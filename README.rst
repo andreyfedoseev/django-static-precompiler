@@ -1,0 +1,3 @@
+Django Static Precompiler
+==========================
+
