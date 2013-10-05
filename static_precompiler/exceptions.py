@@ -1,0 +1,4 @@
+
+
+class StaticCompilationError(Exception):
+    pass

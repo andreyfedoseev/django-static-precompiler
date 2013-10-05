@@ -29,4 +29,10 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     keywords=["sass", "scss", "less", "css", "coffeescript", "javascript"],
+    requires=[
+        "watchdog",
+    ],
+    tests_require=[
+        "mock",
+    ]
 )
