@@ -20,7 +20,7 @@ COMPILERS = getattr(settings, "STATIC_PRECOMPILER_COMPILERS", (
 ROOT = getattr(settings, "STATIC_PRECOMPILER_ROOT",
                getattr(settings, "STATIC_ROOT",
                        getattr(settings, "MEDIA_ROOT")))
-OUTPUT_DIR = getattr(settings, "STATIC_PRECOMPILER_DIR",
+OUTPUT_DIR = getattr(settings, "STATIC_PRECOMPILER_OUTPUT_DIR",
                      "COMPILED")
 
 # Use cache for inline compilation
