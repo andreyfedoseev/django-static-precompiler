@@ -2,3 +2,6 @@ include AUTHORS
 include README.rst
 include CHANGES.rst
 include LICENSE
+recursive-include static_precompiler/tests/static *
+recursive-include static_precompiler/tests/staticfiles_dir *
+recursive-include static_precompiler/tests/staticfiles_dir_with_prefix *
