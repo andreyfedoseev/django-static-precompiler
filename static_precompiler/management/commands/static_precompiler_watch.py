@@ -1,5 +1,6 @@
 # coding: utf-8
 from django.core.management.base import NoArgsCommand
+from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.settings import STATIC_ROOT
 from static_precompiler.utils import get_compilers
 from watchdog.events import FileSystemEventHandler
@@ -28,7 +29,10 @@ class EventHandler(FileSystemEventHandler):
                         print "Created: '{0}'".format(path)
                     else:
                         print "Modified: '{0}'".format(path)
-                compiler.handle_changed_file(path)
+                try:
+                    compiler.handle_changed_file(path)
+                except StaticCompilationError, e:
+                    print e
                 break
 
 
