@@ -46,7 +46,8 @@ class SCSSTestCase(TestCase):
         )
 
         # Test non-ascii
-        NON_ASCII = """.external_link:first-child:before {
+        NON_ASCII = """@charset "UTF-8";
+.external_link:first-child:before {
   content: "Zobacz także:";
   background: url(картинка.png); }
 """
