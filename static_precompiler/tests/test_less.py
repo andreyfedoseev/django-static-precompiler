@@ -29,7 +29,16 @@ class LESSTestCase(TestCase):
 
         self.assertEqual(
             compiler.compile_file("styles/test.less"),
-            "p {\n  font-size: 15px;\n}\np a {\n  color: red;\n}\n"
+            """p {
+  font-size: 15px;
+}
+p a {
+  color: red;
+}
+h1 {
+  color: blue;
+}
+"""
         )
 
     def test_compile_source(self):
