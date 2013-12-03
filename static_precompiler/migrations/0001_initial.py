@@ -11,8 +11,8 @@ class Migration(SchemaMigration):
         # Adding model 'Dependency'
         db.create_table(u'static_precompiler_dependency', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('source', self.gf('django.db.models.fields.CharField')(max_length=500, db_index=True)),
-            ('depends_on', self.gf('django.db.models.fields.CharField')(max_length=500, db_index=True)),
+            ('source', self.gf('django.db.models.fields.CharField')(max_length=255, db_index=True)),
+            ('depends_on', self.gf('django.db.models.fields.CharField')(max_length=255, db_index=True)),
         ))
         db.send_create_signal(u'static_precompiler', ['Dependency'])
 
@@ -31,9 +31,9 @@ class Migration(SchemaMigration):
     models = {
         u'static_precompiler.dependency': {
             'Meta': {'unique_together': "(('source', 'depends_on'),)", 'object_name': 'Dependency'},
-            'depends_on': ('django.db.models.fields.CharField', [], {'max_length': '500', 'db_index': 'True'}),
+            'depends_on': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'source': ('django.db.models.fields.CharField', [], {'max_length': '500', 'db_index': 'True'})
+            'source': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'})
         }
     }
 
