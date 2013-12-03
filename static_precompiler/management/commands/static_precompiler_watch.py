@@ -31,7 +31,7 @@ class EventHandler(FileSystemEventHandler):
                         print "Modified: '{0}'".format(path)
                 try:
                     compiler.handle_changed_file(path)
-                except StaticCompilationError, e:
+                except (StaticCompilationError, ValueError), e:
                     print e
                 break
 
@@ -58,7 +58,10 @@ class Command(NoArgsCommand):
                     path = path[1:]
                 for compiler in compilers:
                     if compiler.is_supported(path):
-                        compiler.handle_changed_file(path)
+                        try:
+                            compiler.handle_changed_file(path)
+                        except (StaticCompilationError, ValueError), e:
+                            print e
                         break
 
         observer = Observer()
