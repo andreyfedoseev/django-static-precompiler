@@ -39,7 +39,7 @@ class BaseCompiler(object):
         full_path = os.path.join(STATIC_ROOT, source_path)
 
         if settings.DEBUG and not os.path.exists(full_path):
-            # while developing it is more confortable
+            # while developing it is more comfortable
             # searching for the source files rather then
             # doing collectstatics all the time
             full_path = finders.find(source_path)
@@ -60,7 +60,7 @@ class BaseCompiler(object):
         raise NotImplementedError
 
     def get_output_path(self, source_path):
-        """ Get ralative path to compiled file based for the given source file.
+        """ Get relative path to compiled file based for the given source file.
 
         :param source_path: relative path to a source file
         :type source_path: str
@@ -283,7 +283,7 @@ class BaseCompiler(object):
                 )
 
     def handle_changed_file(self, source_path):
-        """ Handle the modication of the source file.
+        """ Handle the modification of the source file.
 
         :param source_path: relative path to a source file
         :type source_path: str
