@@ -2,7 +2,7 @@
 Changes
 =======
 
-Dev
+0.2
 ====
 
 - Reduce the max length of varchar fields in Dependency model to meet MySQL limitations
