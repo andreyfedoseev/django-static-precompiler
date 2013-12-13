@@ -3,7 +3,7 @@ from django.conf import settings
 import os
 
 
-STATIC_ROOT = getattr(settings, "STATIC_ROOT", getattr(settings, "MEDIA_ROOT"))
+STATIC_ROOT = getattr(settings, "STATIC_ROOT") or getattr(settings, "MEDIA_ROOT")
 STATIC_URL = getattr(settings, "STATIC_URL", getattr(settings, "MEDIA_URL"))
 
 POSIX_COMPATIBLE = True if os.name == 'posix' else False
