@@ -2,7 +2,7 @@
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from static_precompiler.models import Dependency
-from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR
+from static_precompiler.settings import STATIC_ROOT, REALLY_STATIC_ROOT, OUTPUT_DIR
 from static_precompiler.utils import get_mtime
 import logging
 import os
@@ -80,7 +80,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        return os.path.join(ROOT, self.get_output_path(source_path))
+        return os.path.join(REALLY_STATIC_ROOT, self.get_output_path(source_path))
 
     def get_source_mtime(self, source_path):
         """ Get the modification time of the source file.

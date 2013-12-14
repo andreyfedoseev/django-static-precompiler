@@ -19,6 +19,7 @@ ROOT = getattr(settings, "STATIC_PRECOMPILER_ROOT",
                getattr(settings, "STATIC_ROOT",
                        getattr(settings, "MEDIA_ROOT")))
 STATIC_ROOT = ROOT
+REALLY_STATIC_ROOT = os.path.dirname(getattr(settings, "MEDIA_ROOT"))
 
 OUTPUT_DIR = getattr(settings, "STATIC_PRECOMPILER_OUTPUT_DIR",
                      "COMPILED")
