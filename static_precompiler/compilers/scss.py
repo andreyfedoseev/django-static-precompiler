@@ -1,6 +1,6 @@
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.settings import SCSS_EXECUTABLE, STATIC_ROOT, SCSS_USE_COMPASS
+from static_precompiler.settings import SCSS_EXECUTABLE, ROOT, SCSS_USE_COMPASS
 from static_precompiler.utils import run_command, convert_urls
 import os
 import re
@@ -34,7 +34,7 @@ class SCSS(BaseCompiler):
         if SCSS_USE_COMPASS:
             command += " --compass"
 
-        out, errors = run_command(command, None, STATIC_ROOT)
+        out, errors = run_command(command, None, ROOT)
         if errors:
             raise StaticCompilationError(errors)
 
@@ -46,7 +46,7 @@ class SCSS(BaseCompiler):
         if SCSS_USE_COMPASS:
             command += " --compass"
 
-        out, errors = run_command(command, source, STATIC_ROOT)
+        out, errors = run_command(command, source, ROOT)
         if errors:
             raise StaticCompilationError(errors)
 
@@ -92,7 +92,7 @@ class SCSS(BaseCompiler):
 
     def locate_imported_file(self, source_dir, import_path):
         """ Locate the imported file in the source directory.
-            Return the path to the imported file relative to STATIC_ROOT
+            Return the path to the imported file relative to ROOT
 
         :param source_dir: source directory
         :type source_dir: str
@@ -105,7 +105,7 @@ class SCSS(BaseCompiler):
             import_path += self.EXTENSION
         path = os.path.normpath(os.path.join(source_dir, import_path))
 
-        if os.path.exists(os.path.join(STATIC_ROOT, path)):
+        if os.path.exists(os.path.join(ROOT, path)):
             return path
 
         filename = os.path.basename(import_path)
@@ -115,7 +115,7 @@ class SCSS(BaseCompiler):
                 os.path.dirname(import_path),
                 "_" + filename,
             ))
-            if os.path.exists(os.path.join(STATIC_ROOT, path)):
+            if os.path.exists(os.path.join(ROOT, path)):
                 return path
 
         raise StaticCompilationError(
@@ -144,7 +144,7 @@ class SASS(SCSS):
         if SCSS_USE_COMPASS:
             command += " --compass"
 
-        out, errors = run_command(command, source, STATIC_ROOT)
+        out, errors = run_command(command, source, ROOT)
         if errors:
             raise StaticCompilationError(errors)
 

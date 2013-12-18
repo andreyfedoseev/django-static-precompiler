@@ -1,7 +1,7 @@
 # coding: utf-8
 from django.core.management.base import NoArgsCommand
 from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.settings import STATIC_ROOT
+from static_precompiler.settings import ROOT
 from static_precompiler.utils import get_compilers
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
@@ -19,7 +19,7 @@ class EventHandler(FileSystemEventHandler):
     def on_any_event(self, e):
         if e.is_directory or e.event_type not in ("created", "modified"):
             return
-        path = e.src_path[len(STATIC_ROOT):]
+        path = e.src_path[len(ROOT):]
         if path.startswith("/"):
             path = path[1:]
         for compiler in self.compilers:
@@ -38,22 +38,22 @@ class EventHandler(FileSystemEventHandler):
 
 class Command(NoArgsCommand):
 
-    help = 'Watch for file changes in STATIC_ROOT and re-compile them if necessary.'
+    help = 'Watch for file changes in ROOT and re-compile them if necessary.'
 
     requires_model_validation = False
 
     def handle_noargs(self, **options):
 
-        print "Watching '{0}' for changes.\nPress Control+C to exit.\n".format(STATIC_ROOT)
+        print "Watching '{0}' for changes.\nPress Control+C to exit.\n".format(ROOT)
 
         verbosity = int(options["verbosity"])
 
         compilers = get_compilers()
 
         # Scan the root folder and compile everything
-        for dirname, dirnames, filenames in os.walk(STATIC_ROOT):
+        for dirname, dirnames, filenames in os.walk(ROOT):
             for filename in filenames:
-                path = os.path.join(dirname, filename)[len(STATIC_ROOT):]
+                path = os.path.join(dirname, filename)[len(ROOT):]
                 if path.startswith("/"):
                     path = path[1:]
                 for compiler in compilers:
@@ -65,7 +65,7 @@ class Command(NoArgsCommand):
                         break
 
         observer = Observer()
-        observer.schedule(EventHandler(verbosity, compilers), path=STATIC_ROOT, recursive=True)
+        observer.schedule(EventHandler(verbosity, compilers), path=ROOT, recursive=True)
         observer.start()
         try:
             while True:

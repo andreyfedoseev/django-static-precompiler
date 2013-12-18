@@ -1,6 +1,6 @@
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.settings import LESS_EXECUTABLE, STATIC_ROOT
+from static_precompiler.settings import LESS_EXECUTABLE, ROOT
 from static_precompiler.utils import run_command, convert_urls
 import os
 import re
@@ -31,7 +31,7 @@ class LESS(BaseCompiler):
             self.get_full_source_path(source_path)
         )
 
-        out, errors = run_command(command, None, STATIC_ROOT)
+        out, errors = run_command(command, None)
         if errors:
             raise StaticCompilationError(errors)
 
@@ -40,7 +40,7 @@ class LESS(BaseCompiler):
     def compile_source(self, source):
         command = "{0} -".format(LESS_EXECUTABLE)
 
-        out, errors = run_command(command, source, STATIC_ROOT)
+        out, errors = run_command(command, source)
 
         if errors:
             raise StaticCompilationError(errors)
@@ -87,7 +87,7 @@ class LESS(BaseCompiler):
 
     def locate_imported_file(self, source_dir, import_path):
         """ Locate the imported file in the source directory.
-            Return the path to the imported file relative to STATIC_ROOT
+            Return the path to the imported file relative to ROOT
 
         :param source_dir: source directory
         :type source_dir: str
@@ -100,7 +100,7 @@ class LESS(BaseCompiler):
             import_path += self.EXTENSION
         path = os.path.normpath(os.path.join(source_dir, import_path))
 
-        if os.path.exists(os.path.join(STATIC_ROOT, path)):
+        if os.path.exists(os.path.join(ROOT, path)):
             return path
 
         filename = os.path.basename(import_path)
@@ -110,7 +110,7 @@ class LESS(BaseCompiler):
                 os.path.dirname(import_path),
                 "_" + filename,
             ))
-            if os.path.exists(os.path.join(STATIC_ROOT, path)):
+            if os.path.exists(os.path.join(ROOT, path)):
                 return path
 
         raise StaticCompilationError(
@@ -126,4 +126,3 @@ class LESS(BaseCompiler):
             dependencies.add(import_path)
             dependencies.update(self.find_dependencies(import_path))
         return sorted(dependencies)
-

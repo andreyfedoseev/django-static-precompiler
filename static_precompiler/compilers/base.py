@@ -2,7 +2,7 @@
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from static_precompiler.models import Dependency
-from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR
+from static_precompiler.settings import ROOT, ROOT, OUTPUT_DIR
 from static_precompiler.utils import get_mtime
 import logging
 import os
@@ -36,7 +36,7 @@ class BaseCompiler(object):
         :raises: ValueError
 
         """
-        full_path = os.path.join(STATIC_ROOT, source_path)
+        full_path = os.path.join(ROOT, source_path)
 
         if settings.DEBUG and not os.path.exists(full_path):
             # while developing it is more comfortable
