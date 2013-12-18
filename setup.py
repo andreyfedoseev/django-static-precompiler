@@ -32,7 +32,8 @@ setup(
     requires=[
         "watchdog",
     ],
+    test_suite='static_precompiler.tests.suite',
     tests_require=[
-        "mock",
+        "mock", "Django"
     ]
 )
