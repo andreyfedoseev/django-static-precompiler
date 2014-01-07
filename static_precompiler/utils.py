@@ -51,7 +51,7 @@ def run_command(command, input=None, cwd=None):
         stderr=subprocess.PIPE,
     )
 
-    if cwd is not None:
+    if cwd is not (None or ''):
         popen_kwargs["cwd"] = cwd
 
     if input is not None:
