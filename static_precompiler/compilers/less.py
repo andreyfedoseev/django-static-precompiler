@@ -100,8 +100,10 @@ class LESS(BaseCompiler):
             import_path += self.EXTENSION
         path = os.path.normpath(os.path.join(source_dir, import_path))
 
-        if os.path.exists(os.path.join(STATIC_ROOT, path)):
-            return path
+        try:
+            return self.get_full_source_path(path)
+        except ValueError:
+            pass
 
         filename = os.path.basename(import_path)
         if filename[0] != "_":
@@ -110,8 +112,11 @@ class LESS(BaseCompiler):
                 os.path.dirname(import_path),
                 "_" + filename,
             ))
-            if os.path.exists(os.path.join(STATIC_ROOT, path)):
-                return path
+
+        try:
+            return self.get_full_source_path(path)
+        except ValueError:
+            pass
 
         raise StaticCompilationError(
             "Can't locate the imported file: {0}".format(import_path)

@@ -1,6 +1,6 @@
-# coding: utf-8
 from django.conf import settings
 from django.contrib.staticfiles import finders
+from django.core.exceptions import SuspiciousOperation
 from static_precompiler.models import Dependency
 from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR
 from static_precompiler.utils import get_mtime
@@ -42,7 +42,10 @@ class BaseCompiler(object):
             # while developing it is more comfortable
             # searching for the source files rather then
             # doing collectstatics all the time
-            full_path = finders.find(source_path)
+            try:
+                full_path = finders.find(source_path)
+            except SuspiciousOperation:
+                full_path = None
 
             if full_path is None:
                 raise ValueError("Can't find staticfile named: {0}".format(source_path))
