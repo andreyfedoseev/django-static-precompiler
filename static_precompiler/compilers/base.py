@@ -38,10 +38,7 @@ class BaseCompiler(object):
         """
         full_path = os.path.join(STATIC_ROOT, source_path)
 
-        if settings.DEBUG and not os.path.exists(full_path):
-            # while developing it is more comfortable
-            # searching for the source files rather then
-            # doing collectstatics all the time
+        if not os.path.exists(full_path):
             try:
                 full_path = finders.find(source_path)
             except SuspiciousOperation:
