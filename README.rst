@@ -34,11 +34,11 @@ General settings
 ``STATIC_PRECOMPILER_COMPILERS``
   List of enabled compilers. You can modify it to enable your custom compilers. Default::
 
-    (
-      "static_precompiler.compilers.CoffeeScript",
-      "static_precompiler.compilers.SASS",
-      "static_precompiler.compilers.SCSS",
-      "static_precompiler.compilers.LESS",
+    STATIC_PRECOMPILER_COMPILERS = (
+        'static_precompiler.compilers.CoffeeScript',
+        'static_precompiler.compilers.SASS',
+        'static_precompiler.compilers.SCSS',
+        'static_precompiler.compilers.LESS',
     )
 
 ``STATIC_PRECOMPILER_ROOT``
