@@ -101,7 +101,8 @@ class LESS(BaseCompiler):
         path = os.path.normpath(os.path.join(source_dir, import_path))
 
         try:
-            return self.get_full_source_path(path)
+            self.get_full_source_path(path)
+            return path
         except ValueError:
             pass
 
@@ -114,7 +115,8 @@ class LESS(BaseCompiler):
             ))
 
         try:
-            return self.get_full_source_path(path)
+            self.get_full_source_path(path)
+            return path
         except ValueError:
             pass
 
