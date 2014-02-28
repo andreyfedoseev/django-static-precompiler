@@ -16,7 +16,13 @@ class CoffeeScript(BaseCompiler):
         return self.compile_source(self.get_source(source_path))
 
     def compile_source(self, source):
-        out, errors = run_command("{0} -c -s -p".format(COFFEESCRIPT_EXECUTABLE), source)
+        args = [
+            COFFEESCRIPT_EXECUTABLE,
+            "-c",
+            "-s",
+            "-p",
+        ]
+        out, errors = run_command(args, source)
         if errors:
             raise StaticCompilationError(errors)
 

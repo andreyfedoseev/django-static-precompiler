@@ -6,6 +6,7 @@ from mock import patch, MagicMock
 from static_precompiler.compilers import SASS, SCSS
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.settings import STATIC_ROOT
+from static_precompiler.utils import normalize_path, fix_line_breaks
 import os
 
 
@@ -28,7 +29,7 @@ class SCSSTestCase(TestCase):
         compiler = SCSS()
 
         self.assertEqual(
-            compiler.compile_file("styles/test.scss"),
+            fix_line_breaks(compiler.compile_file("styles/test.scss")),
             "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
         )
 
@@ -36,7 +37,7 @@ class SCSSTestCase(TestCase):
         compiler = SCSS()
 
         self.assertEqual(
-            compiler.compile_source("p {font-size: 15px; a {color: red;}}"),
+            fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")),
             "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
         )
 
@@ -52,7 +53,7 @@ class SCSSTestCase(TestCase):
   background: url(картинка.png); }
 """
         self.assertEqual(
-            compiler.compile_source(NON_ASCII),
+            fix_line_breaks(compiler.compile_source(NON_ASCII)),
             NON_ASCII
         )
 
@@ -93,7 +94,7 @@ class SCSSTestCase(TestCase):
 
             existing_files = set()
             for f in ("A/B.scss", "A/_C.scss", "D.scss"):
-                existing_files.add(os.path.join(STATIC_ROOT, f))
+                existing_files.add(os.path.join(STATIC_ROOT, normalize_path(f)))
 
             mocked_os_path_exist.side_effect = lambda x: x in existing_files
 
@@ -133,7 +134,7 @@ class SCSSTestCase(TestCase):
 
         existing_files = set()
         for f in files:
-            existing_files.add(os.path.join(STATIC_ROOT, f))
+            existing_files.add(os.path.join(STATIC_ROOT, normalize_path(f)))
 
         with patch("os.path.exists") as mocked_os_path_exist:
             mocked_os_path_exist.side_effect = lambda x: x in existing_files
@@ -189,7 +190,7 @@ class SASSTestCase(TestCase):
         compiler = SASS()
 
         self.assertEqual(
-            compiler.compile_file("styles/test.sass"),
+            fix_line_breaks(compiler.compile_file("styles/test.sass")),
             "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
         )
 
@@ -197,7 +198,7 @@ class SASSTestCase(TestCase):
         compiler = SASS()
 
         self.assertEqual(
-            compiler.compile_source("p\n  font-size: 15px"),
+            fix_line_breaks(compiler.compile_source("p\n  font-size: 15px")),
             "p {\n  font-size: 15px; }\n"
         )
 

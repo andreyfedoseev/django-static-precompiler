@@ -1,11 +1,11 @@
-from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.core.exceptions import SuspiciousOperation
 from static_precompiler.models import Dependency
 from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR
-from static_precompiler.utils import get_mtime
+from static_precompiler.utils import get_mtime, normalize_path
 import logging
 import os
+import posixpath
 
 
 logger = logging.getLogger("static_precompiler")
@@ -29,18 +29,21 @@ class BaseCompiler(object):
     def get_full_source_path(self, source_path):
         """ Return the full path to the given source file.
             Check if the source file exists.
+            The returned path is OS-dependent.
 
         :param source_path: relative path to a source file
-        :type source_path: basestring
+        :type source_path: str
         :returns: str
         :raises: ValueError
 
         """
-        full_path = os.path.join(STATIC_ROOT, source_path)
+        norm_source_path = normalize_path(source_path.lstrip("/"))
+
+        full_path = os.path.join(STATIC_ROOT, norm_source_path)
 
         if not os.path.exists(full_path):
             try:
-                full_path = finders.find(source_path)
+                full_path = finders.find(norm_source_path)
             except SuspiciousOperation:
                 full_path = None
 
@@ -61,6 +64,7 @@ class BaseCompiler(object):
 
     def get_output_path(self, source_path):
         """ Get relative path to compiled file based for the given source file.
+            The returned path is in posix format.
 
         :param source_path: relative path to a source file
         :type source_path: str
@@ -70,17 +74,18 @@ class BaseCompiler(object):
         source_dir = os.path.dirname(source_path)
         source_filename = os.path.basename(source_path)
         output_filename = self.get_output_filename(source_filename)
-        return os.path.join(OUTPUT_DIR, source_dir, output_filename)
+        return posixpath.join(OUTPUT_DIR, source_dir, output_filename)
 
     def get_full_output_path(self, source_path):
         """ Get full path to compiled file based for the given source file.
+            The returned path is OS-dependent.
 
         :param source_path: relative path to a source file
         :type source_path: str
         :returns: str
 
         """
-        return os.path.join(ROOT, self.get_output_path(source_path))
+        return os.path.join(ROOT, normalize_path(self.get_output_path(source_path.lstrip("/"))))
 
     def get_source_mtime(self, source_path):
         """ Get the modification time of the source file.

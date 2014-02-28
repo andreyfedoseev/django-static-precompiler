@@ -4,4 +4,7 @@ dist
 *.egg-info
 *.egg
 .idea
+.idea.mac
+.idea.win
 virtualenv
+virtualenv-win

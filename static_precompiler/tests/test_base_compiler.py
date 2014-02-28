@@ -53,7 +53,7 @@ class BaseCompilerTestCase(TestCase):
         # Source file in STATIC_ROOT
         self.assertEqual(
             compiler.get_full_source_path("scripts/test.coffee"),
-            os.path.join(self.django_settings.STATIC_ROOT, "scripts/test.coffee"),
+            os.path.join(self.django_settings.STATIC_ROOT, "scripts", "test.coffee"),
         )
 
         # Source file doesn't exist
@@ -95,13 +95,13 @@ class BaseCompilerTestCase(TestCase):
         )
         self.assertEqual(
             compiler.get_output_path("scripts/test.coffee"),
-            os.path.join(OUTPUT_DIR, "scripts/test.js")
+            OUTPUT_DIR + "/scripts/test.js"
         )
 
     def test_get_full_output_path(self):
         compiler = BaseCompiler()
         compiler.get_output_path = MagicMock(
-            return_value=os.path.join(OUTPUT_DIR, "dummy.js")
+            return_value=OUTPUT_DIR + "/dummy.js"
         )
         self.assertEqual(
             compiler.get_full_output_path("dummy.coffee"),

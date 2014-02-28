@@ -3,6 +3,7 @@ from static_precompiler.compilers.base import BaseCompiler
 from static_precompiler.settings import SCSS_EXECUTABLE, STATIC_ROOT, SCSS_USE_COMPASS
 from static_precompiler.utils import run_command, convert_urls
 import os
+import posixpath
 import re
 
 
@@ -26,27 +27,37 @@ class SCSS(BaseCompiler):
         return super(SCSS, self).should_compile(source_path, watch)
 
     def compile_file(self, source_path):
-        command = "{0} -C {1}".format(
+        full_source_path = self.get_full_source_path(source_path)
+        args = [
             SCSS_EXECUTABLE,
-            self.get_full_source_path(source_path)
-        )
+            "-C",
+            full_source_path,
+        ]
 
         if SCSS_USE_COMPASS:
-            command += " --compass"
+            args.append("--compass")
 
-        out, errors = run_command(command, None, STATIC_ROOT)
+        # `cwd` is a directory containing `source_path`. Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
+        cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
+        out, errors = run_command(args, None, cwd=cwd)
+
         if errors:
             raise StaticCompilationError(errors)
 
         return out
 
     def compile_source(self, source):
-        command = "{0} -s --scss -C".format(SCSS_EXECUTABLE)
+        args = [
+            SCSS_EXECUTABLE,
+            "-s",
+            "--scss",
+            "-C",
+        ]
 
         if SCSS_USE_COMPASS:
-            command += " --compass"
+            args.append("--compass")
 
-        out, errors = run_command(command, source, STATIC_ROOT)
+        out, errors = run_command(args, source, cwd=STATIC_ROOT)
         if errors:
             raise StaticCompilationError(errors)
 
@@ -103,7 +114,7 @@ class SCSS(BaseCompiler):
         """
         if not import_path.endswith(self.EXTENSION):
             import_path += self.EXTENSION
-        path = os.path.normpath(os.path.join(source_dir, import_path))
+        path = posixpath.normpath(posixpath.join(source_dir, import_path))
 
         try:
             self.get_full_source_path(path)
@@ -111,11 +122,11 @@ class SCSS(BaseCompiler):
         except ValueError:
             pass
 
-        filename = os.path.basename(import_path)
+        filename = posixpath.basename(import_path)
         if filename[0] != "_":
-            path = os.path.normpath(os.path.join(
+            path = posixpath.normpath(posixpath.join(
                 source_dir,
-                os.path.dirname(import_path),
+                posixpath.dirname(import_path),
                 "_" + filename,
             ))
 
@@ -131,7 +142,7 @@ class SCSS(BaseCompiler):
 
     def find_dependencies(self, source_path):
         source = self.get_source(source_path)
-        source_dir = os.path.dirname(source_path)
+        source_dir = posixpath.dirname(source_path)
         dependencies = set()
         for import_path in self.find_imports(source):
             import_path = self.locate_imported_file(source_dir, import_path)
@@ -146,12 +157,16 @@ class SASS(SCSS):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*?\n")
 
     def compile_source(self, source):
-        command = "{0} -s -C".format(SCSS_EXECUTABLE)
+        args = [
+            SCSS_EXECUTABLE,
+            "-s",
+            "-C",
+        ]
 
         if SCSS_USE_COMPASS:
-            command += " --compass"
+            args.append("--compass")
 
-        out, errors = run_command(command, source, STATIC_ROOT)
+        out, errors = run_command(args, source, STATIC_ROOT)
         if errors:
             raise StaticCompilationError(errors)
 

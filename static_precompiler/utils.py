@@ -13,6 +13,20 @@ import subprocess
 import urlparse
 
 
+def normalize_path(posix_path):
+    """ Convert posix style path to OS-dependent path.
+    """
+    if POSIX_COMPATIBLE:
+        return posix_path
+    return os.path.join(*posix_path.split("/"))
+
+
+def fix_line_breaks(text):
+    """ Convert Win line breaks to Unix
+    """
+    return text.replace("\r\n", "\n")
+
+
 def get_hexdigest(plaintext, length=None):
     digest = md5(smart_str(plaintext)).hexdigest()
     if length:
@@ -40,11 +54,7 @@ def get_mtime(filename):
 
 
 #noinspection PyShadowingBuiltins
-def run_command(command, input=None, cwd=None):
-    args = shlex.split(
-        command,
-        posix=POSIX_COMPATIBLE
-    )
+def run_command(args, input=None, cwd=None):
 
     popen_kwargs = dict(
         stdout=subprocess.PIPE,

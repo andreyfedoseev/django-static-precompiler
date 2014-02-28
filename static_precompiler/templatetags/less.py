@@ -22,4 +22,4 @@ def do_inlinecoffeescript(parser, token):
 
 @register.simple_tag
 def less(path):
-    return compiler.compile(path)
+    return compiler.compile(str(path))
