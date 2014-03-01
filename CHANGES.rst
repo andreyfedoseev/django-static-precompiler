@@ -2,10 +2,11 @@
 Changes
 =======
 
-Dev
+0.3
 ====
 
-- Bugfixes
+- Bug fixes
+- Add Windows compatibility
 
 
 0.2
