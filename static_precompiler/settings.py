@@ -1,5 +1,6 @@
 # coding: utf-8
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 import os
 
 
@@ -20,6 +21,11 @@ COMPILERS = getattr(settings, "STATIC_PRECOMPILER_COMPILERS", (
 ROOT = getattr(settings, "STATIC_PRECOMPILER_ROOT",
                getattr(settings, "STATIC_ROOT",
                        getattr(settings, "MEDIA_ROOT")))
+
+if not ROOT:
+    raise ImproperlyConfigured("You must specify either STATIC_ROOT or STATIC_PRECOMPILER_ROOT folder.")
+
+
 OUTPUT_DIR = getattr(settings, "STATIC_PRECOMPILER_OUTPUT_DIR",
                      "COMPILED")
 
