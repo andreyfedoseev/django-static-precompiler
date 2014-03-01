@@ -170,6 +170,14 @@ class SCSSTestCase(TestCase):
                 "compiled",
             )
 
+    def test_compass(self):
+        compiler = SCSS()
+
+        self.assertEqual(
+            fix_line_breaks(compiler.compile_file("test-compass.scss")),
+            "p {\n  background: url('/static/images/test.png'); }\n"
+        )
+
 
 class SASSTestCase(TestCase):
 
