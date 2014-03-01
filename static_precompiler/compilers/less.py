@@ -46,7 +46,7 @@ class LESS(BaseCompiler):
             "-"
         ]
 
-        out, errors = run_command(args, source, cwd=STATIC_ROOT)
+        out, errors = run_command(args, source)
 
         if errors:
             raise StaticCompilationError(errors)

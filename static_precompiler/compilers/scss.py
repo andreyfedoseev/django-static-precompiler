@@ -57,7 +57,7 @@ class SCSS(BaseCompiler):
         if SCSS_USE_COMPASS:
             args.append("--compass")
 
-        out, errors = run_command(args, source, cwd=STATIC_ROOT)
+        out, errors = run_command(args, source)
         if errors:
             raise StaticCompilationError(errors)
 
@@ -166,7 +166,7 @@ class SASS(SCSS):
         if SCSS_USE_COMPASS:
             args.append("--compass")
 
-        out, errors = run_command(args, source, STATIC_ROOT)
+        out, errors = run_command(args, source)
         if errors:
             raise StaticCompilationError(errors)
 

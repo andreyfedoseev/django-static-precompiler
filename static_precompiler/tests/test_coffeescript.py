@@ -1,7 +1,7 @@
 # coding: utf-8
 from unittest import main, TestCase
 from django.template import Context
-from django.template.loader import render_to_string, get_template_from_string
+from django.template.loader import get_template_from_string
 from mock import patch, MagicMock
 from static_precompiler.compilers.coffeescript import CoffeeScript
 from static_precompiler.exceptions import StaticCompilationError

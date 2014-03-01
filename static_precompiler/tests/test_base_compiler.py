@@ -50,10 +50,11 @@ class BaseCompilerTestCase(TestCase):
 
         compiler = BaseCompiler()
 
-        # Source file in STATIC_ROOT
+        root = os.path.dirname(__file__)
+
         self.assertEqual(
             compiler.get_full_source_path("scripts/test.coffee"),
-            os.path.join(self.django_settings.STATIC_ROOT, "scripts", "test.coffee"),
+            os.path.join(root, "static", "scripts", "test.coffee"),
         )
 
         # Source file doesn't exist
@@ -62,14 +63,11 @@ class BaseCompilerTestCase(TestCase):
             lambda: compiler.get_full_source_path("scripts/does-not-exist.coffee")
         )
 
-        self.assertEqual(self.django_settings.DEBUG, True)
-
         self.assertEqual(
             compiler.get_full_source_path("another_test.coffee"),
             os.path.normpath(
                 os.path.join(
-                    self.django_settings.STATIC_ROOT,
-                    "..",
+                    root,
                     "staticfiles_dir",
                     "another_test.coffee"
                 )
@@ -80,8 +78,7 @@ class BaseCompilerTestCase(TestCase):
             compiler.get_full_source_path("prefix/another_test.coffee"),
             os.path.normpath(
                 os.path.join(
-                    self.django_settings.STATIC_ROOT,
-                    "..",
+                    root,
                     "staticfiles_dir_with_prefix",
                     "another_test.coffee"
                 )

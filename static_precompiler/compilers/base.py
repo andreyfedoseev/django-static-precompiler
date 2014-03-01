@@ -39,16 +39,18 @@ class BaseCompiler(object):
         """
         norm_source_path = normalize_path(source_path.lstrip("/"))
 
-        full_path = os.path.join(STATIC_ROOT, norm_source_path)
+        if STATIC_ROOT:
+            full_path = os.path.join(STATIC_ROOT, norm_source_path)
+            if os.path.exists(full_path):
+                return full_path
 
-        if not os.path.exists(full_path):
-            try:
-                full_path = finders.find(norm_source_path)
-            except SuspiciousOperation:
-                full_path = None
+        try:
+            full_path = finders.find(norm_source_path)
+        except SuspiciousOperation:
+            full_path = None
 
-            if full_path is None:
-                raise ValueError("Can't find staticfile named: {0}".format(source_path))
+        if full_path is None:
+            raise ValueError("Can't find staticfile named: {0}".format(source_path))
 
         return full_path
 

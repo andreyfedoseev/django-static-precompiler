@@ -5,7 +5,6 @@ from django.template.loader import get_template_from_string
 from mock import patch, MagicMock
 from static_precompiler.compilers import LESS
 from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.settings import STATIC_ROOT
 from static_precompiler.utils import normalize_path
 import os
 
@@ -103,9 +102,11 @@ h1 {
         compiler = LESS()
         with patch("os.path.exists") as mocked_os_path_exist:
 
+            root = os.path.dirname(__file__)
+
             existing_files = set()
             for f in ("A/B.less", "D.less"):
-                existing_files.add(os.path.join(STATIC_ROOT, normalize_path(f)))
+                existing_files.add(os.path.join(root, "static", normalize_path(f)))
 
             mocked_os_path_exist.side_effect = lambda x: x in existing_files
 
@@ -139,9 +140,11 @@ h1 {
         }
         compiler.get_source = MagicMock(side_effect=lambda x: files[x])
 
+        root = os.path.dirname(__file__)
+
         existing_files = set()
         for f in files:
-            existing_files.add(os.path.join(STATIC_ROOT, normalize_path(f)))
+            existing_files.add(os.path.join(root, "static", normalize_path(f)))
 
         with patch("os.path.exists") as mocked_os_path_exist:
             mocked_os_path_exist.side_effect = lambda x: x in existing_files
