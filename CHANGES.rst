@@ -2,7 +2,7 @@
 Changes
 =======
 
-Dev
+0.4
 ====
 
 - Add ``compile_static`` and ``compile_static_lazy`` utility functions.
