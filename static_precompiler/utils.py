@@ -3,11 +3,10 @@ from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import smart_str
 from django.utils.importlib import import_module
-from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, STATIC_URL, \
-    COMPILERS
+from static_precompiler.exceptions import UnsupportedFile
+from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, STATIC_URL, COMPILERS
 import os
 import re
-import shlex
 import socket
 import subprocess
 import urlparse
@@ -131,3 +130,21 @@ def get_compilers():
             compilers.append(compiler_class())
 
     return compilers
+
+
+def compile_static(path):
+
+    for compiler in get_compilers():
+        if compiler.is_supported(path):
+            return compiler.compile(path)
+
+    raise UnsupportedFile("The source file '{0}' is not supported by any of available compilers.".format(path))
+
+
+def compile_static_lazy(path):
+
+    for compiler in get_compilers():
+        if compiler.is_supported(path):
+            return compiler.compile_lazy(path)
+
+    raise UnsupportedFile("The source file '{0}' is not supported by any of available compilers.".format(path))

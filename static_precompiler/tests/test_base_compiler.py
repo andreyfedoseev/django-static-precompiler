@@ -243,6 +243,21 @@ class BaseCompilerTestCase(TestCase):
         compiler.find_dependencies.assert_called_with("dummy.coffee")
         compiler.update_dependencies.assert_called_with("dummy.coffee", ["A", "B"])
 
+    def test_compile_lazy(self):
+        compiler = BaseCompiler()
+        compiler.compile = MagicMock()
+        compiler.compile.return_value = "dummy.js"
+
+        lazy_compiled = compiler.compile_lazy("dummy.coffee")
+
+        self.assertEqual(compiler.compile.call_count, 0)
+
+        self.assertEqual(str(lazy_compiled), "dummy.js")
+
+        self.assertEqual(compiler.compile.call_count, 1)
+        compiler.compile.assert_called_with("dummy.coffee")
+
+
     def test_find_dependencies(self):
         compiler = BaseCompiler()
         self.assertRaises(

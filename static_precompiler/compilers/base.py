@@ -1,5 +1,6 @@
 from django.contrib.staticfiles import finders
 from django.core.exceptions import SuspiciousOperation
+from django.utils.functional import lazy
 from static_precompiler.models import Dependency
 from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR
 from static_precompiler.utils import get_mtime, normalize_path
@@ -193,6 +194,20 @@ class BaseCompiler(object):
             logging.info("Compiled: '{0}'".format(source_path))
 
         return self.get_output_path(source_path)
+
+    def compile_lazy(self, source_path):
+        """ Return a lazy object which, when translated to string, compiles the specified source path and returns
+            the path to the compiled file.
+            Raise ValueError is the source file type is not supported.
+            May raise a StaticCompilationError if something goes wrong with compilation.
+            :param source_path: relative path to a source file
+            :type source_path: str
+
+            :returns: str
+        """
+        return self.compile(source_path)
+
+    compile_lazy = lazy(compile_lazy, str)
 
     def compile_file(self, source_path):
         """ Compile the source file. Return the compiled code.
