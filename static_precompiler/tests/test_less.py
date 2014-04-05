@@ -1,5 +1,4 @@
 # coding: utf-8
-from unittest import main, TestCase
 from django.template import Context
 from django.template.loader import get_template_from_string
 from mock import patch, MagicMock
@@ -7,9 +6,10 @@ from static_precompiler.compilers import LESS
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.utils import normalize_path
 import os
+import unittest
 
 
-class LESSTestCase(TestCase):
+class LESSTestCase(unittest.TestCase):
 
     def test_is_supported(self):
         compiler = LESS()
@@ -181,5 +181,12 @@ h1 {
             )
 
 
+def suite():
+    loader = unittest.TestLoader()
+    test_suite = unittest.TestSuite()
+    test_suite.addTest(loader.loadTestsFromTestCase(LESSTestCase))
+    return test_suite
+
+
 if __name__ == '__main__':
-    main()
+    unittest.TextTestRunner(verbosity=2).run(suite())

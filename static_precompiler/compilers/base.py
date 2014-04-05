@@ -146,7 +146,8 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        return open(self.get_full_source_path(source_path)).read()
+        with open(self.get_full_source_path(source_path)) as source:
+            return source.read()
 
     def write_output(self, output, source_path):
         """ Write the compiled output to a file.

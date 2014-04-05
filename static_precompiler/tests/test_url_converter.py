@@ -1,10 +1,10 @@
 # coding: utf-8
-from unittest import main, TestCase
 from mock import MagicMock
 from static_precompiler.utils import URLConverter
+import unittest
 
 
-class URLConverterTestCase(TestCase):
+class URLConverterTestCase(unittest.TestCase):
 
     def test_convert_url(self):
         converter = URLConverter()
@@ -63,5 +63,12 @@ class URLConverterTestCase(TestCase):
 """)
 
 
+def suite():
+    loader = unittest.TestLoader()
+    test_suite = unittest.TestSuite()
+    test_suite.addTest(loader.loadTestsFromTestCase(URLConverterTestCase))
+    return test_suite
+
+
 if __name__ == '__main__':
-    main()
+    unittest.TextTestRunner(verbosity=2).run(suite())

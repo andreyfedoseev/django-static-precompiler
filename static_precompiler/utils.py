@@ -1,15 +1,16 @@
 from hashlib import md5
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
-from django.utils.encoding import smart_str
+from django.utils.encoding import smart_str, smart_bytes
 from django.utils.importlib import import_module
+# noinspection PyUnresolvedReferences
+from six.moves import urllib
 from static_precompiler.exceptions import UnsupportedFile
 from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, STATIC_URL, COMPILERS
 import os
 import re
 import socket
 import subprocess
-import urlparse
 
 
 def normalize_path(posix_path):
@@ -27,7 +28,7 @@ def fix_line_breaks(text):
 
 
 def get_hexdigest(plaintext, length=None):
-    digest = md5(smart_str(plaintext)).hexdigest()
+    digest = md5(smart_bytes(plaintext)).hexdigest()
     if length:
         return digest[:length]
     return digest
@@ -71,7 +72,12 @@ def run_command(args, input=None, cwd=None):
 
     p = subprocess.Popen(args, **popen_kwargs)
 
-    return p.communicate(input)
+    if input:
+        input = smart_bytes(input)
+
+    output, error = p.communicate(input)
+
+    return smart_str(output), smart_str(error)
 
 
 class URLConverter(object):
@@ -84,7 +90,7 @@ class URLConverter(object):
         url = url.strip(' \'"')
         if url.startswith(('http://', 'https://', '/', 'data:')):
             return url
-        return urlparse.urljoin(STATIC_URL, urlparse.urljoin(source_dir, url))
+        return urllib.parse.urljoin(STATIC_URL, urllib.parse.urljoin(source_dir, url))
 
     def convert(self, content, path):
         source_dir = os.path.dirname(path)

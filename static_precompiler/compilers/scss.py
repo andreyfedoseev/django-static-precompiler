@@ -1,6 +1,6 @@
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.settings import SCSS_EXECUTABLE, STATIC_ROOT, SCSS_USE_COMPASS
+from static_precompiler.settings import SCSS_EXECUTABLE, SCSS_USE_COMPASS
 from static_precompiler.utils import run_command, convert_urls
 import os
 import posixpath

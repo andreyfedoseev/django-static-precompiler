@@ -1,15 +1,14 @@
-# coding: utf-8
 from django.core import management
 from mock import patch, MagicMock
-from unittest import TestCase, main
 from static_precompiler.compilers.base import BaseCompiler
 from static_precompiler.models import Dependency
 from static_precompiler.settings import OUTPUT_DIR, ROOT
 import os
 import shutil
+import unittest
 
 
-class BaseCompilerTestCase(TestCase):
+class BaseCompilerTestCase(unittest.TestCase):
 
     def setUp(self):
         from django.conf import settings as django_settings
@@ -182,7 +181,8 @@ class BaseCompilerTestCase(TestCase):
         compiler.get_full_output_path = MagicMock(return_value=output_path)
         compiler.write_output("compiled", "dummy.coffee")
         self.assertTrue(os.path.exists(output_path))
-        self.assertEqual(open(output_path).read(), "compiled")
+        with open(output_path) as output:
+            self.assertEqual(output.read(), "compiled")
 
     def test_compile_source(self):
         compiler = BaseCompiler()
@@ -250,13 +250,15 @@ class BaseCompilerTestCase(TestCase):
 
         lazy_compiled = compiler.compile_lazy("dummy.coffee")
 
+        # noinspection PyUnresolvedReferences
         self.assertEqual(compiler.compile.call_count, 0)
 
         self.assertEqual(str(lazy_compiled), "dummy.js")
 
+        # noinspection PyUnresolvedReferences
         self.assertEqual(compiler.compile.call_count, 1)
+        # noinspection PyUnresolvedReferences
         compiler.compile.assert_called_with("dummy.coffee")
-
 
     def test_find_dependencies(self):
         compiler = BaseCompiler()
@@ -308,7 +310,7 @@ class BaseCompilerTestCase(TestCase):
 
         self.assertEqual(
             compiler.get_dependents("spam.scss"),
-            [u"eggs.scss", u"ham.scss"],
+            ["eggs.scss", "ham.scss"],
         )
 
     def test_update_dependencies(self):
@@ -346,5 +348,13 @@ class BaseCompilerTestCase(TestCase):
             [("B", "C")]
         )
 
+
+def suite():
+    loader = unittest.TestLoader()
+    test_suite = unittest.TestSuite()
+    test_suite.addTest(loader.loadTestsFromTestCase(BaseCompilerTestCase))
+    return test_suite
+
+
 if __name__ == '__main__':
-    main()
+    unittest.TextTestRunner(verbosity=2).run(suite())

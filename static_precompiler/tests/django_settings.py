@@ -1,3 +1,4 @@
+# noinspection PyUnresolvedReferences
 from django.conf.global_settings import *
 import os
 
@@ -14,6 +15,7 @@ DATABASES = {
 STATIC_ROOT = MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'static')
 STATIC_URL = MEDIA_URL = "/static/"
 
+# noinspection PyUnresolvedReferences
 STATICFILES_DIRS = (
     os.path.join(os.path.dirname(__file__), 'staticfiles_dir'),
     ("prefix", os.path.join(os.path.dirname(__file__), 'staticfiles_dir_with_prefix')),

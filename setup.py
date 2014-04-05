@@ -1,9 +1,13 @@
 from setuptools import setup, find_packages
 import os
+import sys
 
 
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    path = os.path.join(os.path.dirname(__file__), fname)
+    if sys.version < '3':
+        return open(path).read()
+    return open(path, encoding="utf-8").read()
 
 
 README = read('README.rst')
@@ -30,9 +34,10 @@ setup(
     ],
     keywords=["sass", "scss", "less", "css", "coffeescript", "javascript"],
     requires=[
-        "watchdog",
+        "six",
     ],
     tests_require=[
         "mock",
-    ]
+    ],
+    test_suite="static_precompiler.tests.suite",
 )

@@ -9,11 +9,10 @@ class StaticPrecompilerFileStorage(FileSystemStorage):
 
     The default for ``location`` is ``STATIC_PRECOMPILER_ROOT``
     """
-    def __init__(self, location=None, base_url=None, *args, **kwargs):
+    def __init__(self, location=None, base_url=None):
         if location is None:
             location = ROOT
-        super(StaticPrecompilerFileStorage, self).__init__(location, base_url,
-                                                           *args, **kwargs)
+        super(StaticPrecompilerFileStorage, self).__init__(location, base_url)
 
 
 class StaticPrecompilerFinder(BaseStorageFinder):

@@ -1,13 +1,13 @@
 # coding: utf-8
-from unittest import main, TestCase
 from django.template import Context
 from django.template.loader import get_template_from_string
 from mock import patch, MagicMock
 from static_precompiler.compilers.coffeescript import CoffeeScript
 from static_precompiler.exceptions import StaticCompilationError
+import unittest
 
 
-class CoffeeScriptTestCase(TestCase):
+class CoffeeScriptTestCase(unittest.TestCase):
 
     @staticmethod
     def clean_javascript(js):
@@ -74,5 +74,13 @@ class CoffeeScriptTestCase(TestCase):
                 "compiled",
             )
 
+
+def suite():
+    loader = unittest.TestLoader()
+    test_suite = unittest.TestSuite()
+    test_suite.addTest(loader.loadTestsFromTestCase(CoffeeScriptTestCase))
+    return test_suite
+
+
 if __name__ == '__main__':
-    main()
+    unittest.TextTestRunner(verbosity=2).run(suite())

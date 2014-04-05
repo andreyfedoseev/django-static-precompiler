@@ -1,4 +1,3 @@
-# coding: utf-8
 from django.core.management.base import NoArgsCommand
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.settings import STATIC_ROOT
@@ -26,13 +25,13 @@ class EventHandler(FileSystemEventHandler):
             if compiler.is_supported(path):
                 if self.verbosity > 1:
                     if e.event_type == "created":
-                        print "Created: '{0}'".format(path)
+                        print("Created: '{0}'".format(path))
                     else:
-                        print "Modified: '{0}'".format(path)
+                        print("Modified: '{0}'".format(path))
                 try:
                     compiler.handle_changed_file(path)
-                except (StaticCompilationError, ValueError), e:
-                    print e
+                except (StaticCompilationError, ValueError) as e:
+                    print(e)
                 break
 
 
@@ -44,7 +43,7 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
 
-        print "Watching '{0}' for changes.\nPress Control+C to exit.\n".format(STATIC_ROOT)
+        print("Watching '{0}' for changes.\nPress Control+C to exit.\n".format(STATIC_ROOT))
 
         verbosity = int(options["verbosity"])
 
@@ -60,8 +59,8 @@ class Command(NoArgsCommand):
                     if compiler.is_supported(path):
                         try:
                             compiler.handle_changed_file(path)
-                        except (StaticCompilationError, ValueError), e:
-                            print e
+                        except (StaticCompilationError, ValueError) as e:
+                            print(e)
                         break
 
         observer = Observer()
