@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import smart_str, smart_bytes
 from django.utils.importlib import import_module
 # noinspection PyUnresolvedReferences
-from six.moves import urllib
+from six.moves.urllib import parse as urllib_parse
 from static_precompiler.exceptions import UnsupportedFile
 from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, STATIC_URL, COMPILERS
 import os
@@ -90,7 +90,7 @@ class URLConverter(object):
         url = url.strip(' \'"')
         if url.startswith(('http://', 'https://', '/', 'data:')):
             return url
-        return urllib.parse.urljoin(STATIC_URL, urllib.parse.urljoin(source_dir, url))
+        return urllib_parse.urljoin(STATIC_URL, urllib_parse.urljoin(source_dir, url))
 
     def convert(self, content, path):
         source_dir = os.path.dirname(path)
