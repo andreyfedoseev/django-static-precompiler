@@ -2,6 +2,11 @@
 Changes
 =======
 
+0.5
+====
+
+- Add Python 3 support
+
 0.4
 ====
 
