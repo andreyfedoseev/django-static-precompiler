@@ -8,6 +8,6 @@ install:
   - pip install django
   - pip install coveralls
 script:
-  converage run --source=static_precompiler setup.py test
+  coverage run --source=static_precompiler setup.py test
 after_success:
   coveralls
