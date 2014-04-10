@@ -8,3 +8,5 @@ dist
 .idea.win
 virtualenv
 virtualenv-win
+
+.coverage
