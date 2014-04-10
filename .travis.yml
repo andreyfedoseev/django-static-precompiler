@@ -9,10 +9,11 @@ before_install:
   - npm install -g less
   - gem install sass
   - gem install compass
+install:
   - pip install coveralls
   - pip install django
-install:
-  - python setup.py install
+  - pip install six
+  - pip install mock
 script:
   coverage run --source=static_precompiler setup.py test
 after_success:
