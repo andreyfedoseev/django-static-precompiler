@@ -4,9 +4,14 @@ python:
   - "2.7"
   - "2.6"
 env: DJANGO_SETTINGS_MODULE="static_precompiler.tests.django_settings"
+before_install:
+  - npm install -g coffee-script
+  - npm install -g less
+  - gem install sass
+  - gem install compass
+  - pip install coveralls
 install:
   - pip install django
-  - pip install coveralls
 script:
   coverage run --source=static_precompiler setup.py test
 after_success:
