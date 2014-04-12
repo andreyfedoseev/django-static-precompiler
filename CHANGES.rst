@@ -2,6 +2,11 @@
 Changes
 =======
 
+0.5.1
+======
+
+- Fix SCSS compilation error when importing Compass styles
+
 0.5
 ====
 
