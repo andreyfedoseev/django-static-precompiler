@@ -1,6 +1,6 @@
+from static_precompiler import settings
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.settings import SCSS_EXECUTABLE, SCSS_USE_COMPASS
 from static_precompiler.utils import run_command, convert_urls
 import os
 import posixpath
@@ -13,6 +13,10 @@ class SCSS(BaseCompiler):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;")
     EXTENSION = ".scss"
+
+    # noinspection PyMethodMayBeStatic
+    def compass_enabled(self):
+        return settings.SCSS_USE_COMPASS
 
     def is_supported(self, source_path):
         return source_path.endswith(self.EXTENSION)
@@ -29,12 +33,12 @@ class SCSS(BaseCompiler):
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)
         args = [
-            SCSS_EXECUTABLE,
+            settings.SCSS_EXECUTABLE,
             "-C",
             full_source_path,
         ]
 
-        if SCSS_USE_COMPASS:
+        if self.compass_enabled():
             args.append("--compass")
 
         # `cwd` is a directory containing `source_path`. Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
@@ -48,13 +52,13 @@ class SCSS(BaseCompiler):
 
     def compile_source(self, source):
         args = [
-            SCSS_EXECUTABLE,
+            settings.SCSS_EXECUTABLE,
             "-s",
             "--scss",
             "-C",
         ]
 
-        if SCSS_USE_COMPASS:
+        if self.compass_enabled():
             args.append("--compass")
 
         out, errors = run_command(args, source)
@@ -97,6 +101,9 @@ class SCSS(BaseCompiler):
                     continue
                 if import_token.startswith("http://") or \
                    import_token.startswith("https://"):
+                    continue
+                if self.compass_enabled() and (import_token in ("compass", "compass.scss") or import_token.startswith("compass/")):
+                    # Ignore compass imports if Compass is enabled.
                     continue
                 imports.add(import_token)
         return sorted(imports)
@@ -158,12 +165,12 @@ class SASS(SCSS):
 
     def compile_source(self, source):
         args = [
-            SCSS_EXECUTABLE,
+            settings.SCSS_EXECUTABLE,
             "-s",
             "-C",
         ]
 
-        if SCSS_USE_COMPASS:
+        if self.compass_enabled():
             args.append("--compass")
 
         out, errors = run_command(args, source)

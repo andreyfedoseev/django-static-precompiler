@@ -75,7 +75,29 @@ class SCSSTestCase(unittest.TestCase):
 @import "http://foo.com/bar";
 @import url(foo);
 @import "rounded-corners", "text-shadow";
+@import "compass";
+@import "compass.scss";
+@import "compass/css3";
 """
+
+        compiler.compass_enabled = MagicMock()
+        compiler.compass_enabled.return_value = False
+
+        expected = [
+            "compass",
+            "compass.scss",
+            "compass/css3",
+            "foo",
+            "foo.scss",
+            "rounded-corners",
+            "text-shadow",
+        ]
+        self.assertEqual(
+            compiler.find_imports(source),
+            expected
+        )
+
+        compiler.compass_enabled.return_value = True
         expected = [
             "foo",
             "foo.scss",
@@ -130,6 +152,7 @@ class SCSSTestCase(unittest.TestCase):
             "A.scss": "@import 'B/C.scss';",
             "B/C.scss": "@import '../E';",
             "_E.scss": "p {color: red;}",
+            "compass-import.scss": '@import "compass"',
         }
         compiler.get_source = MagicMock(side_effect=lambda x: files[x])
 
@@ -180,6 +203,18 @@ class SCSSTestCase(unittest.TestCase):
             fix_line_breaks(compiler.compile_file("test-compass.scss")),
             "p {\n  background: url('/static/images/test.png'); }\n"
         )
+
+    def test_compass_import(self):
+        compiler = SCSS()
+
+        with patch.object(compiler, "compass_enabled", return_value=True):
+            self.assertEqual(
+                fix_line_breaks(compiler.compile_file("styles/test-compass-import.scss")),
+                ".round-corners {\n  -webkit-border-radius: 4px 4px;\n  -moz-border-radius: 4px / 4px;\n  border-radius: 4px / 4px; }\n"
+            )
+
+        with patch.object(compiler, "compass_enabled", return_value=False):
+            self.assertRaises(StaticCompilationError, lambda: compiler.compile_file("styles/test-compass-import.scss"))
 
 
 class SASSTestCase(unittest.TestCase):
