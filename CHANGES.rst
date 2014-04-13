@@ -2,6 +2,11 @@
 Changes
 =======
 
+Dev
+====
+
+- ``static_precompiler_watch``: watch for changes in all directories handled by static finders, not only ``STATIC_ROOT``
+
 0.5.1
 ======
 
