@@ -1,6 +1,7 @@
 from django.contrib.staticfiles.finders import get_finders
 from django.core.files.storage import FileSystemStorage
 from django.core.management.base import NoArgsCommand
+from optparse import make_option
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.settings import STATIC_ROOT
 from static_precompiler.utils import get_compilers
@@ -54,6 +55,14 @@ class Command(NoArgsCommand):
 
     requires_model_validation = False
 
+    option_list = NoArgsCommand.option_list + (
+        make_option("--no-initial-scan",
+                    action="store_false",
+                    dest="initial_scan",
+                    default=True,
+                    help="Skip the initial scan of watched directories."),
+    )
+
     def handle_noargs(self, **options):
 
         watched_dirs = get_watched_dirs()
@@ -67,20 +76,21 @@ class Command(NoArgsCommand):
 
         compilers = get_compilers()
 
-        # Scan the watched directories and compile everything
-        for watched_dir in watched_dirs:
-            for dirname, dirnames, filenames in os.walk(watched_dir):
-                for filename in filenames:
-                    path = os.path.join(dirname, filename)[len(watched_dir):]
-                    if path.startswith("/"):
-                        path = path[1:]
-                    for compiler in compilers:
-                        if compiler.is_supported(path):
-                            try:
-                                compiler.handle_changed_file(path)
-                            except (StaticCompilationError, ValueError) as e:
-                                print(e)
-                            break
+        if options["initial_scan"]:
+            # Scan the watched directories and compile everything
+            for watched_dir in watched_dirs:
+                for dirname, dirnames, filenames in os.walk(watched_dir):
+                    for filename in filenames:
+                        path = os.path.join(dirname, filename)[len(watched_dir):]
+                        if path.startswith("/"):
+                            path = path[1:]
+                        for compiler in compilers:
+                            if compiler.is_supported(path):
+                                try:
+                                    compiler.handle_changed_file(path)
+                                except (StaticCompilationError, ValueError) as e:
+                                    print(e)
+                                break
 
         observer = Observer()
 
