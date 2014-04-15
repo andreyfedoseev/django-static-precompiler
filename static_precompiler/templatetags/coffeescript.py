@@ -1,4 +1,5 @@
 from django.template.base import Library
+from django.templatetags.static import static
 from static_precompiler.compilers.coffeescript import CoffeeScript
 from static_precompiler.templatetags.base import BaseInlineNode
 
@@ -23,3 +24,8 @@ def do_inlinecoffeescript(parser, token):
 @register.simple_tag
 def coffeescript(path):
     return compiler.compile(path)
+
+
+@register.simple_tag
+def static_coffeescript(path):
+    return static(coffeescript(path))
