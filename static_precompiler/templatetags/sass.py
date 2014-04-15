@@ -1,4 +1,5 @@
 from django.template.base import Library
+from django.templatetags.static import static
 from static_precompiler.compilers import SASS
 from static_precompiler.templatetags.base import BaseInlineNode
 
@@ -23,3 +24,8 @@ def do_inlinecoffeescript(parser, token):
 @register.simple_tag
 def sass(path):
     return compiler.compile(str(path))
+
+
+@register.simple_tag
+def static_sass(path):
+    return static(sass(path))
