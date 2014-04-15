@@ -94,6 +94,10 @@ External file::
   <script type="text/javascript"
           src="{{ STATIC_URL}}{% coffeescript "path/to/script.coffee" %}">
   </script>
+  or
+  <script type="text/javascript"
+          src="{% static_coffeescript "path/to/script.coffee" %}">
+  </script>
 
 renders to::
 
@@ -156,6 +160,8 @@ External file::
   {% load scss %}
 
   <link rel="stylesheet" href="{{ STATIC_URL}}{% scss "path/to/styles.scss" %}" />
+  or
+  <link rel="stylesheet" href="{% static_scss "path/to/styles.scss" %}" />
 
 renders to::
 
@@ -217,6 +223,8 @@ External file::
   {% load less %}
 
   <link rel="stylesheet" href="{{ STATIC_URL}}{% less "path/to/styles.less" %}" />
+  or
+  <link rel="stylesheet" href="{% static_less "path/to/styles.less" %}" />
 
 renders to::
 
