@@ -1,5 +1,4 @@
 from django.template.base import Library
-from django.templatetags.static import static
 from static_precompiler.compilers import SCSS
 from static_precompiler.templatetags.base import BaseInlineNode
 
@@ -25,7 +24,3 @@ def do_inlinecoffeescript(parser, token):
 def scss(path):
     return compiler.compile(str(path))
 
-
-@register.simple_tag
-def static_scss(path):
-    return static(scss(path))

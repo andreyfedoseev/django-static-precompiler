@@ -1,5 +1,4 @@
 from django.template.base import Library
-from django.templatetags.static import static
 from static_precompiler.compilers import LESS
 from static_precompiler.templatetags.base import BaseInlineNode
 
@@ -25,7 +24,3 @@ def do_inlinecoffeescript(parser, token):
 def less(path):
     return compiler.compile(str(path))
 
-
-@register.simple_tag
-def static_less(path):
-    return static(less(path))
