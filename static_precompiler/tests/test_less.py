@@ -87,6 +87,7 @@ h1 {
 @import "screen.less" screen;
 @import url(url-import);
 @import 'single-quotes.less';
+@import "no-extension";
 """
         expected = sorted([
             "foo.less",
@@ -97,6 +98,7 @@ h1 {
             "multiple.less",
             "screen.less",
             "single-quotes.less",
+            "no-extension",
         ])
         self.assertListEqual(
             compiler.find_imports(source),

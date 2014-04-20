@@ -75,11 +75,12 @@ class LESS(BaseCompiler):
             match = self.IMPORT_ITEM_RE.search(import_string)
             if not match:
                 continue
-            import_item = match.groups()[1]
-            if import_string.startswith("(inline)") or \
-                    import_string.startswith("(less)") or \
-                    import_item.endswith(".less"):
-                imports.add(import_item)
+            import_item = match.groups()[1].strip()
+            if not import_item:
+                continue
+            if import_item.endswith(".css") and not import_string.startswith("(inline)"):
+                continue
+            imports.add(import_item)
 
         return sorted(imports)
 
