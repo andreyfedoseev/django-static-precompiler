@@ -63,6 +63,33 @@ class SCSSTestCase(unittest.TestCase):
             self.assertEqual(compiler.postprocess("ham", "eggs"), "spam")
             mocked_convert_urls.assert_called_with("ham", "eggs")
 
+    def test_parse_import_string(self):
+        compiler = SCSS()
+        import_string = """"foo, bar" , "foo", url(bar,baz),
+         'bar,foo',bar screen, projection"""
+        self.assertListEqual(
+            compiler.parse_import_string(import_string), [
+                "bar",
+                "bar,foo",
+                "foo",
+                "foo, bar",
+            ]
+        )
+        import_string = """"foo,bar", url(bar,baz), 'bar,foo',bar screen, projection"""
+        self.assertListEqual(
+            compiler.parse_import_string(import_string), [
+                "bar",
+                "bar,foo",
+                "foo,bar",
+            ]
+        )
+        import_string = """"foo" screen"""
+        self.assertListEqual(
+            compiler.parse_import_string(import_string), [
+                "foo",
+            ]
+        )
+
     def test_find_imports(self):
         compiler = SCSS()
         source = """
@@ -74,37 +101,45 @@ class SCSSTestCase(unittest.TestCase):
 @import "foo" screen;
 @import "http://foo.com/bar";
 @import url(foo);
-@import "rounded-corners", "text-shadow";
+@import "rounded-corners",
+        "text-shadow";
 @import "compass";
 @import "compass.scss";
 @import "compass/css3";
+@import url(http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic);
+@import url("http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,700,600,300");
+@import "foo,bar", url(bar,baz), 'bar,foo';
 """
 
         compiler.compass_enabled = MagicMock()
         compiler.compass_enabled.return_value = False
 
         expected = [
+            "bar,foo",
             "compass",
             "compass.scss",
             "compass/css3",
             "foo",
+            "foo,bar",
             "foo.scss",
             "rounded-corners",
             "text-shadow",
         ]
-        self.assertEqual(
+        self.assertListEqual(
             compiler.find_imports(source),
             expected
         )
 
         compiler.compass_enabled.return_value = True
         expected = [
+            "bar,foo",
             "foo",
+            "foo,bar",
             "foo.scss",
             "rounded-corners",
             "text-shadow",
         ]
-        self.assertEqual(
+        self.assertListEqual(
             compiler.find_imports(source),
             expected
         )
@@ -255,22 +290,23 @@ class SASSTestCase(unittest.TestCase):
 
     def test_find_imports(self):
         compiler = SASS()
-        source = """
-@import foo.sass
-@import "foo"
+        source = """@import foo.sass
 @import "foo.css"
 @import foo screen
 @import "http://foo.com/bar"
 @import url(foo)
 @import "rounded-corners", text-shadow
-"""
+@import "foo,bar", url(bar,baz), 'bar,foo',bar screen, projection"""
         expected = [
+            "bar",
+            "bar,foo",
             "foo",
+            "foo,bar",
             "foo.sass",
             "rounded-corners",
             "text-shadow",
         ]
-        self.assertEqual(
+        self.assertListEqual(
             compiler.find_imports(source),
             expected
         )

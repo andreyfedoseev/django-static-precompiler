@@ -11,7 +11,7 @@ class SCSS(BaseCompiler):
 
     supports_dependencies = True
 
-    IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;")
+    IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     EXTENSION = ".scss"
 
     # noinspection PyMethodMayBeStatic
@@ -70,6 +70,74 @@ class SCSS(BaseCompiler):
     def postprocess(self, compiled, source_path):
         return convert_urls(compiled, source_path)
 
+    def parse_import_string(self, import_string):
+        """ Extract import items from import string.
+        :param import_string: import string
+        :type import_string: str
+        :returns: list of str
+        """
+        items = []
+        item = ""
+        in_quotes = False
+        quote = ""
+        in_parentheses = False
+        item_allowed = True
+
+        for char in import_string:
+
+            if char == ")":
+                in_parentheses = False
+                continue
+
+            if in_parentheses:
+                continue
+
+            if char == "(":
+                item = ""
+                in_parentheses = True
+                continue
+
+            if char == ",":
+                if in_quotes:
+                    item += char
+                else:
+                    if item:
+                        items.append(item)
+                        item = ""
+                    item_allowed = True
+                continue
+
+            if char in " \t\n\r\f\v":
+                if in_quotes:
+                    item += char
+                elif item:
+                    items.append(item)
+                    item_allowed = False
+                    item = ""
+                continue
+
+            if char in "\"'":
+                if in_quotes:
+                    if char == quote:
+                        # Close quote
+                        in_quotes = False
+                    else:
+                        item += char
+                else:
+                    in_quotes = True
+                    quote = char
+                continue
+
+            if not item_allowed:
+                break
+
+            item += char
+
+        if item:
+            items.append(item)
+
+        return sorted(items)
+
     def find_imports(self, source):
         """ Find the imported files in the source code.
 
@@ -80,32 +148,19 @@ class SCSS(BaseCompiler):
         """
         imports = set()
         for import_string in self.IMPORT_RE.findall(source):
-            for import_token in import_string.split(","):
-                import_token = import_token.strip()
-                if not import_token:
+            for import_item in self.parse_import_string(import_string):
+                import_item = import_item.strip()
+                if not import_item:
                     continue
-                if import_token.startswith("url("):
+                if import_item.endswith(".css"):
                     continue
-                if import_token[0] in ("'", '"'):
-                    if import_token[-1] not in ("'", '"'):
-                        continue
-                    import_token = import_token.strip("'\"").strip()
-                    if not import_token:
-                        continue
-                else:
-                    parts = import_token.split(None, 1)
-                    if len(parts) > 1:
-                        continue
-                    import_token = parts[0]
-                if import_token.endswith(".css"):
+                if import_item.startswith("http://") or \
+                   import_item.startswith("https://"):
                     continue
-                if import_token.startswith("http://") or \
-                   import_token.startswith("https://"):
-                    continue
-                if self.compass_enabled() and (import_token in ("compass", "compass.scss") or import_token.startswith("compass/")):
+                if self.compass_enabled() and (import_item in ("compass", "compass.scss") or import_item.startswith("compass/")):
                     # Ignore compass imports if Compass is enabled.
                     continue
-                imports.add(import_token)
+                imports.add(import_item)
         return sorted(imports)
 
     def locate_imported_file(self, source_dir, import_path):
@@ -161,7 +216,7 @@ class SCSS(BaseCompiler):
 class SASS(SCSS):
 
     EXTENSION = ".sass"
-    IMPORT_RE = re.compile(r"@import\s+(.+?)\s*?\n")
+    IMPORT_RE = re.compile(r"@import\s+(.+?)\s*(?:\n|$)")
 
     def compile_source(self, source):
         args = [

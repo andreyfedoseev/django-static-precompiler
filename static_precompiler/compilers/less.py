@@ -11,7 +11,8 @@ class LESS(BaseCompiler):
 
     supports_dependencies = True
 
-    IMPORT_RE = re.compile(r"@import\s+(?:\(less\)\s+)?(.+?)\s*;")
+    IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
+    IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
     EXTENSION = ".less"
 
     def is_supported(self, source_path):
@@ -66,29 +67,20 @@ class LESS(BaseCompiler):
         """
         imports = set()
         for import_string in self.IMPORT_RE.findall(source):
-            for import_token in import_string.split(","):
-                import_token = import_token.strip()
-                if not import_token:
-                    continue
-                if import_token.startswith("url("):
-                    continue
-                if import_token[0] in ("'", '"'):
-                    if import_token[-1] not in ("'", '"'):
-                        continue
-                    import_token = import_token.strip("'\"").strip()
-                    if not import_token:
-                        continue
-                else:
-                    parts = import_token.split(None, 1)
-                    if len(parts) > 1:
-                        continue
-                    import_token = parts[0]
-                if import_token.endswith(".css"):
-                    continue
-                if import_token.startswith("http://") or \
-                   import_token.startswith("https://"):
-                    continue
-                imports.add(import_token)
+            import_string = import_string.strip()
+            if import_string.startswith("(css)"):
+                continue
+            if "url(" in import_string:
+                continue
+            match = self.IMPORT_ITEM_RE.search(import_string)
+            if not match:
+                continue
+            import_item = match.groups()[1]
+            if import_string.startswith("(inline)") or \
+                    import_string.startswith("(less)") or \
+                    import_item.endswith(".less"):
+                imports.add(import_item)
+
         return sorted(imports)
 
     def locate_imported_file(self, source_dir, import_path):

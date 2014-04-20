@@ -75,25 +75,30 @@ h1 {
     def test_find_imports(self):
         compiler = LESS()
         source = """
-@import "foo.css", ;
+@import "foo.css";
 @import " ";
 @import "foo.less";
-@import (less) "bar";
-@import "foo";
-@import "foo.css";
-@import "foo" screen;
-@import "http://foo.com/bar";
-@import url(foo);
-@import "rounded-corners", "text-shadow";
+@import (reference) "reference.less";
+@import (inline) "inline.css";
+@import (less) "less.less";
+@import (css) "css.css";
+@import (once) "once.less";
+@import (multiple) "multiple.less";
+@import "screen.less" screen;
+@import url(url-import);
+@import 'single-quotes.less';
 """
-        expected = [
-            "bar",
-            "foo",
+        expected = sorted([
             "foo.less",
-            "rounded-corners",
-            "text-shadow",
-        ]
-        self.assertEqual(
+            "reference.less",
+            "inline.css",
+            "less.less",
+            "once.less",
+            "multiple.less",
+            "screen.less",
+            "single-quotes.less",
+        ])
+        self.assertListEqual(
             compiler.find_imports(source),
             expected
         )
