@@ -1,6 +1,7 @@
 from hashlib import md5
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
+from django.templatetags.static import static
 from django.utils.encoding import smart_str, smart_bytes
 from django.utils.importlib import import_module
 # noinspection PyUnresolvedReferences
