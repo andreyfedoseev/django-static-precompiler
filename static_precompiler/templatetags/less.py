@@ -1,6 +1,7 @@
 from django.template.base import Library
 from static_precompiler.compilers import LESS
 from static_precompiler.templatetags.base import BaseInlineNode
+from static_precompiler.utils import prepend_static_url
 
 
 register = Library()
@@ -22,5 +23,5 @@ def do_inlinecoffeescript(parser, token):
 
 @register.simple_tag
 def less(path):
-    return compiler.compile(str(path))
+    return prepend_static_url(compiler.compile(str(path)))
 

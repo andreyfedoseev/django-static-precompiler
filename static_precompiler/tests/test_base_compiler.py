@@ -1,5 +1,4 @@
 from django.core import management
-from django.test.utils import override_settings
 from mock import patch, MagicMock
 from static_precompiler.compilers.base import BaseCompiler
 from static_precompiler.models import Dependency
@@ -93,17 +92,6 @@ class BaseCompilerTestCase(unittest.TestCase):
         self.assertEqual(
             compiler.get_output_path("scripts/test.coffee"),
             OUTPUT_DIR + "/scripts/test.js"
-        )
-
-    @override_settings(STATIC_PRECOMPILER_PREPEND_STATIC_URL=True)
-    def test_get_static_path(self):
-        compiler = BaseCompiler()
-        compiler.get_output_filename = MagicMock(
-            side_effect=lambda source_path: source_path.replace(".coffee", ".js")
-        )
-        self.assertEqual(
-            compiler.get_static_path("scripts/test.coffee"),
-            self.django_settings.STATIC_URL + OUTPUT_DIR + "/scripts/test.js"
         )
 
     def test_get_full_output_path(self):

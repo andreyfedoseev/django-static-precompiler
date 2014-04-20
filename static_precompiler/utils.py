@@ -6,7 +6,8 @@ from django.utils.importlib import import_module
 # noinspection PyUnresolvedReferences
 from six.moves.urllib import parse as urllib_parse
 from static_precompiler.exceptions import UnsupportedFile
-from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, STATIC_URL, COMPILERS
+from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS, \
+    STATIC_URL, PREPEND_STATIC_URL
 import os
 import re
 import socket
@@ -154,3 +155,11 @@ def compile_static_lazy(path):
             return compiler.compile_lazy(path)
 
     raise UnsupportedFile("The source file '{0}' is not supported by any of available compilers.".format(path))
+
+
+def prepend_static_url(path):
+    
+    if PREPEND_STATIC_URL:
+        path = static(path)
+    return path
+    

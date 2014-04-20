@@ -81,20 +81,6 @@ class BaseCompiler(object):
         output_filename = self.get_output_filename(source_filename)
         return posixpath.join(OUTPUT_DIR, source_dir, output_filename)
 
-    def get_static_path(self, source_path):
-        """ Get relative path to compiled file with static base path prepended to it 
-            in case ``STATIC_PRECOMPILER_PREPEND_STATIC_URL`` is set to ``True``.
-
-        :param source_path: relative path to a source file
-        :type source_path: str
-        :returns: str
-        
-        """
-        path = self.get_output_path(source_path)
-        if getattr(settings, "STATIC_PRECOMPILER_PREPEND_STATIC_URL", False):#PREPEND_STATIC_URL:
-            path = static(path)
-        return path
-
     def get_full_output_path(self, source_path):
         """ Get full path to compiled file based for the given source file.
             The returned path is OS-dependent.
@@ -210,7 +196,7 @@ class BaseCompiler(object):
 
             logging.info("Compiled: '{0}'".format(source_path))
 
-        return self.get_static_path(source_path)
+        return self.get_output_path(source_path)
 
     def compile_lazy(self, source_path):
         """ Return a lazy object which, when translated to string, compiles the specified source path and returns
