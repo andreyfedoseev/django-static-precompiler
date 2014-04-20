@@ -2,6 +2,11 @@
 Changes
 =======
 
+0.5.3
+======
+
+- Update the parsing of ``@import`` statements. Fix the bug with URLs containing commas.
+
 0.5.2
 ======
 
