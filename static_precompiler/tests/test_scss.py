@@ -67,7 +67,7 @@ class SCSSTestCase(unittest.TestCase):
         compiler = SCSS()
         import_string = """"foo, bar" , "foo", url(bar,baz),
          'bar,foo',bar screen, projection"""
-        self.assertListEqual(
+        self.assertEqual(
             compiler.parse_import_string(import_string), [
                 "bar",
                 "bar,foo",
@@ -76,7 +76,7 @@ class SCSSTestCase(unittest.TestCase):
             ]
         )
         import_string = """"foo,bar", url(bar,baz), 'bar,foo',bar screen, projection"""
-        self.assertListEqual(
+        self.assertEqual(
             compiler.parse_import_string(import_string), [
                 "bar",
                 "bar,foo",
@@ -84,7 +84,7 @@ class SCSSTestCase(unittest.TestCase):
             ]
         )
         import_string = """"foo" screen"""
-        self.assertListEqual(
+        self.assertEqual(
             compiler.parse_import_string(import_string), [
                 "foo",
             ]
@@ -125,7 +125,7 @@ class SCSSTestCase(unittest.TestCase):
             "rounded-corners",
             "text-shadow",
         ]
-        self.assertListEqual(
+        self.assertEqual(
             compiler.find_imports(source),
             expected
         )
@@ -139,7 +139,7 @@ class SCSSTestCase(unittest.TestCase):
             "rounded-corners",
             "text-shadow",
         ]
-        self.assertListEqual(
+        self.assertEqual(
             compiler.find_imports(source),
             expected
         )
@@ -306,7 +306,7 @@ class SASSTestCase(unittest.TestCase):
             "rounded-corners",
             "text-shadow",
         ]
-        self.assertListEqual(
+        self.assertEqual(
             compiler.find_imports(source),
             expected
         )

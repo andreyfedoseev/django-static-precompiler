@@ -100,7 +100,7 @@ h1 {
             "single-quotes.less",
             "no-extension",
         ])
-        self.assertListEqual(
+        self.assertEqual(
             compiler.find_imports(source),
             expected
         )
