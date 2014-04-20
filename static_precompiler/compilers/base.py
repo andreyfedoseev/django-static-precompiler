@@ -1,7 +1,5 @@
 from django.contrib.staticfiles import finders
 from django.core.exceptions import SuspiciousOperation
-from django.conf import settings
-from django.templatetags.static import static
 from django.utils.functional import lazy
 from static_precompiler.models import Dependency
 from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR

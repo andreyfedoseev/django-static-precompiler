@@ -162,4 +162,3 @@ def prepend_static_url(path):
     if PREPEND_STATIC_URL:
         path = static(path)
     return path
-    
