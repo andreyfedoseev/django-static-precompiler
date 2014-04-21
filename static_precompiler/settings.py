@@ -43,3 +43,5 @@ COFFEESCRIPT_EXECUTABLE = getattr(settings, "COFFEESCRIPT_EXECUTABLE", "coffee")
 SCSS_EXECUTABLE = getattr(settings, "SCSS_EXECUTABLE", "sass")
 SCSS_USE_COMPASS = getattr(settings, "SCSS_USE_COMPASS", False)
 LESS_EXECUTABLE = getattr(settings, "LESS_EXECUTABLE", "lessc")
+
+PREPEND_STATIC_URL = getattr(settings, 'STATIC_PRECOMPILER_PREPEND_STATIC_URL', False)

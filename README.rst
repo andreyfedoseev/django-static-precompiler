@@ -59,6 +59,8 @@ General settings
 ``STATIC_PRECOMPILER_MTIME_DELAY``
   Cache timeout for reading the modification time of source files (in seconds). Default: 10 seconds.
 
+``STATIC_PRECOMPILER_PREPEND_STATIC_URL``
+  Prepend base ``STATIC_URL`` in template tags. Default: ``False``
 
 CoffeeScript
 ============
