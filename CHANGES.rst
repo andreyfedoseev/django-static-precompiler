@@ -2,7 +2,7 @@
 Changes
 =======
 
-Dev
+0.7
 ===
 
 - Add ``compilestatic`` management command (replaces ``static_precompiler_watch``)

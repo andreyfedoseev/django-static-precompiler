@@ -16,7 +16,7 @@ CHANGES = read('CHANGES.rst')
 setup(
     name="django-static-precompiler",
     packages=find_packages(),
-    version="0.6",
+    version="0.7",
     author="Andrey Fedoseev",
     author_email="andrey.fedoseev@gmail.com",
     url="https://github.com/andreyfedoseev/django-static-precompiler",
