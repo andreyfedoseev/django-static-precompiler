@@ -268,11 +268,13 @@ If you want to use ``static_precompiler`` in form media definitions, you can use
           )
 
 
-static_precompiler_watch
-========================
+``compilestatic`` management command
+====================================
 
-Django Static Precompiler includes a management command ``static_precompiler_watch``.
-It monitors the change in your source files and re-compiles them on the fly. It can be
-handy if you use tools such as `LiveReload <http://livereload.com/>`_.
+Django Static Precompiler includes a management command ``compilestatic``. If will scan your static files for source
+files and compile all of them.
 
-You should install `Watchdog <http://pythonhosted.org/watchdog/>`_ to use this command.
+You can run ``compilestatic`` in watch mode (``--watch`` option) when it monitors the changes in your source files and
+re-compiles them on the fly. It can be handy if you use tools such as `LiveReload <http://livereload.com/>`_.
+
+You should install `Watchdog <http://pythonhosted.org/watchdog/>`_ to use watch mode.

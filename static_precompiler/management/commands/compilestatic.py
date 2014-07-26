@@ -8,6 +8,7 @@ from static_precompiler.utils import get_compilers
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 import os
+import sys
 import time
 
 
@@ -51,32 +52,35 @@ class EventHandler(FileSystemEventHandler):
 
 class Command(NoArgsCommand):
 
-    help = 'Watch for static files changes and re-compile them if necessary.'
+    help = "Compile static files."
 
     requires_model_validation = False
 
     option_list = NoArgsCommand.option_list + (
+        make_option("--watch",
+                    action="store_true",
+                    dest="watch",
+                    default=False,
+                    help="Watch for changes and recompile if necessary."),
         make_option("--no-initial-scan",
                     action="store_false",
                     dest="initial_scan",
                     default=True,
-                    help="Skip the initial scan of watched directories."),
+                    help="Skip the initial scan of watched directories in --watch mode."),
     )
 
     def handle_noargs(self, **options):
 
-        watched_dirs = get_watched_dirs()
+        if not options["watch"] and not options["initial_scan"]:
+            sys.exit("--no-initial-scan option should be used with --watch.")
 
-        print("Watching directories:")
-        for watched_dir in watched_dirs:
-            print(watched_dir)
-        print("\nPress Control+C to exit.\n")
+        watched_dirs = get_watched_dirs()
 
         verbosity = int(options["verbosity"])
 
         compilers = get_compilers()
 
-        if options["initial_scan"]:
+        if not options["watch"] or options["initial_scan"]:
             # Scan the watched directories and compile everything
             for watched_dir in watched_dirs:
                 for dirname, dirnames, filenames in os.walk(watched_dir):
@@ -92,18 +96,24 @@ class Command(NoArgsCommand):
                                     print(e)
                                 break
 
-        observer = Observer()
+        if options["watch"]:
+            print("Watching directories:")
+            for watched_dir in watched_dirs:
+                print(watched_dir)
+            print("\nPress Control+C to exit.\n")
 
-        for watched_dir in watched_dirs:
-            handler = EventHandler(watched_dir, verbosity, compilers)
-            observer.schedule(handler, path=watched_dir, recursive=True)
+            observer = Observer()
 
-        observer.start()
+            for watched_dir in watched_dirs:
+                handler = EventHandler(watched_dir, verbosity, compilers)
+                observer.schedule(handler, path=watched_dir, recursive=True)
 
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            observer.stop()
+            observer.start()
 
-        observer.join()
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                observer.stop()
+
+            observer.join()

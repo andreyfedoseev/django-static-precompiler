@@ -9,7 +9,7 @@ def suite():
     from static_precompiler.tests import test_coffeescript
     from static_precompiler.tests import test_scss
     from static_precompiler.tests import test_templatetags
-    from static_precompiler.tests import test_static_precompiler_watch
+    from static_precompiler.tests import test_management
 
     test_suite = unittest.TestSuite()
     test_suite.addTests(test_base_compiler.suite())
@@ -19,7 +19,7 @@ def suite():
     test_suite.addTests(test_coffeescript.suite())
     test_suite.addTests(test_scss.suite())
     test_suite.addTests(test_templatetags.suite())
-    test_suite.addTests(test_static_precompiler_watch.suite())
+    test_suite.addTests(test_management.suite())
     return test_suite
 
 

@@ -1,10 +1,10 @@
-from static_precompiler.management.commands.static_precompiler_watch import get_watched_dirs
+from static_precompiler.management.commands.compilestatic import get_watched_dirs
 from static_precompiler.settings import STATIC_ROOT
 import os
 import unittest
 
 
-class StaticPrecompilerWatchTestCase(unittest.TestCase):
+class CompileStaticTestCase(unittest.TestCase):
 
     def test_get_watched_dirs(self):
 
@@ -18,7 +18,7 @@ class StaticPrecompilerWatchTestCase(unittest.TestCase):
 def suite():
     loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
-    test_suite.addTest(loader.loadTestsFromTestCase(StaticPrecompilerWatchTestCase))
+    test_suite.addTest(loader.loadTestsFromTestCase(CompileStaticTestCase))
     return test_suite
 
 
