@@ -12,7 +12,7 @@ import sys
 import time
 
 
-def get_watched_dirs():
+def get_scanned_dirs():
     dirs = set([STATIC_ROOT])
     for finder in get_finders():
         if hasattr(finder, "storages"):
@@ -24,8 +24,8 @@ def get_watched_dirs():
 
 class EventHandler(FileSystemEventHandler):
 
-    def __init__(self, watched_dir, verbosity, compilers):
-        self.watched_dir = watched_dir
+    def __init__(self, scanned_dir, verbosity, compilers):
+        self.scanned_dir = scanned_dir
         self.verbosity = verbosity
         self.compilers = compilers
         super(EventHandler, self).__init__()
@@ -33,7 +33,7 @@ class EventHandler(FileSystemEventHandler):
     def on_any_event(self, e):
         if e.is_directory or e.event_type not in ("created", "modified"):
             return
-        path = e.src_path[len(self.watched_dir):]
+        path = e.src_path[len(self.scanned_dir):]
         if path.startswith("/"):
             path = path[1:]
         for compiler in self.compilers:
@@ -74,7 +74,7 @@ class Command(NoArgsCommand):
         if not options["watch"] and not options["initial_scan"]:
             sys.exit("--no-initial-scan option should be used with --watch.")
 
-        watched_dirs = get_watched_dirs()
+        scanned_dirs = get_scanned_dirs()
 
         verbosity = int(options["verbosity"])
 
@@ -82,10 +82,10 @@ class Command(NoArgsCommand):
 
         if not options["watch"] or options["initial_scan"]:
             # Scan the watched directories and compile everything
-            for watched_dir in watched_dirs:
-                for dirname, dirnames, filenames in os.walk(watched_dir):
+            for scanned_dir in scanned_dirs:
+                for dirname, dirnames, filenames in os.walk(scanned_dir):
                     for filename in filenames:
-                        path = os.path.join(dirname, filename)[len(watched_dir):]
+                        path = os.path.join(dirname, filename)[len(scanned_dir):]
                         if path.startswith("/"):
                             path = path[1:]
                         for compiler in compilers:
@@ -98,15 +98,15 @@ class Command(NoArgsCommand):
 
         if options["watch"]:
             print("Watching directories:")
-            for watched_dir in watched_dirs:
-                print(watched_dir)
+            for scanned_dir in scanned_dirs:
+                print(scanned_dir)
             print("\nPress Control+C to exit.\n")
 
             observer = Observer()
 
-            for watched_dir in watched_dirs:
-                handler = EventHandler(watched_dir, verbosity, compilers)
-                observer.schedule(handler, path=watched_dir, recursive=True)
+            for scanned_dir in scanned_dirs:
+                handler = EventHandler(scanned_dir, verbosity, compilers)
+                observer.schedule(handler, path=scanned_dir, recursive=True)
 
             observer.start()
 

@@ -114,13 +114,13 @@ class BaseCompiler(object):
             return None
         return get_mtime(full_output_path)
 
-    def should_compile(self, source_path, watch=False):
+    def should_compile(self, source_path, from_management=False):
         """ Return True iff provided source file should be compiled.
 
         :param source_path: relative path to a source file
         :type source_path: str
-        :param watch: whether the method was invoked from watch utility
-        :type watch: bool
+        :param from_management: whether the method was invoked from management command
+        :type from_management: bool
         :returns: bool
 
         """
@@ -167,14 +167,14 @@ class BaseCompiler(object):
         compiled_file.write(output)
         compiled_file.close()
 
-    def compile(self, source_path, watch=False):
+    def compile(self, source_path, from_management=False):
         """ Compile the given source path and return relative path to the compiled file.
             Raise ValueError is the source file type is not supported.
             May raise a StaticCompilationError if something goes wrong with compilation.
         :param source_path: relative path to a source file
         :type source_path: str
-        :param watch: whether the method was invoked from watch utility
-        :type watch: bool
+        :param from_management: whether the method was invoked from management command
+        :type from_management: bool
 
         :returns: str
 
@@ -183,7 +183,7 @@ class BaseCompiler(object):
             raise ValueError("'{0}' file type is not supported by '{1}'".format(
                 source_path, self.__class__.__name__
             ))
-        if self.should_compile(source_path, watch=watch):
+        if self.should_compile(source_path, from_management=from_management):
 
             compiled = self.compile_file(source_path)
             compiled = self.postprocess(compiled, source_path)
@@ -312,6 +312,6 @@ class BaseCompiler(object):
         :type source_path: str
 
         """
-        self.compile(source_path, watch=True)
+        self.compile(source_path, from_management=True)
         for dependent in self.get_dependents(source_path):
-            self.compile(dependent, watch=True)
+            self.compile(dependent, from_management=True)

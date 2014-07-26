@@ -21,11 +21,11 @@ class LESS(BaseCompiler):
     def get_output_filename(self, source_filename):
         return source_filename[:-len(self.EXTENSION)] + ".css"
 
-    def should_compile(self, source_path, watch=False):
-        # Do not auto-compile the files that start with "_"
-        if watch and os.path.basename(source_path).startswith("_"):
+    def should_compile(self, source_path, from_management=False):
+        # Do not compile the files that start with "_" if run from management
+        if from_management and os.path.basename(source_path).startswith("_"):
             return False
-        return super(LESS, self).should_compile(source_path, watch)
+        return super(LESS, self).should_compile(source_path, from_management)
 
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)

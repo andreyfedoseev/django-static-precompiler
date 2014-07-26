@@ -1,4 +1,4 @@
-from static_precompiler.management.commands.compilestatic import get_watched_dirs
+from static_precompiler.management.commands.compilestatic import get_scanned_dirs
 from static_precompiler.settings import STATIC_ROOT
 import os
 import unittest
@@ -6,9 +6,9 @@ import unittest
 
 class CompileStaticTestCase(unittest.TestCase):
 
-    def test_get_watched_dirs(self):
+    def test_get_scanned_dirs(self):
 
-        self.assertEqual(get_watched_dirs(), sorted([
+        self.assertEqual(get_scanned_dirs(), sorted([
             os.path.join(os.path.dirname(__file__), "staticfiles_dir"),
             os.path.join(os.path.dirname(__file__), "staticfiles_dir_with_prefix"),
             STATIC_ROOT
