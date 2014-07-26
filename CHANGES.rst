@@ -2,6 +2,11 @@
 Changes
 =======
 
+Dev
+====
+
+- Add ``STATIC_PRECOMPILER_PREPEND_STATIC_URL`` to settings
+
 0.5.3
 ======
 

@@ -1,7 +1,7 @@
 from django.template.base import Library
 from static_precompiler.compilers import CoffeeScript
 from static_precompiler.templatetags.base import BaseInlineNode
-from static_precompiler.utils import prepend_static_url
+from static_precompiler.templatetags.compile_static import compile_tag
 
 
 register = Library()
@@ -21,7 +21,6 @@ def do_inlinecoffeescript(parser, token):
     return InlineCoffeescriptNode(nodelist)
 
 
-@register.simple_tag
-def coffeescript(path):
-    return prepend_static_url(compiler.compile(str(path)))
-
+@register.simple_tag(name="coffeescript")
+def coffeescript_tag(source_path):
+    return compile_tag(source_path, compiler)

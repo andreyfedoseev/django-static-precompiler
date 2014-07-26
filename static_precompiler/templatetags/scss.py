@@ -1,7 +1,7 @@
 from django.template.base import Library
 from static_precompiler.compilers import SCSS
 from static_precompiler.templatetags.base import BaseInlineNode
-from static_precompiler.utils import prepend_static_url
+from static_precompiler.templatetags.compile_static import compile_tag
 
 
 register = Library()
@@ -15,13 +15,12 @@ class InlineSCSSNode(BaseInlineNode):
 
 #noinspection PyUnusedLocal
 @register.tag(name="inlinescss")
-def do_inlinecoffeescript(parser, token):
+def do_inlinescss(parser, token):
     nodelist = parser.parse(("endinlinescss",))
     parser.delete_first_token()
     return InlineSCSSNode(nodelist)
 
 
-@register.simple_tag
-def scss(path):
-    return prepend_static_url(compiler.compile(str(path)))
-
+@register.simple_tag(name="scss")
+def scss_tag(source_path):
+    return compile_tag(source_path, compiler)

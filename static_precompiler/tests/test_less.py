@@ -169,24 +169,6 @@ h1 {
                 []
             )
 
-    def test_less_templatetag(self):
-        template = get_template_from_string("""{% load less %}{% less "dummy.less" %}""")
-        with patch("static_precompiler.templatetags.less.compiler") as mocked_compiler:
-            mocked_compiler.compile = MagicMock(return_value="dummy.css")
-            self.assertEqual(
-                template.render(Context({})),
-                "dummy.css",
-            )
-
-    def test_inlineless_templatetag(self):
-        template = get_template_from_string("""{% load less %}{% inlineless %}source{% endinlineless %}""")
-        with patch("static_precompiler.templatetags.less.InlineLESSNode.compiler") as mocked_compiler:
-            mocked_compiler.compile_source = MagicMock(return_value="compiled")
-            self.assertEqual(
-                template.render(Context({})),
-                "compiled",
-            )
-
 
 def suite():
     loader = unittest.TestLoader()

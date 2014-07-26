@@ -213,24 +213,6 @@ class SCSSTestCase(unittest.TestCase):
                 []
             )
 
-    def test_scss_templatetag(self):
-        template = get_template_from_string("""{% load scss %}{% scss "dummy.scss" %}""")
-        with patch("static_precompiler.templatetags.scss.compiler") as mocked_compiler:
-            mocked_compiler.compile = MagicMock(return_value="dummy.css")
-            self.assertEqual(
-                template.render(Context({})),
-                "dummy.css",
-            )
-
-    def test_inlinescss_templatetag(self):
-        template = get_template_from_string("""{% load scss %}{% inlinescss %}source{% endinlinescss %}""")
-        with patch("static_precompiler.templatetags.scss.InlineSCSSNode.compiler") as mocked_compiler:
-            mocked_compiler.compile_source = MagicMock(return_value="compiled")
-            self.assertEqual(
-                template.render(Context({})),
-                "compiled",
-            )
-
     def test_compass(self):
         compiler = SCSS()
 
@@ -310,24 +292,6 @@ class SASSTestCase(unittest.TestCase):
             compiler.find_imports(source),
             expected
         )
-
-    def test_sass_templatetag(self):
-        template = get_template_from_string("""{% load sass %}{% sass "dummy.sass" %}""")
-        with patch("static_precompiler.templatetags.sass.compiler") as mocked_compiler:
-            mocked_compiler.compile = MagicMock(return_value="dummy.css")
-            self.assertEqual(
-                template.render(Context({})),
-                "dummy.css",
-            )
-
-    def test_inlinesass_templatetag(self):
-        template = get_template_from_string("""{% load sass %}{% inlinesass %}source{% endinlinesass %}""")
-        with patch("static_precompiler.templatetags.sass.InlineSASSNode.compiler") as mocked_compiler:
-            mocked_compiler.compile_source = MagicMock(return_value="compiled")
-            self.assertEqual(
-                template.render(Context({})),
-                "compiled",
-            )
 
 
 def suite():

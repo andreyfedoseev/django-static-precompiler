@@ -37,7 +37,7 @@ def get_hexdigest(plaintext, length=None):
 
 
 def get_cache_key(key):
-    return "django_coffescript.{0}.{1}".format(socket.gethostname(), key)
+    return "static_precompiler.{0}.{1}".format(socket.gethostname(), key)
 
 
 def get_mtime_cachekey(filename):
@@ -156,10 +156,3 @@ def compile_static_lazy(path):
             return compiler.compile_lazy(path)
 
     raise UnsupportedFile("The source file '{0}' is not supported by any of available compilers.".format(path))
-
-
-def prepend_static_url(path):
-    
-    if PREPEND_STATIC_URL:
-        path = static(path)
-    return path

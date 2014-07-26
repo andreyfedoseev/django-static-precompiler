@@ -56,24 +56,6 @@ class CoffeeScriptTestCase(unittest.TestCase):
             """(function() {\n  console.log("Привет, Мир!");\n}).call(this);"""
         )
 
-    def test_coffessecript_templatetag(self):
-        template = get_template_from_string("""{% load coffeescript %}{% coffeescript "dummy.coffee" %}""")
-        with patch("static_precompiler.templatetags.coffeescript.compiler") as mocked_compiler:
-            mocked_compiler.compile = MagicMock(return_value="dummy.js")
-            self.assertEqual(
-                template.render(Context({})),
-                "dummy.js",
-            )
-
-    def test_inlinecoffessecript_templatetag(self):
-        template = get_template_from_string("""{% load coffeescript %}{% inlinecoffeescript %}source{% endinlinecoffeescript %}""")
-        with patch("static_precompiler.templatetags.coffeescript.InlineCoffeescriptNode.compiler") as mocked_compiler:
-            mocked_compiler.compile_source = MagicMock(return_value="compiled")
-            self.assertEqual(
-                template.render(Context({})),
-                "compiled",
-            )
-
 
 def suite():
     loader = unittest.TestLoader()

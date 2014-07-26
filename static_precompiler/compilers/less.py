@@ -133,4 +133,3 @@ class LESS(BaseCompiler):
             dependencies.add(import_path)
             dependencies.update(self.find_dependencies(import_path))
         return sorted(dependencies)
-

@@ -1,7 +1,7 @@
 from django.template.base import Library
 from static_precompiler.compilers import LESS
 from static_precompiler.templatetags.base import BaseInlineNode
-from static_precompiler.utils import prepend_static_url
+from static_precompiler.templatetags.compile_static import compile_tag
 
 
 register = Library()
@@ -15,13 +15,13 @@ class InlineLESSNode(BaseInlineNode):
 
 #noinspection PyUnusedLocal
 @register.tag(name="inlineless")
-def do_inlinecoffeescript(parser, token):
+def do_inlineless(parser, token):
     nodelist = parser.parse(("endinlineless",))
     parser.delete_first_token()
     return InlineLESSNode(nodelist)
 
 
-@register.simple_tag
-def less(path):
-    return prepend_static_url(compiler.compile(str(path)))
+@register.simple_tag(name="less")
+def less_tag(source_path):
+    return compile_tag(source_path, compiler)
 
