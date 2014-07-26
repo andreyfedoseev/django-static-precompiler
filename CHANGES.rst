@@ -2,6 +2,11 @@
 Changes
 =======
 
+Dev
+===
+
+- Add ``STATIC_PRECOMPILER_CACHE_NAME`` to settings
+
 0.6
 ===
 

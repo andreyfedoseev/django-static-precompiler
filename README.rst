@@ -59,6 +59,9 @@ General settings
 ``STATIC_PRECOMPILER_MTIME_DELAY``
   Cache timeout for reading the modification time of source files (in seconds). Default: 10 seconds.
 
+``STATIC_PRECOMPILER_CACHE_NAME``
+  Name of the cache to be used. If not specified then the default django cache is used. Default: ``None``.
+
 ``STATIC_PRECOMPILER_PREPEND_STATIC_URL``
   Add ``STATIC_URL`` to the output of template tags. Default: ``False``
 

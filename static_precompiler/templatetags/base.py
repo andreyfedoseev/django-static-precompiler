@@ -1,8 +1,6 @@
-from django.core.cache import cache
 from django.template import Node
-from django.templatetags.static import static
-from static_precompiler.settings import USE_CACHE, CACHE_TIMEOUT, PREPEND_STATIC_URL
-from static_precompiler.utils import get_cache_key, get_hexdigest
+from static_precompiler.settings import USE_CACHE, CACHE_TIMEOUT
+from static_precompiler.utils import get_cache_key, get_hexdigest, get_cache
 
 
 class BaseInlineNode(Node):
@@ -20,6 +18,7 @@ class BaseInlineNode(Node):
                 self.__class__.__name__,
                 get_hexdigest(source)
             ))
+            cache = get_cache()
             cached = cache.get(cache_key, None)
             if cached is not None:
                 return cached

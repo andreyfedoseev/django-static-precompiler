@@ -1,4 +1,3 @@
-# coding: utf-8
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 import os
@@ -38,6 +37,9 @@ CACHE_TIMEOUT = getattr(
     "STATIC_PRECOMPILER_CACHE_TIMEOUT",
     60 * 60 * 24 * 30
 )  # 30 days
+
+# Name of the cache
+CACHE_NAME = getattr(settings, "STATIC_PRECOMPILER_CACHE_NAME", None)
 
 COFFEESCRIPT_EXECUTABLE = getattr(settings, "COFFEESCRIPT_EXECUTABLE", "coffee")
 SCSS_EXECUTABLE = getattr(settings, "SCSS_EXECUTABLE", "sass")

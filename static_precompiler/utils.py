@@ -1,14 +1,13 @@
 from hashlib import md5
-from django.core.cache import cache
+from django.core.cache import get_cache as base_get_cache, cache as default_cache
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import smart_str, smart_bytes
-from django.utils.functional import lazy
 from django.utils.importlib import import_module
 # noinspection PyUnresolvedReferences
 from six.moves.urllib import parse as urllib_parse
 from static_precompiler.exceptions import UnsupportedFile
 from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS, \
-    STATIC_URL
+    STATIC_URL, CACHE_NAME
 import os
 import re
 import socket
@@ -36,6 +35,12 @@ def get_hexdigest(plaintext, length=None):
     return digest
 
 
+def get_cache():
+    if CACHE_NAME:
+        return base_get_cache(CACHE_NAME)
+    return default_cache
+
+
 def get_cache_key(key):
     return "static_precompiler.{0}.{1}".format(socket.gethostname(), key)
 
@@ -47,6 +52,7 @@ def get_mtime_cachekey(filename):
 def get_mtime(filename):
     if MTIME_DELAY:
         key = get_mtime_cachekey(filename)
+        cache = get_cache()
         mtime = cache.get(key)
         if mtime is None:
             mtime = os.path.getmtime(filename)
