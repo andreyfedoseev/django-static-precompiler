@@ -8,6 +8,7 @@ Dev
 - Add ``compilestatic`` management command (replaces ``static_precompiler_watch``)
 - Add ``STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE`` to settings
 - Add ``STATIC_PRECOMPILER_CACHE_NAME`` to settings
+- Bugfixes
 
 0.6
 ===
