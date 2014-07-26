@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import smart_str, smart_bytes
 from django.utils.importlib import import_module
 # noinspection PyUnresolvedReferences
-from six.moves.urllib import parse as urllib_parse
+from django.utils.six.moves.urllib import parse as urllib_parse
 from static_precompiler.exceptions import UnsupportedFile
 from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS, \
     STATIC_URL, CACHE_NAME
