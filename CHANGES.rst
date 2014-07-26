@@ -6,6 +6,7 @@ Dev
 ====
 
 - Add ``STATIC_PRECOMPILER_PREPEND_STATIC_URL`` to settings
+- Add ``{% compile %}`` template tag
 
 0.5.3
 ======

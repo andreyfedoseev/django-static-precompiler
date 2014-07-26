@@ -1,6 +1,6 @@
-==========================
+=========================
 Django Static Precompiler
-==========================
+=========================
 
 Django Static Precompiler provides template tags to compile CoffeeScript, SASS / SCSS and LESS.
 It works with both inline code and extenal files.
@@ -62,6 +62,25 @@ General settings
 ``STATIC_PRECOMPILER_PREPEND_STATIC_URL``
   Add ``STATIC_URL`` to the output of template tags. Default: ``False``
 
+{% compile %} tag
+=================
+
+``{% compile %}`` is a template tag that allows to compile any source file supported by compilers configured with
+``STATIC_PRECOMPILER_COMPILERS`` settings. For example::
+
+  {% load compile_static %}
+
+  <script src="{{ STATIC_URL}}{% compile "path/to/script.coffee" %}"></script>
+  <link rel="stylesheet" href="{{ STATIC_URL}}{% compile "path/to/styles1.less" %}" />
+  <link rel="stylesheet" href="{{ STATIC_URL}}{% compile "path/to/styles2.scss" %}" />
+
+renders to::
+
+  <script src="/static/COMPILED/path/to/script.js"></script>
+  <link rel="stylesheet" href="/static/COMPILED/path/to/styles1.css" />
+  <link rel="stylesheet" href="/static/COMPILED/path/to/styles2.css" />
+
+
 CoffeeScript
 ============
 
@@ -96,15 +115,11 @@ External file::
 
   {% load coffeescript %}
 
-  <script type="text/javascript"
-          src="{{ STATIC_URL}}{% coffeescript "path/to/script.coffee" %}">
-  </script>
+  <script src="{{ STATIC_URL}}{% coffeescript "path/to/script.coffee" %}"></script>
 
 renders to::
 
-  <script type="text/javascript"
-          src="/media/COFFEESCRIPT_CACHE/path/to/script-91ce1f66f583.js">
-  </script>
+  <script src="/static/COMPILED/path/to/script.js"></script>
 
 
 SASS / SCSS
@@ -164,7 +179,7 @@ External file::
 
 renders to::
 
-  <link rel="stylesheet" href="/media/COMPILED/path/to/styles.css" />
+  <link rel="stylesheet" href="/static/COMPILED/path/to/styles.css" />
 
 
 LESS
@@ -225,11 +240,11 @@ External file::
 
 renders to::
 
-  <link rel="stylesheet" href="/media/COMPILED/path/to/styles.css" />
+  <link rel="stylesheet" href="/static/COMPILED/path/to/styles.css" />
 
 
 Usage with forms media
-=======================
+======================
 
 If you want to use ``static_precompiler`` in form media definitions, you can use the following approach::
 
