@@ -1,14 +1,14 @@
 from hashlib import md5
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
-from django.templatetags.static import static
 from django.utils.encoding import smart_str, smart_bytes
+from django.utils.functional import lazy
 from django.utils.importlib import import_module
 # noinspection PyUnresolvedReferences
 from six.moves.urllib import parse as urllib_parse
 from static_precompiler.exceptions import UnsupportedFile
 from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS, \
-    STATIC_URL, PREPEND_STATIC_URL
+    STATIC_URL
 import os
 import re
 import socket
@@ -120,7 +120,7 @@ def get_compilers():
     global compilers
 
     if compilers is None:
-        compilers = []
+        compilers_temp = []
         for compiler_path in COMPILERS:
             try:
                 compiler_module, compiler_classname = compiler_path.rsplit('.', 1)
@@ -135,7 +135,9 @@ def get_compilers():
             except AttributeError:
                 raise ImproperlyConfigured('Compiler module "{0}" does not define a "{1}" class'.format(compiler_module, compiler_classname))
 
-            compilers.append(compiler_class())
+            compilers_temp.append(compiler_class())
+
+        compilers = compilers_temp
 
     return compilers
 
