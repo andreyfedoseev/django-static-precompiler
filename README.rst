@@ -65,6 +65,11 @@ General settings
 ``STATIC_PRECOMPILER_PREPEND_STATIC_URL``
   Add ``STATIC_URL`` to the output of template tags. Default: ``False``
 
+``STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE``
+  Disable automatic compilation from template tags or ``compile_static`` utility function. Files are compiled
+  only with ``compilestatic`` command (see below).
+
+
 {% compile %} tag
 =================
 
@@ -274,7 +279,12 @@ If you want to use ``static_precompiler`` in form media definitions, you can use
 Django Static Precompiler includes a management command ``compilestatic``. If will scan your static files for source
 files and compile all of them.
 
-You can run ``compilestatic`` in watch mode (``--watch`` option) when it monitors the changes in your source files and
-re-compiles them on the fly. It can be handy if you use tools such as `LiveReload <http://livereload.com/>`_.
+You can use this command in conjunction with ``STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE`` setting if you use custom
+``STATICFILES_STORAGE`` such as S3 or some CDN. In that case you can should run ``compilestatic`` every time when your
+source files change and then run ``collectstatic``.
+
+You can run ``compilestatic`` in watch mode (``--watch`` option). In watch mode it will monitor the changes in your
+source files and re-compile them on the fly. It can be handy if you use tools such as
+`LiveReload <http://livereload.com/>`_.
 
 You should install `Watchdog <http://pythonhosted.org/watchdog/>`_ to use watch mode.

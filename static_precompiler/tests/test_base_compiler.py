@@ -167,6 +167,11 @@ class BaseCompilerTestCase(unittest.TestCase):
         compiler.get_output_mtime.return_value = 0
         self.assertTrue(compiler.should_compile("A"))
 
+        compiler.get_source_mtime.reset_mock()
+        with patch("static_precompiler.compilers.base.DISABLE_AUTO_COMPILE"):
+            self.assertFalse(compiler.should_compile("A"))
+            self.assertFalse(compiler.get_source_mtime.called)
+
     def test_get_source(self):
         compiler = BaseCompiler()
         self.assertEqual(

@@ -2,7 +2,7 @@ from django.contrib.staticfiles import finders
 from django.core.exceptions import SuspiciousOperation
 from django.utils.functional import lazy
 from static_precompiler.models import Dependency
-from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR
+from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR, DISABLE_AUTO_COMPILE
 from static_precompiler.utils import get_mtime, normalize_path
 import logging
 import os
@@ -124,6 +124,9 @@ class BaseCompiler(object):
         :returns: bool
 
         """
+        if DISABLE_AUTO_COMPILE and not from_management:
+            return False
+
         compiled_mtime = self.get_output_mtime(source_path)
 
         if compiled_mtime is None:
