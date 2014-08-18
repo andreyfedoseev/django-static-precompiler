@@ -8,7 +8,7 @@ before_install:
   - npm install -g coffee-script
   - npm install -g less
   - gem install sass --version 3.2.18
-  - gem install compass
+  - gem install compass --version 1.0.0
 install:
   - pip install coveralls
   - pip install django
