@@ -129,17 +129,15 @@ class BaseCompiler(object):
 
         compiled_mtime = self.get_output_mtime(source_path)
 
-        if compiled_mtime is None:
-            return True
-
-        source_mtime = self.get_source_mtime(source_path)
-
-        if self.supports_dependencies:
-            for dependency in self.get_dependencies(source_path):
-                if compiled_mtime <= self.get_source_mtime(dependency):
-                    return True
-
-        return compiled_mtime <= source_mtime
+        return (
+            compiled_mtime is None or
+            compiled_mtime <= self.get_source_mtime(source_path) or
+            self.supports_dependencies and
+            any(
+                compiled_mtime <= self.get_source_mtime(dependency)
+                for dependency in self.get_dependencies(source_path)
+            )
+        )
 
     def get_source(self, source_path):
         """ Get the source code to be compiled.
