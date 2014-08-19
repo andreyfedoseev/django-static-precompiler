@@ -42,3 +42,13 @@ def inlinecompile(nodelist, context, compiler):
         return output
 
     return compiler.compile_source(source)
+
+
+def register_compiler_tags(register, compiler):
+    @register.simple_tag(name=compiler.name)
+    def tag(source_path):
+        return compile_tag(source_path, compiler)
+
+    @container_tag(register, name="inline" + compiler.name)
+    def inline_tag(nodelist, context):
+        return inlinecompile(nodelist, context, compiler)
