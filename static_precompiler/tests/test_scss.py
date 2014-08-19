@@ -227,7 +227,7 @@ class SCSSTestCase(unittest.TestCase):
         with patch.object(compiler, "compass_enabled", return_value=True):
             self.assertEqual(
                 fix_line_breaks(compiler.compile_file("styles/test-compass-import.scss")),
-                ".round-corners {\n  -webkit-border-radius: 4px 4px;\n  -moz-border-radius: 4px / 4px;\n  border-radius: 4px / 4px; }\n"
+                ".round-corners {\n  -moz-border-radius: 4px / 4px;\n  -webkit-border-radius: 4px 4px;\n  border-radius: 4px / 4px; }\n"
             )
 
         with patch.object(compiler, "compass_enabled", return_value=False):
