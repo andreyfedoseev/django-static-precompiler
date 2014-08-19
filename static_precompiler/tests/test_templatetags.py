@@ -29,6 +29,20 @@ class TemplateTagsTestCase(unittest.TestCase):
         )
         mocked_compiler.compile.assert_called_with("source")
 
+    def test_inlinecompile_tag(self):
+        with patch("static_precompiler.templatetags.compile_static.get_compiler_by_name") as mocked_get_compiler_by_name:
+            mocked_compiler = MagicMock()
+            mocked_compiler.compile_source.return_value = "compiled"
+            mocked_get_compiler_by_name.return_value = mocked_compiler
+            template = get_template_from_string("""{% load compile_static %}{% inlinecompile compiler='sass' %}source{% endinlinecompile %}""")
+            self.assertEqual(
+                template.render(Context({})),
+                "compiled",
+            )
+
+            mocked_get_compiler_by_name.assert_called_with("sass")
+            mocked_compiler.compile_source.assert_called_with("source")
+
     @patch("static_precompiler.templatetags.coffeescript.compiler")
     def test_coffeescript_tag(self, mocked_compiler):
         mocked_compiler.compile.return_value = "compiled"

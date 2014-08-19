@@ -9,6 +9,7 @@ import re
 
 class SCSS(BaseCompiler):
 
+    name = "scss"
     supports_dependencies = True
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
@@ -214,6 +215,8 @@ class SCSS(BaseCompiler):
 
 
 class SASS(SCSS):
+
+    name = "sass"
 
     EXTENSION = ".sass"
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*(?:\n|$)")

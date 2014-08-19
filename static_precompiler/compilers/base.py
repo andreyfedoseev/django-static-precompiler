@@ -14,6 +14,7 @@ logger = logging.getLogger("static_precompiler")
 
 class BaseCompiler(object):
 
+    name = None
     supports_dependencies = False
 
     def is_supported(self, source_path):

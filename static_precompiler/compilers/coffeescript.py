@@ -6,6 +6,8 @@ from static_precompiler.utils import run_command
 
 class CoffeeScript(BaseCompiler):
 
+    name = "coffeescript"
+
     def is_supported(self, source_path):
         return source_path.endswith(".coffee")
 
