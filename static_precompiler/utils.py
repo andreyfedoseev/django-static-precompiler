@@ -5,13 +5,14 @@ from django.utils.encoding import smart_str, smart_bytes
 from django.utils.importlib import import_module
 # noinspection PyUnresolvedReferences
 import six.moves.urllib.parse as urllib_parse
-from static_precompiler.exceptions import UnsupportedFile
+from static_precompiler.exceptions import UnsupportedFile, CompilerNotFound
 from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS, \
     STATIC_URL, CACHE_NAME
 import os
 import re
 import socket
 import subprocess
+from warnings import warn
 
 
 def normalize_path(posix_path):
@@ -122,11 +123,11 @@ def convert_urls(content, path):
 compilers = None
 
 
-def get_compilers():
+def get_compilers_registry():
     global compilers
 
     if compilers is None:
-        compilers_temp = []
+        compilers_temp = {}
         for compiler_path in COMPILERS:
             try:
                 compiler_module, compiler_classname = compiler_path.rsplit('.', 1)
@@ -141,11 +142,26 @@ def get_compilers():
             except AttributeError:
                 raise ImproperlyConfigured('Compiler module "{0}" does not define a "{1}" class'.format(compiler_module, compiler_classname))
 
-            compilers_temp.append(compiler_class())
+            compiler_to_add = compiler_class()
+            compiler = compilers_temp.setdefault(compiler_class.name, compiler_to_add)
+            if compiler_to_add != compiler:
+                warn("Both compilers {0} and {1} have the same name.".format(compiler_to_add, compiler))
 
         compilers = compilers_temp
 
     return compilers
+
+
+def get_compilers():
+    return list(get_compilers_registry().values())
+
+
+def get_compiler_by_name(name):
+    compilers = get_compilers_registry()
+    try:
+        return compilers[name]
+    except KeyError:
+        raise CompilerNotFound("There is no compiler with name '{0}'.".format(name))
 
 
 def compile_static(path):

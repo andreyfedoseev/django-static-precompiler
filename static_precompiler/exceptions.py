@@ -6,3 +6,7 @@ class StaticCompilationError(Exception):
 
 class UnsupportedFile(Exception):
     pass
+
+
+class CompilerNotFound(Exception):
+    pass

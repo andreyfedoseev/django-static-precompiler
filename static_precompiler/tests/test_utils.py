@@ -1,8 +1,8 @@
 from django.core.exceptions import ImproperlyConfigured
 from mock import patch, MagicMock
 from static_precompiler.compilers import CoffeeScript
-from static_precompiler.exceptions import UnsupportedFile
-from static_precompiler.utils import get_compilers, compile_static, compile_static_lazy
+from static_precompiler.exceptions import UnsupportedFile, CompilerNotFound
+from static_precompiler.utils import get_compilers, compile_static, compile_static_lazy, get_compiler_by_name
 import unittest
 
 
@@ -22,6 +22,15 @@ class UtilsTestCase(unittest.TestCase):
             compilers = get_compilers()
             self.assertEqual(len(compilers), 1)
             self.assertTrue(isinstance(compilers[0], CoffeeScript))
+
+    def test_get_compiler_by_name(self):
+        with patch("static_precompiler.utils.get_compilers_registry") as mocked_get_compilers_registry:
+            mocked_get_compilers_registry.return_value = {CoffeeScript.name: CoffeeScript()}
+
+            self.assertRaises(CompilerNotFound, get_compiler_by_name, 'non-existing compiler')
+
+            compiler = get_compiler_by_name(CoffeeScript.name)
+            self.assertTrue(isinstance(compiler, CoffeeScript))
 
     def test_compile_static(self):
         mocked_coffeescript_compiler = MagicMock()

@@ -9,6 +9,7 @@ import re
 
 class LESS(BaseCompiler):
 
+    name = "less"
     supports_dependencies = True
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
