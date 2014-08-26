@@ -134,38 +134,6 @@ Settings
 ``COFFEESCRIPT_EXECUTABLE``
   Path to CoffeeScript compiler executable. Default: ``"coffee"``.
 
-Example Usage
--------------
-
-Inline CoffeeScript::
-
-  {% load coffeescript %}
-
-  <script type="text/javascript">
-    {% inlinecoffeescript %}
-      console.log "Hello, World!"
-    {% endinlinecoffeescript %}
-  </script>
-
-renders to::
-
-  <script type="text/javascript">
-    (function() {
-      console.log("Hello, World!");
-    }).call(this);
-  </script>
-
-External file::
-
-  {% load coffeescript %}
-
-  <script src="{{ STATIC_URL}}{% coffeescript "path/to/script.coffee" %}"></script>
-
-renders to::
-
-  <script src="/static/COMPILED/path/to/script.js"></script>
-
-
 SASS / SCSS
 ===========
 
@@ -178,54 +146,6 @@ Settings
 ``SCSS_USE_COMPASS``
   Boolean. Wheter to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
 
-Example Usage
--------------
-
-Inline SCSS::
-
-  {% load scss %}
-
-  <style>
-    {% inlinescss %}
-      #header {
-        h1 {
-          font-size: 26px;
-          font-weight: bold;
-        }
-        p { font-size: 12px;
-          a { text-decoration: none;
-            &:hover { border-width: 1px }
-          }
-        }
-      }
-    {% endinlinescss %}
-  </style>
-
-renders to::
-
-  <style>
-    #header h1 {
-      font-size: 26px;
-      font-weight: bold; }
-    #header p {
-      font-size: 12px; }
-      #header p a {
-        text-decoration: none; }
-        #header p a:hover {
-          border-width: 1px; }
-  </style>
-
-External file::
-
-  {% load scss %}
-
-  <link rel="stylesheet" href="{{ STATIC_URL}}{% scss "path/to/styles.scss" %}" />
-
-renders to::
-
-  <link rel="stylesheet" href="/static/COMPILED/path/to/styles.css" />
-
-
 LESS
 ====
 
@@ -234,58 +154,6 @@ Settings
 
 ``LESS_EXECUTABLE``
   Path to LESS compiler executable. Default: ``"lessc"``.
-
-Example Usage
--------------
-
-Inline LESS::
-
-  {% load less %}
-
-  <style>
-    {% inlineless %}
-      #header {
-        h1 {
-          font-size: 26px;
-          font-weight: bold;
-        }
-        p { font-size: 12px;
-          a { text-decoration: none;
-            &:hover { border-width: 1px }
-          }
-        }
-      }
-    {% endinlineless %}
-  </style>
-
-renders to::
-
-  <style>
-    #header h1 {
-      font-size: 26px;
-      font-weight: bold;
-    }
-    #header p {
-      font-size: 12px;
-    }
-    #header p a {
-      text-decoration: none;
-    }
-    #header p a:hover {
-      border-width: 1px;
-    }
-  </style>
-
-External file::
-
-  {% load less %}
-
-  <link rel="stylesheet" href="{{ STATIC_URL}}{% less "path/to/styles.less" %}" />
-
-renders to::
-
-  <link rel="stylesheet" href="/static/COMPILED/path/to/styles.css" />
-
 
 Usage with forms media
 ======================
