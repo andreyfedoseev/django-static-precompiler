@@ -11,19 +11,14 @@ class SCSS(BaseCompiler):
 
     name = "scss"
     supports_dependencies = True
+    input_extension = "scss"
+    output_extension = "css"
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
-    EXTENSION = ".scss"
 
     # noinspection PyMethodMayBeStatic
     def compass_enabled(self):
         return settings.SCSS_USE_COMPASS
-
-    def is_supported(self, source_path):
-        return source_path.endswith(self.EXTENSION)
-
-    def get_output_filename(self, source_filename):
-        return source_filename[:-len(self.EXTENSION)] + ".css"
 
     def should_compile(self, source_path, from_management=False):
         # Do not compile the files that start with "_" if run from management
@@ -175,8 +170,8 @@ class SCSS(BaseCompiler):
         :returns: str
 
         """
-        if not import_path.endswith(self.EXTENSION):
-            import_path += self.EXTENSION
+        if not import_path.endswith("." + self.input_extension):
+            import_path += "." + self.input_extension
         path = posixpath.normpath(posixpath.join(source_dir, import_path))
 
         try:
@@ -217,8 +212,8 @@ class SCSS(BaseCompiler):
 class SASS(SCSS):
 
     name = "sass"
+    input_extension = "sass"
 
-    EXTENSION = ".sass"
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*(?:\n|$)")
 
     def compile_source(self, source):

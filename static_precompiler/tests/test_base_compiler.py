@@ -1,5 +1,5 @@
 from django.core import management
-from mock import patch, MagicMock
+from mock import patch, MagicMock, PropertyMock
 from static_precompiler.compilers.base import BaseCompiler
 from static_precompiler.models import Dependency
 from static_precompiler.settings import OUTPUT_DIR, ROOT
@@ -32,18 +32,37 @@ class BaseCompilerTestCase(unittest.TestCase):
         management.call_command('flush', interactive=False, verbosity=0)
 
     def test_is_supported(self):
-        compiler = BaseCompiler()
-        self.assertRaises(
-            NotImplementedError,
-            lambda: compiler.is_supported("dummy.coffee")
-        )
+
+        input_mock = PropertyMock(return_value="coffee")
+
+        class IsSupportedTestCompiler(BaseCompiler):
+            input_extension = input_mock
+
+        compiler = IsSupportedTestCompiler()
+        self.assertEqual(compiler.is_supported("dummy.coffee"), True)
+        self.assertEqual(compiler.is_supported("dummy.js"), False)
+        input_mock.assert_called_with()
 
     def test_get_output_filename(self):
-        compiler = BaseCompiler()
-        self.assertRaises(
-            NotImplementedError,
-            lambda: compiler.get_output_filename("dummy.coffee")
+
+        input_mock = PropertyMock(return_value="coffee")
+        output_mock = PropertyMock(return_value="js")
+
+        class GetOutputFilenameTestCompiler(BaseCompiler):
+            input_extension = input_mock
+            output_extension = output_mock
+
+        compiler = GetOutputFilenameTestCompiler()
+        self.assertEqual(
+            compiler.get_output_filename("dummy.coffee"),
+            "dummy.js"
         )
+        self.assertEqual(
+            compiler.get_output_filename("dummy.coffee.coffee"),
+            "dummy.coffee.js"
+        )
+        input_mock.assert_called_with()
+        output_mock.assert_called_with()
 
     def test_get_full_source_path(self):
 

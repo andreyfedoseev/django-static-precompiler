@@ -16,6 +16,8 @@ class BaseCompiler(object):
 
     name = None
     supports_dependencies = False
+    input_extension = None
+    output_extension = None
 
     def is_supported(self, source_path):
         """ Return True iff provided source file type is supported by this precompiler.
@@ -25,7 +27,7 @@ class BaseCompiler(object):
         :returns: bool
 
         """
-        raise NotImplementedError
+        return source_path.endswith(self.input_extension)
 
     #noinspection PyMethodMayBeStatic
     def get_full_source_path(self, source_path):
@@ -64,7 +66,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        raise NotImplementedError
+        return source_filename[:-len(self.input_extension)] + self.output_extension
 
     def get_output_path(self, source_path):
         """ Get relative path to compiled file based for the given source file.
