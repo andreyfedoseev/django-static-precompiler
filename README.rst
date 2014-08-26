@@ -74,7 +74,12 @@ General settings
 =================
 
 ``{% compile %}`` is a template tag that allows to compile any source file supported by compilers configured with
-``STATIC_PRECOMPILER_COMPILERS`` settings. For example::
+``STATIC_PRECOMPILER_COMPILERS`` settings.
+
+Example Usage
+-------------
+
+::
 
   {% load compile_static %}
 
@@ -88,6 +93,37 @@ renders to::
   <link rel="stylesheet" href="/static/COMPILED/path/to/styles1.css" />
   <link rel="stylesheet" href="/static/COMPILED/path/to/styles2.css" />
 
+{% inlinecompile %} tag
+=======================
+
+Compiles everything between ``{% inlinecompile %}`` and ``{% endinlinecompile %}`` with compiler specified by name.
+Compiler needs to be specified in ``STATIC_PRECOMPILER_COMPILERS`` settings. Names for default compilers are:
+
+* ``coffeescript``
+* ``less``
+* ``sass``
+* ``scss``
+
+Example Usage
+-------------
+
+::
+
+  {% load compile_static %}
+
+  <script type="text/javascript">
+    {% inlinecompile "coffeescript" %}
+      console.log "Hello, World!"
+    {% endinlinecoffeescript %}
+  </script>
+
+renders to::
+
+  <script type="text/javascript">
+    (function() {
+      console.log("Hello, World!");
+    }).call(this);
+  </script>
 
 CoffeeScript
 ============
