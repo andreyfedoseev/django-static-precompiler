@@ -30,46 +30,6 @@ You can change this folder with ``STATIC_PRECOMPILER_ROOT`` and ``STATIC_PRECOMP
 
 Note that all relative URLs in your stylesheets are converted to absolute URLs using your ``STATIC_URL`` setting.
 
-
-General settings
-================
-
-``STATIC_PRECOMPILER_COMPILERS``
-  List of enabled compilers. You can modify it to enable your custom compilers. Default::
-
-    STATIC_PRECOMPILER_COMPILERS = (
-        'static_precompiler.compilers.CoffeeScript',
-        'static_precompiler.compilers.SASS',
-        'static_precompiler.compilers.SCSS',
-        'static_precompiler.compilers.LESS',
-    )
-
-``STATIC_PRECOMPILER_ROOT``
-  Controls the absolute file path that compiled files will be written to. Default: ``STATIC_ROOT``.
-
-``STATIC_PRECOMPILER_OUTPUT_DIR``
-  Controls the directory inside ``STATIC_PRECOMPILER_ROOT`` that compiled files will be written to. Default: ``"COMPILED"``.
-
-``STATIC_PRECOMPILER_USE_CACHE``
-  Whether to use cache for inline compilation. Default: ``True``.
-
-``STATIC_PRECOMPILER_CACHE_TIMEOUT``
-  Cache timeout for inline styles (in seconds). Default: 30 days.
-
-``STATIC_PRECOMPILER_MTIME_DELAY``
-  Cache timeout for reading the modification time of source files (in seconds). Default: 10 seconds.
-
-``STATIC_PRECOMPILER_CACHE_NAME``
-  Name of the cache to be used. If not specified then the default django cache is used. Default: ``None``.
-
-``STATIC_PRECOMPILER_PREPEND_STATIC_URL``
-  Add ``STATIC_URL`` to the output of template tags. Default: ``False``
-
-``STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE``
-  Disable automatic compilation from template tags or ``compile_static`` utility function. Files are compiled
-  only with ``compilestatic`` command (see below).
-
-
 {% compile %} tag
 =================
 
@@ -125,20 +85,55 @@ renders to::
     }).call(this);
   </script>
 
-CoffeeScript
-============
+General settings
+================
 
-Settings
---------
+``STATIC_PRECOMPILER_COMPILERS``
+  List of enabled compilers. You can modify it to enable your custom compilers. Default::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        'static_precompiler.compilers.CoffeeScript',
+        'static_precompiler.compilers.SASS',
+        'static_precompiler.compilers.SCSS',
+        'static_precompiler.compilers.LESS',
+    )
+
+``STATIC_PRECOMPILER_ROOT``
+  Controls the absolute file path that compiled files will be written to. Default: ``STATIC_ROOT``.
+
+``STATIC_PRECOMPILER_OUTPUT_DIR``
+  Controls the directory inside ``STATIC_PRECOMPILER_ROOT`` that compiled files will be written to. Default: ``"COMPILED"``.
+
+``STATIC_PRECOMPILER_USE_CACHE``
+  Whether to use cache for inline compilation. Default: ``True``.
+
+``STATIC_PRECOMPILER_CACHE_TIMEOUT``
+  Cache timeout for inline styles (in seconds). Default: 30 days.
+
+``STATIC_PRECOMPILER_MTIME_DELAY``
+  Cache timeout for reading the modification time of source files (in seconds). Default: 10 seconds.
+
+``STATIC_PRECOMPILER_CACHE_NAME``
+  Name of the cache to be used. If not specified then the default django cache is used. Default: ``None``.
+
+``STATIC_PRECOMPILER_PREPEND_STATIC_URL``
+  Add ``STATIC_URL`` to the output of template tags. Default: ``False``
+
+``STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE``
+  Disable automatic compilation from template tags or ``compile_static`` utility function. Files are compiled
+  only with ``compilestatic`` command (see below).
+
+Compiler specific settings
+================
+
+CoffeeScript
+------------
 
 ``COFFEESCRIPT_EXECUTABLE``
   Path to CoffeeScript compiler executable. Default: ``"coffee"``.
 
 SASS / SCSS
-===========
-
-Settings
---------
+-----------
 
 ``SCSS_EXECUTABLE``
   Path to SASS compiler executable. Default: "sass".
@@ -147,10 +142,7 @@ Settings
   Boolean. Wheter to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
 
 LESS
-====
-
-Settings
---------
+----
 
 ``LESS_EXECUTABLE``
   Path to LESS compiler executable. Default: ``"lessc"``.
