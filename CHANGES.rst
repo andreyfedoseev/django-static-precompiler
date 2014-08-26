@@ -2,6 +2,21 @@
 Changes
 =======
 
+0.8
+===
+
+- Add ``{% inlinecompile %}`` template tag
+- **These compiler specific template tags are DEPRECATED:**
+
+  * ``{% coffeescript %}``
+  * ``{% inlinecoffeescript %}``
+  * ``{% sass %}``
+  * ``{% inlinesass %}``
+  * ``{% scss %}``
+  * ``{% inlinescss %}``
+  * ``{% less %}``
+  * ``{% inlineless %}``
+
 0.7
 ===
 
