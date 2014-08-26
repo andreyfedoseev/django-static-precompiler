@@ -2,7 +2,8 @@ from django.core.exceptions import ImproperlyConfigured
 from mock import patch, MagicMock
 from static_precompiler.compilers import CoffeeScript
 from static_precompiler.exceptions import UnsupportedFile, CompilerNotFound
-from static_precompiler.utils import get_compilers, compile_static, compile_static_lazy, get_compiler_by_name
+from static_precompiler.utils import get_compilers, get_compiler_by_name, \
+    get_compiler_by_path, compile_static, compile_static_lazy
 import unittest
 
 
@@ -21,56 +22,59 @@ class UtilsTestCase(unittest.TestCase):
         with patch("static_precompiler.utils.COMPILERS", ["static_precompiler.compilers.CoffeeScript"]):
             compilers = get_compilers()
             self.assertEqual(len(compilers), 1)
-            self.assertTrue(isinstance(compilers[0], CoffeeScript))
+            self.assertTrue(CoffeeScript.name in compilers)
+            self.assertTrue(isinstance(compilers[CoffeeScript.name], CoffeeScript))
 
     def test_get_compiler_by_name(self):
-        with patch("static_precompiler.utils.get_compilers_registry") as mocked_get_compilers_registry:
-            mocked_get_compilers_registry.return_value = {CoffeeScript.name: CoffeeScript()}
+        with patch("static_precompiler.utils.get_compilers") as mocked_get_compilers:
+            mocked_get_compilers.return_value = {CoffeeScript.name: CoffeeScript()}
 
             self.assertRaises(CompilerNotFound, get_compiler_by_name, 'non-existing compiler')
 
             compiler = get_compiler_by_name(CoffeeScript.name)
             self.assertTrue(isinstance(compiler, CoffeeScript))
 
-    def test_compile_static(self):
+    def test_get_compiler_by_path(self):
         mocked_coffeescript_compiler = MagicMock()
         mocked_coffeescript_compiler.is_supported.side_effect = lambda source_path: source_path.endswith(".coffee")
-        mocked_coffeescript_compiler.compile.return_value = "compiled coffeescript"
         mocked_less_compiler = MagicMock()
         mocked_less_compiler.is_supported.side_effect = lambda source_path: source_path.endswith(".less")
-        mocked_less_compiler.compile.return_value = "compiled less"
-
         with patch("static_precompiler.utils.get_compilers") as mocked_get_compilers:
-            mocked_get_compilers.return_value = [
-                mocked_coffeescript_compiler,
-                mocked_less_compiler
-            ]
-            self.assertEquals(
-                compile_static("test.coffee"),
-                "compiled coffeescript"
-            )
-            self.assertEquals(
-                compile_static("test.less"),
-                "compiled less"
-            )
+            mocked_get_compilers.return_value = {
+                "coffeescript": mocked_coffeescript_compiler,
+                "less": mocked_less_compiler,
+            }
+
             self.assertRaises(
                 UnsupportedFile,
-                lambda: compile_static("test.sass")
+                get_compiler_by_path,
+                "test.sass"
             )
 
-    def test_compile_static_lazy(self):
-        mocked_compiler = MagicMock()
-        mocked_compiler.compile_lazy.return_value = "compiled"
+            self.assertTrue(get_compiler_by_path("test.coffee") is mocked_coffeescript_compiler)
+            self.assertTrue(get_compiler_by_path("test.less") is mocked_less_compiler)
 
-        with patch("static_precompiler.utils.get_compilers") as mocked_get_compilers:
-            mocked_get_compilers.return_value = [
-                mocked_compiler,
-            ]
+    def test_compile_static(self):
+        mocked_compiler = MagicMock()
+        mocked_compiler.compile.return_value = "compiled"
+        mocked_compiler.compile_lazy.return_value = "compiled"
+        source_filename = "test.coffee"
+        with patch("static_precompiler.utils.get_compiler_by_path") as mocked_get_compiler_by_path:
+            mocked_get_compiler_by_path.return_value = mocked_compiler
             self.assertEquals(
-                compile_static_lazy("source"),
+                compile_static(source_filename),
                 "compiled"
             )
-            mocked_compiler.compile_lazy.assert_called_with("source")
+            mocked_get_compiler_by_path.assert_called_once_with(source_filename)
+            mocked_compiler.compile.assert_called_once_with(source_filename)
+
+            mocked_get_compiler_by_path.reset_mock()
+            self.assertEquals(
+                compile_static_lazy(source_filename),
+                "compiled"
+            )
+            mocked_get_compiler_by_path.assert_called_once_with(source_filename)
+            mocked_compiler.compile_lazy.assert_called_once_with(source_filename)
 
 
 def suite():

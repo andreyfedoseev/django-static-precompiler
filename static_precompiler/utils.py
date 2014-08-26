@@ -11,6 +11,7 @@ from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS
 import os
 import re
 import socket
+import six
 import subprocess
 from warnings import warn
 
@@ -123,7 +124,7 @@ def convert_urls(content, path):
 compilers = None
 
 
-def get_compilers_registry():
+def get_compilers():
     global compilers
 
     if compilers is None:
@@ -152,31 +153,27 @@ def get_compilers_registry():
     return compilers
 
 
-def get_compilers():
-    return list(get_compilers_registry().values())
-
-
 def get_compiler_by_name(name):
-    compilers = get_compilers_registry()
+    compilers = get_compilers()
     try:
         return compilers[name]
     except KeyError:
         raise CompilerNotFound("There is no compiler with name '{0}'.".format(name))
 
 
-def compile_static(path):
-
-    for compiler in get_compilers():
+def get_compiler_by_path(path):
+    for compiler in six.itervalues(get_compilers()):
         if compiler.is_supported(path):
-            return compiler.compile(path)
+            return compiler
 
     raise UnsupportedFile("The source file '{0}' is not supported by any of available compilers.".format(path))
+
+
+def compile_static(path):
+
+    return get_compiler_by_path(path).compile(path)
 
 
 def compile_static_lazy(path):
 
-    for compiler in get_compilers():
-        if compiler.is_supported(path):
-            return compiler.compile_lazy(path)
-
-    raise UnsupportedFile("The source file '{0}' is not supported by any of available compilers.".format(path))
+    return get_compiler_by_path(path).compile_lazy(path)
