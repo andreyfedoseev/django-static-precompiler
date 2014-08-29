@@ -7,8 +7,8 @@ env: DJANGO_SETTINGS_MODULE="static_precompiler.tests.django_settings"
 before_install:
   - npm install -g coffee-script
   - npm install -g less
-  - gem install sass --version 3.2.18
-  - gem install compass --version 1.0.0
+  - gem install sass --version 3.3.14
+  - gem install compass --version 1.0.1
 install:
   - pip install coveralls
   - pip install django
