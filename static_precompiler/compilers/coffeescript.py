@@ -7,12 +7,8 @@ from static_precompiler.utils import run_command
 class CoffeeScript(BaseCompiler):
 
     name = "coffeescript"
-
-    def is_supported(self, source_path):
-        return source_path.endswith(".coffee")
-
-    def get_output_filename(self, source_filename):
-        return source_filename[:-7] + ".js"
+    input_extension = "coffee"
+    output_extension = "js"
 
     def compile_file(self, source_path):
         return self.compile_source(self.get_source(source_path))

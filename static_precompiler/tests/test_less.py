@@ -1,6 +1,4 @@
 # coding: utf-8
-from django.template import Context
-from django.template.loader import get_template_from_string
 from mock import patch, MagicMock
 from static_precompiler.compilers import LESS
 from static_precompiler.exceptions import StaticCompilationError
@@ -10,19 +8,6 @@ import unittest
 
 
 class LESSTestCase(unittest.TestCase):
-
-    def test_is_supported(self):
-        compiler = LESS()
-        self.assertEqual(compiler.is_supported("dummy"), False)
-        self.assertEqual(compiler.is_supported("dummy.less"), True)
-
-    def test_get_output_filename(self):
-        compiler = LESS()
-        self.assertEqual(compiler.get_output_filename("dummy.less"), "dummy.css")
-        self.assertEqual(
-            compiler.get_output_filename("dummy.less.less"),
-            "dummy.less.css"
-        )
 
     def test_compile_file(self):
         compiler = LESS()

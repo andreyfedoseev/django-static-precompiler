@@ -11,16 +11,11 @@ class LESS(BaseCompiler):
 
     name = "less"
     supports_dependencies = True
+    input_extension = "less"
+    output_extension = "css"
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
-    EXTENSION = ".less"
-
-    def is_supported(self, source_path):
-        return source_path.endswith(self.EXTENSION)
-
-    def get_output_filename(self, source_filename):
-        return source_filename[:-len(self.EXTENSION)] + ".css"
 
     def should_compile(self, source_path, from_management=False):
         # Do not compile the files that start with "_" if run from management
@@ -96,9 +91,8 @@ class LESS(BaseCompiler):
         :returns: str
 
         """
-        if not import_path.endswith(self.EXTENSION):
-            import_path += self.EXTENSION
-
+        if not import_path.endswith("." + self.input_extension):
+            import_path += "." + self.input_extension
         path = posixpath.normpath(posixpath.join(source_dir, import_path))
 
         try:

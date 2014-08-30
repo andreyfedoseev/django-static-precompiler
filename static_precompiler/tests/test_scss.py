@@ -1,6 +1,4 @@
 # coding: utf-8
-from django.template import Context
-from django.template.loader import get_template_from_string
 from mock import patch, MagicMock
 from static_precompiler.compilers import SASS, SCSS
 from static_precompiler.exceptions import StaticCompilationError
@@ -10,19 +8,6 @@ import unittest
 
 
 class SCSSTestCase(unittest.TestCase):
-
-    def test_is_supported(self):
-        compiler = SCSS()
-        self.assertEqual(compiler.is_supported("dummy"), False)
-        self.assertEqual(compiler.is_supported("dummy.scss"), True)
-
-    def test_get_output_filename(self):
-        compiler = SCSS()
-        self.assertEqual(compiler.get_output_filename("dummy.scss"), "dummy.css")
-        self.assertEqual(
-            compiler.get_output_filename("dummy.scss.scss"),
-            "dummy.scss.css"
-        )
 
     def test_compile_file(self):
         compiler = SCSS()
@@ -235,19 +220,6 @@ class SCSSTestCase(unittest.TestCase):
 
 
 class SASSTestCase(unittest.TestCase):
-
-    def test_is_supported(self):
-        compiler = SASS()
-        self.assertEqual(compiler.is_supported("dummy"), False)
-        self.assertEqual(compiler.is_supported("dummy.sass"), True)
-
-    def test_get_output_filename(self):
-        compiler = SASS()
-        self.assertEqual(compiler.get_output_filename("dummy.sass"), "dummy.css")
-        self.assertEqual(
-            compiler.get_output_filename("dummy.sass.sass"),
-            "dummy.sass.css"
-        )
 
     def test_compile_file(self):
         compiler = SASS()
