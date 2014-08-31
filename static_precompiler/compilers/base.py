@@ -2,8 +2,9 @@ from django.contrib.staticfiles import finders
 from django.core.exceptions import SuspiciousOperation
 from django.utils.functional import lazy
 from static_precompiler.models import Dependency
-from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR, DISABLE_AUTO_COMPILE
+from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR, DISABLE_AUTO_COMPILE, MULTISITE_PATH_PROVIDER, SITE_ID
 from static_precompiler.utils import get_mtime, normalize_path
+from inspect import isfunction
 import logging
 import os
 import posixpath
@@ -80,7 +81,12 @@ class BaseCompiler(object):
         source_dir = os.path.dirname(source_path)
         source_filename = os.path.basename(source_path)
         output_filename = self.get_output_filename(source_filename)
-        return posixpath.join(OUTPUT_DIR, source_dir, output_filename)
+        parts = [OUTPUT_DIR, source_dir]
+        if isfunction(MULTISITE_PATH_PROVIDER):
+            parts.append(MULTISITE_PATH_PROVIDER(SITE_ID))
+        parts.append(output_filename)
+            
+        return posixpath.join(*parts)
 
     def get_full_output_path(self, source_path):
         """ Get full path to compiled file based for the given source file.

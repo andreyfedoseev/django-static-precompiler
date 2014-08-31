@@ -18,7 +18,7 @@ class LESSTestCase(unittest.TestCase):
   font-size: 15px;
 }
 p a {
-  color: red;
+  color: #ff0000;
 }
 h1 {
   color: blue;
@@ -63,6 +63,7 @@ h1 {
 @import "foo.css";
 @import " ";
 @import "foo.less";
+@import "@{VAR}.less";
 @import (reference) "reference.less";
 @import (inline) "inline.css";
 @import (less) "less.less";
@@ -76,6 +77,7 @@ h1 {
 """
         expected = sorted([
             "foo.less",
+            "global-var.less",
             "reference.less",
             "inline.css",
             "less.less",

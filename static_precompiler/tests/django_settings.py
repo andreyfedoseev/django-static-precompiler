@@ -27,3 +27,8 @@ INSTALLED_APPS = (
 MTIME_DELAY = 2
 
 SCSS_USE_COMPASS = True
+
+LESS_GLOBAL_VARS = [
+    ('VAR', 'global-var'),
+    ('COLOR', '#ff0000'),
+]
