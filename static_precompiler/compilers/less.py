@@ -1,10 +1,11 @@
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.settings import LESS_EXECUTABLE
+from static_precompiler.settings import LESS_EXECUTABLE, LESS_GLOBAL_VARS
 from static_precompiler.utils import run_command, convert_urls
 import os
 import posixpath
 import re
+import hashlib
 
 
 class LESS(BaseCompiler):
@@ -16,6 +17,22 @@ class LESS(BaseCompiler):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
+    VARIABLE_RE = re.compile(r".*@\{(.+?)\}.*")
+
+    def get_output_filename(self, source_filename):
+        """ Return the name of compiled file based on the name of source file.
+
+        :param source_filename: name of a source file
+        :type source_filename: str
+        :returns: str
+
+        """
+        vars_hash = ""
+        if len(LESS_GLOBAL_VARS):
+            vars_str = ";".join([k + "=" + v for (k, v) in LESS_GLOBAL_VARS])
+            vars_hash = hashlib.md5(vars_str).hexdigest() + "."
+            
+        return source_filename[:-len(self.input_extension)] + vars_hash + self.output_extension
 
     def should_compile(self, source_path, from_management=False):
         # Do not compile the files that start with "_" if run from management
@@ -27,8 +44,10 @@ class LESS(BaseCompiler):
         full_source_path = self.get_full_source_path(source_path)
         args = [
             LESS_EXECUTABLE,
-            full_source_path,
         ]
+        for var in LESS_GLOBAL_VARS:
+            args.append("--global-var=%s=%s" % var)
+        args.append(full_source_path)
         # `cwd` is a directory containing `source_path`. Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
         out, errors = run_command(args, None, cwd=cwd)
@@ -64,6 +83,10 @@ class LESS(BaseCompiler):
         imports = set()
         for import_string in self.IMPORT_RE.findall(source):
             import_string = import_string.strip()
+            match = self.VARIABLE_RE.match(import_string)
+            # TODO: variable in @import
+            if match:
+                continue
             if import_string.startswith("(css)"):
                 continue
             if "url(" in import_string:

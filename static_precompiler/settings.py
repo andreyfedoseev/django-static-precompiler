@@ -46,6 +46,8 @@ SCSS_EXECUTABLE = getattr(settings, "SCSS_EXECUTABLE", "sass")
 SCSS_USE_COMPASS = getattr(settings, "SCSS_USE_COMPASS", False)
 LESS_EXECUTABLE = getattr(settings, "LESS_EXECUTABLE", "lessc")
 
+LESS_GLOBAL_VARS = getattr(settings, "LESS_GLOBAL_VARS", [])
+
 PREPEND_STATIC_URL = getattr(settings, 'STATIC_PRECOMPILER_PREPEND_STATIC_URL', False)
 
 DISABLE_AUTO_COMPILE = getattr(settings, 'STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE', False)
