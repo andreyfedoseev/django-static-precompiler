@@ -3,7 +3,16 @@ python:
   - "3.3"
   - "2.7"
   - "2.6"
-env: DJANGO_SETTINGS_MODULE="static_precompiler.tests.django_settings"
+env:
+  global:
+    - DJANGO_SETTINGS_MODULE="static_precompiler.tests.django_settings"
+  matrix:
+    - DJANGO_VERSION=1.6.6
+    - DJANGO_VERSION=1.7
+matrix:
+  exclude:
+  - python: "2.6"
+    env: DJANGO_VERSION=1.7
 before_install:
   - npm install -g coffee-script
   - npm install -g less
@@ -11,7 +20,7 @@ before_install:
   - gem install compass --version 1.0.1
 install:
   - pip install coveralls
-  - pip install django
+  - pip install django==$DJANGO_VERSION
   - pip install six
   - pip install mock
   - pip install watchdog
