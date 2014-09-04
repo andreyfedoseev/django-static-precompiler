@@ -11,6 +11,13 @@ def suite():
     from static_precompiler.tests import test_templatetags
     from static_precompiler.tests import test_management
 
+    try:
+        # django 1.7+
+        from django import setup
+        setup()
+    except ImportError:
+        pass
+
     test_suite = unittest.TestSuite()
     test_suite.addTests(test_base_compiler.suite())
     test_suite.addTests(test_url_converter.suite())
