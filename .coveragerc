@@ -1,0 +1,4 @@
+[report]
+omit =
+    static_precompiler/migrations/*
+    static_precompiler/south_migrations/*
