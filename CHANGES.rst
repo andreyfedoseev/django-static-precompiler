@@ -16,6 +16,7 @@ Changes
   * ``{% inlinescss %}``
   * ``{% less %}``
   * ``{% inlineless %}``
+- Django 1.7 migrations
 
 0.7
 ===

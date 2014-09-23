@@ -13,7 +13,11 @@ Installation
 ============
 
 1. Add "static_precompiler" to INSTALLED_APPS setting.
-2. Run ``syncdb`` or ``migrate static_precompiler`` if you use South.
+2. Initialize DB:
+
+   * On Django < 1.7 run ``syncdb`` or ``migrate static_precompiler`` if you use South (1.0 is required).
+   * On Django >= 1.7 run ``migrate static_precompiler``.
+
 3. Make sure that you have necessary compilers installed.
 4. Optionally, you can specify the full path to compilers (for example ``SCSS_EXECUTABLE='/usr/local/bin/sass'``).
 5. In case you use Django’s staticfiles contrib app you have to add static-precompiler’s file finder to the ``STATICFILES_FINDERS`` setting, for example::
