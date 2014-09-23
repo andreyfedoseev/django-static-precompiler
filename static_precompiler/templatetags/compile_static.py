@@ -1,4 +1,5 @@
 import six
+import warnings
 
 from django.template import Library
 from django.templatetags.static import static
@@ -44,11 +45,21 @@ def inlinecompile(nodelist, context, compiler):
     return compiler.compile_source(source)
 
 
+def _warn(old, new):
+    warnings.warn(
+        "{%% %s %%} tag has been deprecated, use {%% %s %%} "
+        "from `compile_static` template tag library instead." % (old, new),
+        UserWarning,
+    )
+
+
 def register_compiler_tags(register, compiler):
     @register.simple_tag(name=compiler.name)
     def tag(source_path):
+        _warn(compiler.name, 'compile')
         return compile_tag(source_path, compiler)
 
     @container_tag(register, name="inline" + compiler.name)
     def inline_tag(nodelist, context):
+        _warn('inline%s' % compiler.name, 'inlinecompile "%s"' % compiler.name)
         return inlinecompile(nodelist, context, compiler)
