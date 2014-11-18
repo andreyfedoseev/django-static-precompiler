@@ -4,14 +4,14 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import smart_str, smart_bytes
 from django.utils.importlib import import_module
 # noinspection PyUnresolvedReferences
-import six.moves.urllib.parse as urllib_parse
+import django.utils.six.moves.urllib.parse as urllib_parse
 from static_precompiler.exceptions import UnsupportedFile, CompilerNotFound
 from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS, \
     STATIC_URL, CACHE_NAME
 import os
 import re
 import socket
-import six
+from django.utils import six
 import subprocess
 from warnings import warn
 

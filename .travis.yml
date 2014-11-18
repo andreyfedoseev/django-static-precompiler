@@ -21,7 +21,6 @@ before_install:
 install:
   - pip install coveralls
   - pip install django==$DJANGO_VERSION
-  - pip install six
   - pip install mock
   - pip install watchdog
 script:

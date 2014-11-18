@@ -34,9 +34,6 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     keywords=["sass", "scss", "less", "css", "coffeescript", "javascript"],
-    requires=[
-        "six",
-    ],
     tests_require=[
         "mock",
     ],
