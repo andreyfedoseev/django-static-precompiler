@@ -13,6 +13,7 @@ class SCSS(BaseCompiler):
     supports_dependencies = True
     input_extension = "scss"
     output_extension = "css"
+    import_extensions = ("scss", "sass")
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
 
@@ -170,29 +171,31 @@ class SCSS(BaseCompiler):
         :returns: str
 
         """
-        if not import_path.endswith("." + self.input_extension):
-            import_path += "." + self.input_extension
-        path = posixpath.normpath(posixpath.join(source_dir, import_path))
+        for extension in self.import_extensions:
+            import_path_probe = import_path
+            if not import_path_probe.endswith("." + extension):
+                import_path_probe += "." + extension
+            path = posixpath.normpath(posixpath.join(source_dir, import_path_probe))
 
-        try:
-            self.get_full_source_path(path)
-            return path
-        except ValueError:
-            pass
+            try:
+                self.get_full_source_path(path)
+                return path
+            except ValueError:
+                pass
 
-        filename = posixpath.basename(import_path)
-        if filename[0] != "_":
-            path = posixpath.normpath(posixpath.join(
-                source_dir,
-                posixpath.dirname(import_path),
-                "_" + filename,
-            ))
+            filename = posixpath.basename(import_path_probe)
+            if filename[0] != "_":
+                path = posixpath.normpath(posixpath.join(
+                    source_dir,
+                    posixpath.dirname(import_path_probe),
+                    "_" + filename,
+                ))
 
-        try:
-            self.get_full_source_path(path)
-            return path
-        except ValueError:
-            pass
+                try:
+                    self.get_full_source_path(path)
+                    return path
+                except ValueError:
+                    pass
 
         raise StaticCompilationError(
             "Can't locate the imported file: {0}".format(import_path)
@@ -213,6 +216,7 @@ class SASS(SCSS):
 
     name = "sass"
     input_extension = "sass"
+    import_extensions = ("sass", "scss")
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*(?:\n|$)")
 
