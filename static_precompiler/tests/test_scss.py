@@ -136,7 +136,7 @@ class SCSSTestCase(unittest.TestCase):
             root = os.path.dirname(__file__)
 
             existing_files = set()
-            for f in ("A/B.scss", "A/_C.scss", "D.scss"):
+            for f in ("A/B.scss", "A/_C.scss", "A/S.sass", "D.scss"):
                 existing_files.add(os.path.join(root, "static", normalize_path(f)))
 
             mocked_os_path_exist.side_effect = lambda x: x in existing_files
@@ -160,6 +160,14 @@ class SCSSTestCase(unittest.TestCase):
             self.assertEqual(
                 compiler.locate_imported_file("", "D.scss"),
                 "D.scss"
+            )
+            self.assertEqual(
+                compiler.locate_imported_file("A", "S.sass"),
+                "A/S.sass"
+            )
+            self.assertEqual(
+                compiler.locate_imported_file("A", "S"),
+                "A/S.sass"
             )
             self.assertRaises(
                 StaticCompilationError,

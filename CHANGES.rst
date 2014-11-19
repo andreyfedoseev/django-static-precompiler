@@ -17,6 +17,7 @@ Changes
   * ``{% less %}``
   * ``{% inlineless %}``
 - Django 1.7 migrations
+- BUGFIX: fix sass imports from scss and vice versa
 
 0.7
 ===
