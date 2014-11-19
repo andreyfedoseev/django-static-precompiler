@@ -1,4 +1,4 @@
-import six
+from django.utils import six
 import warnings
 
 from django.template import Library
