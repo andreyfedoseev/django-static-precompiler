@@ -1,19 +1,25 @@
-from hashlib import md5
 from django.core.cache import get_cache as base_get_cache, cache as default_cache
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import smart_str, smart_bytes
 from django.utils.importlib import import_module
-# noinspection PyUnresolvedReferences
-import django.utils.six.moves.urllib.parse as urllib_parse
+from hashlib import md5
 from static_precompiler.exceptions import UnsupportedFile, CompilerNotFound
 from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS, \
     STATIC_URL, CACHE_NAME
+from django.utils import six
+from warnings import warn
 import os
 import re
 import socket
-from django.utils import six
 import subprocess
-from warnings import warn
+
+
+if six.PY2:
+    # noinspection PyUnresolvedReferences
+    from urlparse import urljoin
+else:
+    # noinspection PyUnresolvedReferences
+    from urllib.parse import urljoin
 
 
 def normalize_path(posix_path):
@@ -100,7 +106,7 @@ class URLConverter(object):
         url = url.strip(' \'"')
         if url.startswith(('http://', 'https://', '/', 'data:')):
             return url
-        return urllib_parse.urljoin(STATIC_URL, urllib_parse.urljoin(source_dir, url))
+        return urljoin(STATIC_URL, urljoin(source_dir, url))
 
     def convert(self, content, path):
         source_dir = os.path.dirname(path)
