@@ -8,5 +8,5 @@ dist
 .idea.win
 virtualenv
 virtualenv-win
-
 .coverage
+test_project/db.sqlite3
