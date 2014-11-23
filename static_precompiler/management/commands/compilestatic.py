@@ -78,7 +78,7 @@ class Command(NoArgsCommand):
 
         verbosity = int(options["verbosity"])
 
-        compilers = get_compilers()
+        compilers = get_compilers().values()
 
         if not options["watch"] or options["initial_scan"]:
             # Scan the watched directories and compile everything
