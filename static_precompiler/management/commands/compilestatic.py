@@ -1,3 +1,7 @@
+import os
+import sys
+import time
+
 from django.contrib.staticfiles.finders import get_finders
 from django.core.files.storage import FileSystemStorage
 from django.core.management.base import NoArgsCommand
@@ -5,11 +9,13 @@ from optparse import make_option
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.settings import STATIC_ROOT
 from static_precompiler.utils import get_compilers
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
-import os
-import sys
-import time
+
+try:
+    from watchdog.events import FileSystemEventHandler
+    from watchdog.observers import Observer
+    WATCHDOG_AVAILABLE = True
+except ImportError:
+    WATCHDOG_AVAILABLE = False
 
 
 def get_scanned_dirs():
@@ -22,32 +28,33 @@ def get_scanned_dirs():
     return sorted(dirs)
 
 
-class EventHandler(FileSystemEventHandler):
+if WATCHDOG_AVAILABLE:
+    class EventHandler(FileSystemEventHandler):
 
-    def __init__(self, scanned_dir, verbosity, compilers):
-        self.scanned_dir = scanned_dir
-        self.verbosity = verbosity
-        self.compilers = compilers
-        super(EventHandler, self).__init__()
+        def __init__(self, scanned_dir, verbosity, compilers):
+            self.scanned_dir = scanned_dir
+            self.verbosity = verbosity
+            self.compilers = compilers
+            super(EventHandler, self).__init__()
 
-    def on_any_event(self, e):
-        if e.is_directory or e.event_type not in ("created", "modified"):
-            return
-        path = e.src_path[len(self.scanned_dir):]
-        if path.startswith("/"):
-            path = path[1:]
-        for compiler in self.compilers:
-            if compiler.is_supported(path):
-                if self.verbosity > 1:
-                    if e.event_type == "created":
-                        print("Created: '{0}'".format(path))
-                    else:
-                        print("Modified: '{0}'".format(path))
-                try:
-                    compiler.handle_changed_file(path)
-                except (StaticCompilationError, ValueError) as e:
-                    print(e)
-                break
+        def on_any_event(self, e):
+            if e.is_directory or e.event_type not in ("created", "modified"):
+                return
+            path = e.src_path[len(self.scanned_dir):]
+            if path.startswith("/"):
+                path = path[1:]
+            for compiler in self.compilers:
+                if compiler.is_supported(path):
+                    if self.verbosity > 1:
+                        if e.event_type == "created":
+                            print("Created: '{0}'".format(path))
+                        else:
+                            print("Modified: '{0}'".format(path))
+                    try:
+                        compiler.handle_changed_file(path)
+                    except (StaticCompilationError, ValueError) as e:
+                        print(e)
+                    break
 
 
 class Command(NoArgsCommand):
@@ -97,6 +104,9 @@ class Command(NoArgsCommand):
                                 break
 
         if options["watch"]:
+            if not WATCHDOG_AVAILABLE:
+                sys.exit("You should install watchdog in order to use --watch.")
+
             print("Watching directories:")
             for scanned_dir in scanned_dirs:
                 print(scanned_dir)
