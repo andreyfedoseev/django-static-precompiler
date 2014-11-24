@@ -132,7 +132,7 @@ General settings
   only with ``compilestatic`` command (see below).
 
 Compiler specific settings
-================
+==========================
 
 CoffeeScript
 ------------
@@ -192,3 +192,13 @@ source files and re-compile them on the fly. It can be handy if you use tools su
 `LiveReload <http://livereload.com/>`_.
 
 You should install `Watchdog <http://pythonhosted.org/watchdog/>`_ to use watch mode.
+
+
+Troubleshooting
+===============
+
+If you get ``[Errno 2] No such file or directory`` make sure that you have the required compiler installed. For all
+compilers you can specify the path to executable file, for example ``LESS_EXECUTABLE = "/usr/local/bin/lessc"``
+
+If you run ``migrate`` and get ``ImportError: cannot import name migrations`` then most likely you use Django < 1.7 and
+South < 1.0. You should either upgrade to Django 1.7+ or use South 1.0.
