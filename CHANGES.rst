@@ -6,7 +6,7 @@ Changes
 ===
 
 - Add ``{% inlinecompile %}`` template tag
-- **These compiler specific template tags are DEPRECATED:**
+- **The following compiler specific template tags are DEPRECATED:**
 
   * ``{% coffeescript %}``
   * ``{% inlinecoffeescript %}``
@@ -16,8 +16,10 @@ Changes
   * ``{% inlinescss %}``
   * ``{% less %}``
   * ``{% inlineless %}``
-- Django 1.7 migrations
+- Use Django 1.7 migrations
 - BUGFIX: fix sass imports from scss and vice versa
+- BUGFIX: make sure that ``compilestatic`` works if ``watchdog`` isn't installed.
+- BUGFIX: fix compilation error when dependency file was removed or renamed
 
 0.7
 ===
