@@ -11,3 +11,4 @@ virtualenv-win
 .coverage
 test_project/db.sqlite3
 test_project/test_project/static/COMPILED
+static_precompiler/tests/static/COMPILED
