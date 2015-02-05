@@ -82,7 +82,7 @@ Example Usage
   <script type="text/javascript">
     {% inlinecompile "coffeescript" %}
       console.log "Hello, World!"
-    {% endinlinecoffeescript %}
+    {% endinlinecompile %}
   </script>
 
 renders to::
