@@ -130,42 +130,55 @@ def convert_urls(content, path):
     return url_converter.convert(content, path)
 
 
+def _build_compilers():
+    # noinspection PyShadowingNames
+    compilers = {}
+    for compiler_path in COMPILERS:
+        compiler_options = {}
+        if isinstance(compiler_path, (tuple, list)):
+            if len(compiler_path) != 2:
+                raise ImproperlyConfigured(
+                    'Compiler must be specified in the format ("path.to.CompilerClass", {{compiler options...}}),'
+                    ' got {0}'.format(compiler_path)
+                )
+            compiler_path, compiler_options = compiler_path
+            if not isinstance(compiler_options, dict):
+                raise ImproperlyConfigured('Compiler options must be a dict, got {0}'.format(compiler_options))
+
+        try:
+            compiler_module, compiler_classname = compiler_path.rsplit('.', 1)
+        except ValueError:
+            raise ImproperlyConfigured('{0} isn\'t a compiler module'.format(compiler_path))
+        try:
+            mod = import_module(compiler_module)
+        except ImportError as e:
+            raise ImproperlyConfigured('Error importing compiler {0}: "{1}"'.format(compiler_module, e))
+        try:
+            compiler_class = getattr(mod, compiler_classname)
+        except AttributeError:
+            raise ImproperlyConfigured('Compiler module "{0}" does not define a "{1}" class'.format(compiler_module, compiler_classname))
+
+        compiler_to_add = compiler_class(**compiler_options)
+        compiler = compilers.setdefault(compiler_class.name, compiler_to_add)
+        if compiler_to_add != compiler:
+            warn("Both compilers {0} and {1} have the same name.".format(compiler_to_add, compiler))
+
+    return compilers
+
+
 compilers = None
 
 
 def get_compilers():
     global compilers
-
     if compilers is None:
-        compilers_temp = {}
-        for compiler_path in COMPILERS:
-            try:
-                compiler_module, compiler_classname = compiler_path.rsplit('.', 1)
-            except ValueError:
-                raise ImproperlyConfigured('{0} isn\'t a compiler module'.format(compiler_path))
-            try:
-                mod = import_module(compiler_module)
-            except ImportError as e:
-                raise ImproperlyConfigured('Error importing compiler {0}: "{1}"'.format(compiler_module, e))
-            try:
-                compiler_class = getattr(mod, compiler_classname)
-            except AttributeError:
-                raise ImproperlyConfigured('Compiler module "{0}" does not define a "{1}" class'.format(compiler_module, compiler_classname))
-
-            compiler_to_add = compiler_class()
-            compiler = compilers_temp.setdefault(compiler_class.name, compiler_to_add)
-            if compiler_to_add != compiler:
-                warn("Both compilers {0} and {1} have the same name.".format(compiler_to_add, compiler))
-
-        compilers = compilers_temp
-
+        compilers = _build_compilers()
     return compilers
 
 
 def get_compiler_by_name(name):
-    compilers = get_compilers()
     try:
-        return compilers[name]
+        return get_compilers()[name]
     except KeyError:
         raise CompilerNotFound("There is no compiler with name '{0}'.".format(name))
 

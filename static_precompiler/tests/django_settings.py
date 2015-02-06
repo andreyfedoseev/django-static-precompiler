@@ -23,5 +23,3 @@ INSTALLED_APPS = (
     "static_precompiler",
 )
 MTIME_DELAY = 2
-
-SCSS_USE_COMPASS = True

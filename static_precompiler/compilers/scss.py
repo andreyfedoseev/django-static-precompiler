@@ -1,4 +1,4 @@
-from static_precompiler import settings
+from static_precompiler.settings import SCSS_EXECUTABLE, SCSS_USE_COMPASS
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.compilers.base import BaseCompiler
 from static_precompiler.utils import run_command, convert_urls
@@ -17,9 +17,10 @@ class SCSS(BaseCompiler):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
 
-    # noinspection PyMethodMayBeStatic
-    def compass_enabled(self):
-        return settings.SCSS_USE_COMPASS
+    def __init__(self, executable=SCSS_EXECUTABLE, compass_enabled=SCSS_USE_COMPASS):
+        self.executable = executable
+        self.is_compass_enabled = compass_enabled
+        super(SCSS, self).__init__()
 
     def should_compile(self, source_path, from_management=False):
         # Do not compile the files that start with "_" if run from management
@@ -30,12 +31,12 @@ class SCSS(BaseCompiler):
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)
         args = [
-            settings.SCSS_EXECUTABLE,
+            self.executable,
             "-C",
             full_source_path,
         ]
 
-        if self.compass_enabled():
+        if self.is_compass_enabled:
             args.append("--compass")
 
         # `cwd` is a directory containing `source_path`. Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
@@ -49,13 +50,13 @@ class SCSS(BaseCompiler):
 
     def compile_source(self, source):
         args = [
-            settings.SCSS_EXECUTABLE,
+            self.executable,
             "-s",
             "--scss",
             "-C",
         ]
 
-        if self.compass_enabled():
+        if self.is_compass_enabled:
             args.append("--compass")
 
         out, errors = run_command(args, source)
@@ -67,6 +68,7 @@ class SCSS(BaseCompiler):
     def postprocess(self, compiled, source_path):
         return convert_urls(compiled, source_path)
 
+    # noinspection PyMethodMayBeStatic
     def parse_import_string(self, import_string):
         """ Extract import items from import string.
         :param import_string: import string
@@ -154,7 +156,7 @@ class SCSS(BaseCompiler):
                 if import_item.startswith("http://") or \
                    import_item.startswith("https://"):
                     continue
-                if self.compass_enabled() and (import_item in ("compass", "compass.scss") or import_item.startswith("compass/")):
+                if self.is_compass_enabled and (import_item in ("compass", "compass.scss") or import_item.startswith("compass/")):
                     # Ignore compass imports if Compass is enabled.
                     continue
                 imports.add(import_item)
@@ -222,12 +224,12 @@ class SASS(SCSS):
 
     def compile_source(self, source):
         args = [
-            settings.SCSS_EXECUTABLE,
+            self.executable,
             "-s",
             "-C",
         ]
 
-        if self.compass_enabled():
+        if self.is_compass_enabled:
             args.append("--compass")
 
         out, errors = run_command(args, source)

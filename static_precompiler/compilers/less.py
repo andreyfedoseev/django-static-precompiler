@@ -17,6 +17,11 @@ class LESS(BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
+    def __init__(self, executable=LESS_EXECUTABLE):
+        self.executable = executable
+        super(LESS, self).__init__()
+
+
     def should_compile(self, source_path, from_management=False):
         # Do not compile the files that start with "_" if run from management
         if from_management and os.path.basename(source_path).startswith("_"):
@@ -26,7 +31,7 @@ class LESS(BaseCompiler):
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)
         args = [
-            LESS_EXECUTABLE,
+            self.executable,
             full_source_path,
         ]
         # `cwd` is a directory containing `source_path`. Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
@@ -39,7 +44,7 @@ class LESS(BaseCompiler):
 
     def compile_source(self, source):
         args = [
-            LESS_EXECUTABLE,
+            self.executable,
             "-"
         ]
 

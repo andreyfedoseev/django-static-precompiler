@@ -10,12 +10,16 @@ class CoffeeScript(BaseCompiler):
     input_extension = "coffee"
     output_extension = "js"
 
+    def __init__(self, executable=COFFEESCRIPT_EXECUTABLE):
+        self.executable = executable
+        super(CoffeeScript, self).__init__()
+
     def compile_file(self, source_path):
         return self.compile_source(self.get_source(source_path))
 
     def compile_source(self, source):
         args = [
-            COFFEESCRIPT_EXECUTABLE,
+            self.executable,
             "-c",
             "-s",
             "-p",
@@ -25,3 +29,6 @@ class CoffeeScript(BaseCompiler):
             raise StaticCompilationError(errors)
 
         return out
+
+    def find_dependencies(self, source_path):
+        return []

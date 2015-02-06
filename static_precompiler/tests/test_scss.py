@@ -1,6 +1,6 @@
 # coding: utf-8
 from pretend import call_recorder, call
-from static_precompiler.compilers import SASS, SCSS
+from static_precompiler.compilers import SCSS
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.utils import normalize_path, fix_line_breaks
 import os
@@ -60,8 +60,7 @@ def test_parse_import_string():
     assert compiler.parse_import_string(import_string) == ["foo"]
 
 
-def test_find_imports(monkeypatch):
-    compiler = SCSS()
+def test_find_imports():
     source = """
 @import "foo.css", ;
 @import " ";
@@ -81,8 +80,6 @@ def test_find_imports(monkeypatch):
 @import "foo,bar", url(bar,baz), 'bar,foo';
 """
 
-    monkeypatch.setattr("static_precompiler.compilers.scss.SCSS.compass_enabled", lambda self: False)
-
     expected = [
         "bar,foo",
         "compass",
@@ -94,9 +91,10 @@ def test_find_imports(monkeypatch):
         "rounded-corners",
         "text-shadow",
     ]
+    compiler = SCSS(compass_enabled=False)
     assert compiler.find_imports(source) == expected
 
-    monkeypatch.setattr("static_precompiler.compilers.scss.SCSS.compass_enabled", lambda self: True)
+    compiler = SCSS(compass_enabled=True)
     expected = [
         "bar,foo",
         "foo",
@@ -155,18 +153,16 @@ def test_find_dependencies(monkeypatch):
 
 
 def test_compass():
-    compiler = SCSS()
+    compiler = SCSS(compass_enabled=True)
 
     assert fix_line_breaks(compiler.compile_file("test-compass.scss")) == "p {\n  background: url('/static/images/test.png'); }\n"
 
 
-def test_compass_import(monkeypatch):
-    compiler = SCSS()
-
-    monkeypatch.setattr("static_precompiler.compilers.scss.SCSS.compass_enabled", lambda self: True)
+def test_compass_import():
+    compiler = SCSS(compass_enabled=True)
 
     assert fix_line_breaks(compiler.compile_file("styles/test-compass-import.scss")) == ".round-corners {\n  -moz-border-radius: 4px / 4px;\n  -webkit-border-radius: 4px 4px;\n  border-radius: 4px / 4px; }\n"
 
-    monkeypatch.setattr("static_precompiler.compilers.scss.SCSS.compass_enabled", lambda self: False)
+    compiler = SCSS(compass_enabled=False)
     with pytest.raises(StaticCompilationError):
         compiler.compile_file("styles/test-compass-import.scss")
