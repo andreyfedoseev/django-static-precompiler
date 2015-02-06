@@ -1,384 +1,320 @@
-from django.core import management
-from mock import patch, MagicMock, PropertyMock
-from static_precompiler.compilers.base import BaseCompiler
 from static_precompiler.models import Dependency
+from static_precompiler.compilers.base import BaseCompiler
 from static_precompiler.settings import OUTPUT_DIR, ROOT
+from pretend import call_recorder, call
 import os
-import shutil
-import unittest
+import pytest
 
 
-class BaseCompilerTestCase(unittest.TestCase):
+def test_is_supported(monkeypatch):
 
-    def setUp(self):
-        from django.conf import settings as django_settings
-        self.django_settings = django_settings
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.input_extension", ".foo")
+    compiler = BaseCompiler()
 
-        output_dir = os.path.join(self.django_settings.STATIC_ROOT, OUTPUT_DIR)
+    assert compiler.is_supported("test.foo") is True
+    assert compiler.is_supported("test.bar") is False
+    assert compiler.is_supported("foo.test") is False
 
-        # Remove the output directory if it exists to start from scratch
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
 
-        management.call_command('syncdb', interactive=False, verbosity=0)
+def test_get_output_filename(monkeypatch):
 
-    def tearDown(self):
-        output_dir = os.path.join(self.django_settings.STATIC_ROOT, OUTPUT_DIR)
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.input_extension", ".coffee")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.output_extension", ".js")
 
-        # Remove the output directory
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
+    compiler = BaseCompiler()
+    assert compiler.get_output_filename("dummy.coffee") == "dummy.js"
+    assert compiler.get_output_filename("dummy.coffee.coffee") == "dummy.coffee.js"
 
-        management.call_command('flush', interactive=False, verbosity=0)
 
-    def test_is_supported(self):
+def test_get_full_source_path():
+    compiler = BaseCompiler()
 
-        input_mock = PropertyMock(return_value="coffee")
+    root = os.path.dirname(__file__)
 
-        class IsSupportedTestCompiler(BaseCompiler):
-            input_extension = input_mock
+    assert compiler.get_full_source_path("scripts/test.coffee") == os.path.join(root, "static", "scripts",
+                                                                                "test.coffee")
 
-        compiler = IsSupportedTestCompiler()
-        self.assertEqual(compiler.is_supported("dummy.coffee"), True)
-        self.assertEqual(compiler.is_supported("dummy.js"), False)
-        input_mock.assert_called_with()
+    with pytest.raises(ValueError):
+        compiler.get_full_source_path("scripts/does-not-exist.coffee")
 
-    def test_get_output_filename(self):
-
-        input_mock = PropertyMock(return_value="coffee")
-        output_mock = PropertyMock(return_value="js")
-
-        class GetOutputFilenameTestCompiler(BaseCompiler):
-            input_extension = input_mock
-            output_extension = output_mock
-
-        compiler = GetOutputFilenameTestCompiler()
-        self.assertEqual(
-            compiler.get_output_filename("dummy.coffee"),
-            "dummy.js"
+    assert compiler.get_full_source_path("another_test.coffee") == os.path.normpath(
+        os.path.join(
+            root,
+            "staticfiles_dir",
+            "another_test.coffee"
         )
-        self.assertEqual(
-            compiler.get_output_filename("dummy.coffee.coffee"),
-            "dummy.coffee.js"
+    )
+
+    assert compiler.get_full_source_path("prefix/another_test.coffee") == os.path.normpath(
+        os.path.join(
+            root,
+            "staticfiles_dir_with_prefix",
+            "another_test.coffee"
         )
-        input_mock.assert_called_with()
-        output_mock.assert_called_with()
+    )
 
-    def test_get_full_source_path(self):
 
-        compiler = BaseCompiler()
+def test_get_output_path(monkeypatch):
 
-        root = os.path.dirname(__file__)
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_filename",
+                        lambda self, source_path: source_path.replace(".coffee", ".js"))
 
-        self.assertEqual(
-            compiler.get_full_source_path("scripts/test.coffee"),
-            os.path.join(root, "static", "scripts", "test.coffee"),
-        )
+    compiler = BaseCompiler()
+    assert compiler.get_output_path("scripts/test.coffee") == OUTPUT_DIR + "/scripts/test.js"
 
-        # Source file doesn't exist
-        self.assertRaises(
-            ValueError,
-            lambda: compiler.get_full_source_path("scripts/does-not-exist.coffee")
-        )
 
-        self.assertEqual(
-            compiler.get_full_source_path("another_test.coffee"),
-            os.path.normpath(
-                os.path.join(
-                    root,
-                    "staticfiles_dir",
-                    "another_test.coffee"
-                )
-            )
-        )
+def test_get_full_output_path(monkeypatch):
 
-        self.assertEqual(
-            compiler.get_full_source_path("prefix/another_test.coffee"),
-            os.path.normpath(
-                os.path.join(
-                    root,
-                    "staticfiles_dir_with_prefix",
-                    "another_test.coffee"
-                )
-            )
-        )
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_path",
+                        lambda self, source_path: OUTPUT_DIR + "/dummy.js")
 
-    def test_get_output_path(self):
-        compiler = BaseCompiler()
-        compiler.get_output_filename = MagicMock(
-            side_effect=lambda source_path: source_path.replace(".coffee", ".js")
-        )
-        self.assertEqual(
-            compiler.get_output_path("scripts/test.coffee"),
-            OUTPUT_DIR + "/scripts/test.js"
-        )
+    compiler = BaseCompiler()
+    assert compiler.get_full_output_path("dummy.coffee") == os.path.join(ROOT, OUTPUT_DIR, "dummy.js")
 
-    def test_get_full_output_path(self):
-        compiler = BaseCompiler()
-        compiler.get_output_path = MagicMock(
-            return_value=OUTPUT_DIR + "/dummy.js"
-        )
-        self.assertEqual(
-            compiler.get_full_output_path("dummy.coffee"),
-            os.path.join(ROOT, OUTPUT_DIR, "dummy.js")
-        )
 
-    def test_get_source_mtime(self):
-        compiler = BaseCompiler()
-        compiler.get_full_source_path = MagicMock(return_value="dummy.coffee")
-        with patch("static_precompiler.compilers.base.get_mtime") as mocked_get_mtime:
-            mocked_get_mtime.return_value = 1
-            self.assertEqual(compiler.get_source_mtime("dummy.coffee"), 1)
-            mocked_get_mtime.assert_called_with("dummy.coffee")
-            #noinspection PyUnresolvedReferences
-            compiler.get_full_source_path.assert_called_with("dummy.coffee")
+def test_get_source_mtime(monkeypatch):
 
-    def test_get_output_mtime(self):
-        compiler = BaseCompiler()
-        compiler.get_full_output_path = MagicMock(return_value="dummy.js")
-        with patch("os.path.exists") as mocked_os_path_exists:
-            mocked_os_path_exists.return_value = False
-            self.assertEqual(compiler.get_output_mtime("dummy.coffee"), None)
-            mocked_os_path_exists.assert_called_with("dummy.js")
-            mocked_os_path_exists.return_value = True
-            with patch("static_precompiler.compilers.base.get_mtime") as mocked_get_mtime:
-                mocked_get_mtime.return_value = 1
-                self.assertEqual(compiler.get_output_mtime("dummy.coffee"), 1)
-                mocked_get_mtime.assert_called_with("dummy.js")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_full_source_path",
+                        lambda self, source_path: "dummy.coffee")
+    monkeypatch.setattr("static_precompiler.compilers.base.get_mtime", lambda filename: 1)
 
-    def test_should_compile(self):
-        compiler = BaseCompiler()
-        compiler.get_source_mtime = MagicMock()
-        compiler.get_output_mtime = MagicMock()
-        compiler.get_dependencies = MagicMock(return_value=["B", "C"])
-        mtimes = dict(
-            A=1,
-            B=3,
-            C=5,
-        )
-        compiler.get_source_mtime.side_effect = lambda x: mtimes[x]
+    compiler = BaseCompiler()
+    assert compiler.get_source_mtime("dummy.coffee") == 1
 
-        compiler.get_output_mtime.return_value = None
-        self.assertTrue(compiler.should_compile("A"))
 
-        compiler.supports_dependencies = True
+def test_get_output_mtime(monkeypatch):
 
-        compiler.get_output_mtime.return_value = 6
-        self.assertFalse(compiler.should_compile("A"))
+    compiler = BaseCompiler()
 
-        compiler.get_output_mtime.return_value = 5
-        self.assertTrue(compiler.should_compile("A"))
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_full_output_path",
+                        lambda self, output_path: "dummy.js")
+    monkeypatch.setattr("os.path.exists", lambda path: False)
 
-        compiler.get_output_mtime.return_value = 4
-        self.assertTrue(compiler.should_compile("A"))
+    assert compiler.get_output_mtime("dummy.coffee") is None
 
-        compiler.get_output_mtime.return_value = 2
-        self.assertTrue(compiler.should_compile("A"))
+    monkeypatch.setattr("os.path.exists", lambda path: True)
 
-        compiler.supports_dependencies = False
+    monkeypatch.setattr("static_precompiler.compilers.base.get_mtime", lambda filename: 1)
+    assert compiler.get_output_mtime("dummy.coffee") == 1
 
-        compiler.get_output_mtime.return_value = 2
-        self.assertFalse(compiler.should_compile("A"))
 
-        compiler.get_output_mtime.return_value = 1
-        self.assertTrue(compiler.should_compile("A"))
+def test_should_compile(monkeypatch):
+    compiler = BaseCompiler()
 
-        compiler.get_output_mtime.return_value = 0
-        self.assertTrue(compiler.should_compile("A"))
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_dependencies",
+                        lambda self, source_path: ["B", "C"])
 
-        compiler.get_source_mtime.reset_mock()
-        with patch("static_precompiler.compilers.base.DISABLE_AUTO_COMPILE"):
-            self.assertFalse(compiler.should_compile("A"))
-            self.assertFalse(compiler.get_source_mtime.called)
+    mtimes = dict(
+        A=1,
+        B=3,
+        C=5,
+    )
 
-    def test_get_source(self):
-        compiler = BaseCompiler()
-        self.assertEqual(
-            compiler.get_source("scripts/test.coffee"),
-            'console.log "Hello, World!"'
-        )
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_source_mtime", lambda self, x: mtimes[x])
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: None)
 
-    def test_write_output(self):
-        compiler = BaseCompiler()
-        output_path = os.path.join(ROOT, OUTPUT_DIR, "dummy.js")
-        self.assertFalse(os.path.exists(output_path))
-        compiler.get_full_output_path = MagicMock(return_value=output_path)
-        compiler.write_output("compiled", "dummy.coffee")
-        self.assertTrue(os.path.exists(output_path))
-        with open(output_path) as output:
-            self.assertEqual(output.read(), "compiled")
+    assert compiler.should_compile("A") is True
 
-    def test_compile_source(self):
-        compiler = BaseCompiler()
-        self.assertRaises(
-            NotImplementedError,
-            lambda: compiler.compile_source("source")
-        )
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.supports_dependencies", True)
 
-    def test_postprocess(self):
-        compiler = BaseCompiler()
-        self.assertEqual(compiler.postprocess("compiled", "dummy.coffee"), "compiled")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 6)
+    assert compiler.should_compile("A") is False
 
-    #noinspection PyUnresolvedReferences
-    def test_compile(self):
-        compiler = BaseCompiler()
-        compiler.is_supported = MagicMock()
-        compiler.should_compile = MagicMock()
-        compiler.compile_file = MagicMock(return_value="compiled")
-        compiler.write_output = MagicMock()
-        compiler.get_output_path = MagicMock(return_value="dummy.js")
-        compiler.postprocess = MagicMock(
-            side_effect=lambda compiled, source_path: compiled
-        )
-        compiler.update_dependencies = MagicMock()
-        compiler.find_dependencies = MagicMock(return_value=["A", "B"])
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 5)
+    assert compiler.should_compile("A") is True
 
-        compiler.is_supported.return_value = False
-        self.assertRaises(ValueError, lambda: compiler.compile("dummy.coffee"))
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 4)
+    assert compiler.should_compile("A") is True
 
-        self.assertEqual(compiler.compile_file.call_count, 0)
-        self.assertEqual(compiler.postprocess.call_count, 0)
-        self.assertEqual(compiler.write_output.call_count, 0)
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 2)
+    assert compiler.should_compile("A") is True
 
-        compiler.is_supported.return_value = True
-        compiler.should_compile.return_value = False
-        self.assertEqual(compiler.compile("dummy.coffee"), "dummy.js")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.supports_dependencies", False)
 
-        self.assertEqual(compiler.compile_file.call_count, 0)
-        self.assertEqual(compiler.postprocess.call_count, 0)
-        self.assertEqual(compiler.write_output.call_count, 0)
+    assert compiler.should_compile("A") is False
 
-        compiler.should_compile.return_value = True
-        self.assertEqual(compiler.compile("dummy.coffee"), "dummy.js")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 1)
+    assert compiler.should_compile("A") is True
 
-        self.assertEqual(compiler.compile_file.call_count, 1)
-        compiler.compile_file.assert_called_with("dummy.coffee")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 0)
+    assert compiler.should_compile("A") is True
 
-        self.assertEqual(compiler.postprocess.call_count, 1)
-        compiler.postprocess.assert_called_with("compiled", "dummy.coffee")
+    monkeypatch.setattr("static_precompiler.compilers.base.DISABLE_AUTO_COMPILE", True)
+    assert compiler.should_compile("A") is False
 
-        self.assertEqual(compiler.write_output.call_count, 1)
-        compiler.write_output.assert_called_with("compiled", "dummy.coffee")
 
-        self.assertEqual(compiler.update_dependencies.call_count, 0)
+def test_get_source():
+    compiler = BaseCompiler()
+    assert compiler.get_source("scripts/test.coffee") == 'console.log "Hello, World!"'
 
-        compiler.supports_dependencies = True
+
+def test_write_output(monkeypatch, tmpdir):
+    compiler = BaseCompiler()
+
+    output_path = os.path.join(tmpdir.dirname, "dummy.js")
+    assert os.path.exists(output_path) is False
+
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_full_output_path",
+                        lambda self, x: output_path)
+
+    compiler.write_output("compiled", "dummy.coffee")
+    assert os.path.exists(output_path) is True
+
+    with open(output_path) as output:
+        assert output.read() == "compiled"
+
+
+def test_compile_source():
+    compiler = BaseCompiler()
+    with pytest.raises(NotImplementedError):
+        compiler.compile_source("source")
+
+
+def test_postprocess():
+    compiler = BaseCompiler()
+    assert compiler.postprocess("compiled", "dummy.coffee") == "compiled"
+
+
+def test_compile(monkeypatch):
+    compiler = BaseCompiler()
+
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.compile_file",
+                        call_recorder(lambda self, *args: "compiled"))
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.write_output",
+                        call_recorder(lambda self, *args: None))
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.postprocess",
+                        call_recorder(lambda self, compiled, source_path: compiled))
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.update_dependencies",
+                        call_recorder(lambda self, *args: None))
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.find_dependencies",
+                        call_recorder(lambda self, *args: ["A", "B"]))
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_path", lambda self, *args: "dummy.js")
+
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.is_supported", lambda self, *args: False)
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile", lambda self, *args, **kwargs: True)
+
+    with pytest.raises(ValueError):
         compiler.compile("dummy.coffee")
-        compiler.find_dependencies.assert_called_with("dummy.coffee")
-        compiler.update_dependencies.assert_called_with("dummy.coffee", ["A", "B"])
 
-    def test_compile_lazy(self):
-        compiler = BaseCompiler()
-        compiler.compile = MagicMock()
-        compiler.compile.return_value = "dummy.js"
+    # noinspection PyUnresolvedReferences
+    assert compiler.compile_file.calls == []
+    # noinspection PyUnresolvedReferences
+    assert compiler.write_output.calls == []
+    # noinspection PyUnresolvedReferences
+    assert compiler.postprocess.calls == []
 
-        lazy_compiled = compiler.compile_lazy("dummy.coffee")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.is_supported", lambda self, *args: True)
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile", lambda self, *args, **kwargs: False)
 
-        # noinspection PyUnresolvedReferences
-        self.assertEqual(compiler.compile.call_count, 0)
+    assert compiler.compile("dummy.coffee") == "dummy.js"
+    # noinspection PyUnresolvedReferences
+    assert compiler.compile_file.calls == []
+    # noinspection PyUnresolvedReferences
+    assert compiler.write_output.calls == []
+    # noinspection PyUnresolvedReferences
+    assert compiler.postprocess.calls == []
 
-        self.assertEqual(str(lazy_compiled), "dummy.js")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile", lambda self, *args, **kwargs: True)
+    assert compiler.compile("dummy.coffee") == "dummy.js"
 
-        # noinspection PyUnresolvedReferences
-        self.assertEqual(compiler.compile.call_count, 1)
-        # noinspection PyUnresolvedReferences
-        compiler.compile.assert_called_with("dummy.coffee")
+    # noinspection PyUnresolvedReferences
+    assert compiler.compile_file.calls == [call(compiler, "dummy.coffee")]
+    # noinspection PyUnresolvedReferences
+    assert compiler.write_output.calls == [call(compiler, "compiled", "dummy.coffee")]
+    # noinspection PyUnresolvedReferences
+    assert compiler.postprocess.calls == [call(compiler, "compiled", "dummy.coffee")]
 
-    def test_find_dependencies(self):
-        compiler = BaseCompiler()
-        self.assertRaises(
-            NotImplementedError,
-            lambda: compiler.find_dependencies("dummy.coffee")
-        )
+    # noinspection PyUnresolvedReferences
+    assert compiler.update_dependencies.calls == []
 
-    def test_get_dependencies(self):
-        compiler = BaseCompiler()
-        self.assertFalse(Dependency.objects.exists())
-
-        self.assertEqual(
-            compiler.get_dependencies("spam.scss"),
-            [],
-        )
-
-        Dependency.objects.create(
-            source="spam.scss",
-            depends_on="ham.scss"
-        )
-        Dependency.objects.create(
-            source="spam.scss",
-            depends_on="eggs.scss"
-        )
-
-        self.assertEqual(
-            compiler.get_dependencies("spam.scss"),
-            ["eggs.scss", "ham.scss"],
-        )
-
-    def test_get_dependents(self):
-        compiler = BaseCompiler()
-        self.assertFalse(Dependency.objects.exists())
-
-        self.assertEqual(
-            compiler.get_dependents("spam.scss"),
-            [],
-        )
-
-        Dependency.objects.create(
-            source="ham.scss",
-            depends_on="spam.scss"
-        )
-        Dependency.objects.create(
-            source="eggs.scss",
-            depends_on="spam.scss"
-        )
-
-        self.assertEqual(
-            compiler.get_dependents("spam.scss"),
-            ["eggs.scss", "ham.scss"],
-        )
-
-    def test_update_dependencies(self):
-        compiler = BaseCompiler()
-
-        self.assertFalse(Dependency.objects.exists())
-
-        compiler.update_dependencies("A", ["B", "C"])
-        self.assertEqual(
-            sorted(Dependency.objects.values_list("source", "depends_on")),
-            [("A", "B"), ("A", "C")]
-        )
-
-        compiler.update_dependencies("A", ["B", "C", "D"])
-        self.assertEqual(
-            sorted(Dependency.objects.values_list("source", "depends_on")),
-            [("A", "B"), ("A", "C"), ("A", "D")]
-        )
-
-        compiler.update_dependencies("A", ["E"])
-        self.assertEqual(
-            sorted(Dependency.objects.values_list("source", "depends_on")),
-            [("A", "E")]
-        )
-
-        compiler.update_dependencies("B", ["C"])
-        self.assertEqual(
-            sorted(Dependency.objects.values_list("source", "depends_on")),
-            [("A", "E"), ("B", "C")]
-        )
-
-        compiler.update_dependencies("A", [])
-        self.assertEqual(
-            sorted(Dependency.objects.values_list("source", "depends_on")),
-            [("B", "C")]
-        )
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.supports_dependencies", True)
+    compiler.supports_dependencies = True
+    compiler.compile("dummy.coffee")
+    # noinspection PyUnresolvedReferences
+    assert compiler.find_dependencies.calls == [call(compiler, "dummy.coffee")]
+    # noinspection PyUnresolvedReferences
+    assert compiler.update_dependencies.calls == [call(compiler, "dummy.coffee", ["A", "B"])]
 
 
-def suite():
-    loader = unittest.TestLoader()
-    test_suite = unittest.TestSuite()
-    test_suite.addTest(loader.loadTestsFromTestCase(BaseCompilerTestCase))
-    return test_suite
+def test_compile_lazy(monkeypatch):
+    compiler = BaseCompiler()
+
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.compile",
+                        call_recorder(lambda self, *args: "dummy.js"))
+
+    lazy_compiled = compiler.compile_lazy("dummy.coffee")
+    # noinspection PyUnresolvedReferences
+    assert compiler.compile.calls == []
+
+    assert str(lazy_compiled) == "dummy.js"
+
+    # noinspection PyUnresolvedReferences
+    assert compiler.compile.calls == [call(compiler, "dummy.coffee")]
 
 
-if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+def test_find_dependencies():
+    compiler = BaseCompiler()
+    with pytest.raises(NotImplementedError):
+        compiler.find_dependencies("dummy.coffee")
+
+
+@pytest.mark.django_db
+def test_get_dependencies():
+    compiler = BaseCompiler()
+
+    assert Dependency.objects.exists() is False
+
+    assert compiler.get_dependencies("spam.scss") == []
+
+    Dependency.objects.create(
+        source="spam.scss",
+        depends_on="ham.scss"
+    )
+    Dependency.objects.create(
+        source="spam.scss",
+        depends_on="eggs.scss"
+    )
+
+    assert compiler.get_dependencies("spam.scss") == ["eggs.scss", "ham.scss"]
+
+
+@pytest.mark.django_db
+def test_get_dependents():
+    compiler = BaseCompiler()
+
+    assert Dependency.objects.exists() is False
+
+    assert compiler.get_dependents("spam.scss") == []
+
+    Dependency.objects.create(
+        source="ham.scss",
+        depends_on="spam.scss"
+    )
+    Dependency.objects.create(
+        source="eggs.scss",
+        depends_on="spam.scss"
+    )
+
+    assert compiler.get_dependents("spam.scss") == ["eggs.scss", "ham.scss"]
+
+
+@pytest.mark.django_db
+def test_update_dependencies():
+    compiler = BaseCompiler()
+
+    assert Dependency.objects.exists() is False
+
+    compiler.update_dependencies("A", ["B", "C"])
+    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("A", "B"), ("A", "C")]
+
+    compiler.update_dependencies("A", ["B", "C", "D"])
+    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("A", "B"), ("A", "C"), ("A", "D")]
+
+    compiler.update_dependencies("A", ["E"])
+    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("A", "E")]
+
+    compiler.update_dependencies("B", ["C"])
+    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("A", "E"), ("B", "C")]
+
+    compiler.update_dependencies("A", [])
+    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("B", "C")]

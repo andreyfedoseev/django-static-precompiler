@@ -1,20 +1,16 @@
 # coding: utf-8
-from mock import patch, MagicMock
+from pretend import call_recorder, call
 from static_precompiler.compilers import LESS
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.utils import normalize_path
 import os
-import unittest
+import pytest
 
 
-class LESSTestCase(unittest.TestCase):
+def test_compile_file():
+    compiler = LESS()
 
-    def test_compile_file(self):
-        compiler = LESS()
-
-        self.assertEqual(
-            compiler.compile_file("styles/test.less"),
-            """p {
+    assert compiler.compile_file("styles/test.less") == """p {
   font-size: 15px;
 }
 p a {
@@ -24,42 +20,39 @@ h1 {
   color: blue;
 }
 """
-        )
 
-    def test_compile_source(self):
-        compiler = LESS()
 
-        self.assertEqual(
-            compiler.compile_source("p {font-size: 15px; a {color: red;}}"),
-            "p {\n  font-size: 15px;\n}\np a {\n  color: red;\n}\n"
-        )
+def test_compile_source():
+    compiler = LESS()
 
-        self.assertRaises(
-            StaticCompilationError,
-            lambda: compiler.compile_source('invalid syntax')
-        )
+    assert compiler.compile_source("p {font-size: 15px; a {color: red;}}") == "p {\n  font-size: 15px;\n}\np a {\n  color: red;\n}\n"
 
-        # Test non-ascii
-        NON_ASCII = """.external_link:first-child:before {
+    with pytest.raises(StaticCompilationError):
+        compiler.compile_source('invalid syntax')
+
+    # Test non-ascii
+    NON_ASCII = """.external_link:first-child:before {
   content: "Zobacz także:";
   background: url(картинка.png);
 }
 """
-        self.assertEqual(
-            compiler.compile_source(NON_ASCII),
-            NON_ASCII
-        )
+    assert compiler.compile_source(NON_ASCII) == NON_ASCII
 
-    def test_postprocesss(self):
-        compiler = LESS()
-        with patch("static_precompiler.compilers.less.convert_urls") as mocked_convert_urls:
-            mocked_convert_urls.return_value = "spam"
-            self.assertEqual(compiler.postprocess("ham", "eggs"), "spam")
-            mocked_convert_urls.assert_called_with("ham", "eggs")
 
-    def test_find_imports(self):
-        compiler = LESS()
-        source = """
+def test_postprocesss(monkeypatch):
+    compiler = LESS()
+
+    convert_urls = call_recorder(lambda *args: "spam")
+
+    monkeypatch.setattr("static_precompiler.compilers.less.convert_urls", convert_urls)
+
+    assert compiler.postprocess("ham", "eggs") == "spam"
+    assert convert_urls.calls == [call("ham", "eggs")]
+
+
+def test_find_imports():
+    compiler = LESS()
+    source = """
 @import "foo.css";
 @import " ";
 @import "foo.less";
@@ -74,93 +67,57 @@ h1 {
 @import 'single-quotes.less';
 @import "no-extension";
 """
-        expected = sorted([
-            "foo.less",
-            "reference.less",
-            "inline.css",
-            "less.less",
-            "once.less",
-            "multiple.less",
-            "screen.less",
-            "single-quotes.less",
-            "no-extension",
-        ])
-        self.assertEqual(
-            compiler.find_imports(source),
-            expected
-        )
-
-    def test_locate_imported_file(self):
-        compiler = LESS()
-        with patch("os.path.exists") as mocked_os_path_exist:
-
-            root = os.path.dirname(__file__)
-
-            existing_files = set()
-            for f in ("A/B.less", "D.less"):
-                existing_files.add(os.path.join(root, "static", normalize_path(f)))
-
-            mocked_os_path_exist.side_effect = lambda x: x in existing_files
-
-            self.assertEqual(
-                compiler.locate_imported_file("A", "B.less"),
-                "A/B.less"
-            )
-            self.assertEqual(
-                compiler.locate_imported_file("E", "../D"),
-                "D.less"
-            )
-            self.assertEqual(
-                compiler.locate_imported_file("E", "../A/B.less"),
-                "A/B.less"
-            )
-            self.assertEqual(
-                compiler.locate_imported_file("", "D.less"),
-                "D.less"
-            )
-            self.assertRaises(
-                StaticCompilationError,
-                lambda: compiler.locate_imported_file("", "Z.less")
-            )
-
-    def test_find_dependencies(self):
-        compiler = LESS()
-        files = {
-            "A.less": "@import 'B/C.less';",
-            "B/C.less": "@import '../E';",
-            "E.less": "p {color: red;}",
-        }
-        compiler.get_source = MagicMock(side_effect=lambda x: files[x])
-
-        root = os.path.dirname(__file__)
-
-        existing_files = set()
-        for f in files:
-            existing_files.add(os.path.join(root, "static", normalize_path(f)))
-
-        with patch("os.path.exists") as mocked_os_path_exist:
-            mocked_os_path_exist.side_effect = lambda x: x in existing_files
-
-            self.assertEqual(
-                compiler.find_dependencies("A.less"),
-                ["B/C.less", "E.less"]
-            )
-            self.assertEqual(
-                compiler.find_dependencies("B/C.less"),
-                ["E.less"]
-            )
-            self.assertEqual(
-                compiler.find_dependencies("E.less"),
-                []
-            )
+    expected = sorted([
+        "foo.less",
+        "reference.less",
+        "inline.css",
+        "less.less",
+        "once.less",
+        "multiple.less",
+        "screen.less",
+        "single-quotes.less",
+        "no-extension",
+    ])
+    assert compiler.find_imports(source) == expected
 
 
-def suite():
-    loader = unittest.TestLoader()
-    test_suite = unittest.TestSuite()
-    test_suite.addTest(loader.loadTestsFromTestCase(LESSTestCase))
-    return test_suite
+def test_locate_imported_file(monkeypatch):
+    compiler = LESS()
+
+    root = os.path.dirname(__file__)
+
+    existing_files = set()
+    for f in ("A/B.less", "D.less"):
+        existing_files.add(os.path.join(root, "static", normalize_path(f)))
+
+    monkeypatch.setattr("os.path.exists", lambda path: path in existing_files)
+
+    assert compiler.locate_imported_file("A", "B.less") == "A/B.less"
+    assert compiler.locate_imported_file("E", "../D") == "D.less"
+    assert compiler.locate_imported_file("E", "../A/B.less") == "A/B.less"
+    assert compiler.locate_imported_file("", "D.less") == "D.less"
+
+    with pytest.raises(StaticCompilationError):
+        compiler.locate_imported_file("", "Z.less")
 
 
-if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+def test_find_dependencies(monkeypatch):
+    compiler = LESS()
+    files = {
+        "A.less": "@import 'B/C.less';",
+        "B/C.less": "@import '../E';",
+        "E.less": "p {color: red;}",
+    }
+    monkeypatch.setattr("static_precompiler.compilers.less.LESS.get_source", lambda self, x: files[x])
+
+    root = os.path.dirname(__file__)
+
+    existing_files = set()
+    for f in files:
+        existing_files.add(os.path.join(root, "static", normalize_path(f)))
+
+    monkeypatch.setattr("os.path.exists", lambda path: path in existing_files)
+
+    assert compiler.find_dependencies("A.less") == ["B/C.less", "E.less"]
+    assert compiler.find_dependencies("B/C.less") == ["E.less"]
+    assert compiler.find_dependencies("E.less") == []

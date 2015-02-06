@@ -1,5 +1,3 @@
-# noinspection PyUnresolvedReferences
-from django.conf.global_settings import *
 import os
 
 DEBUG = True
