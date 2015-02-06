@@ -49,7 +49,7 @@ def _warn(old, new):
     warnings.warn(
         "{%% %s %%} tag has been deprecated, use {%% %s %%} "
         "from `compile_static` template tag library instead." % (old, new),
-        UserWarning,
+        DeprecationWarning,
     )
 
 
