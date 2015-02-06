@@ -23,7 +23,7 @@ def test_get_compilers(monkeypatch):
 
     monkeypatch.setattr("static_precompiler.utils.COMPILERS", ["static_precompiler.compilers.CoffeeScript"])
     compilers = get_compilers()
-    assert compilers.keys() == ["coffeescript"]
+    assert list(compilers.keys()) == ["coffeescript"]
     assert isinstance(compilers["coffeescript"], CoffeeScript)
 
 
