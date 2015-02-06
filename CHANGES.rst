@@ -12,7 +12,7 @@ Dev
   * ``SCSS_EXECUTABLE``
   * ``SCSS_USE_COMPASS``
   * ``LESS_EXECUTABLE``
-
+- ``-C`` (``--no-cache``) flag is removed from SASS/SCSS compilers
 
 0.8
 ===
