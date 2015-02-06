@@ -18,4 +18,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "shell", path: "provision.sh", privileged: false
 
+  config.vm.provider "parallels" do |v, override|
+    override.vm.box = "parallels/ubuntu-14.04"
+    override.vm.box_url = "https://vagrantcloud.com/parallels/boxes/ubuntu-14.04"
+  end
+
 end
