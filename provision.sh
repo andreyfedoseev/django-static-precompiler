@@ -5,7 +5,7 @@
 ############
 
 sudo aptitude update
-sudo aptitude install -y virtualenvwrapper python-dev ruby-dev node npm
+sudo aptitude install -y virtualenvwrapper python-dev ruby-dev node npm sqlite3
 
 sudo gem install sass -v 3.4.9
 sudo gem install compass -v 1.0.1
