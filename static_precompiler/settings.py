@@ -28,6 +28,11 @@ if not ROOT:
 OUTPUT_DIR = getattr(settings, "STATIC_PRECOMPILER_OUTPUT_DIR",
                      "COMPILED")
 
+# lambda site_id: site_id
+MULTISITE_PATH_PROVIDER = getattr(settings, "MULTISITE_PATH_PROVIDER", None)
+
+SITE_ID = getattr(settings, "SITE_ID", None)
+
 # Use cache for inline compilation
 USE_CACHE = getattr(settings, "STATIC_PRECOMPILER_USE_CACHE", True)
 
@@ -45,6 +50,8 @@ COFFEESCRIPT_EXECUTABLE = getattr(settings, "COFFEESCRIPT_EXECUTABLE", "coffee")
 SCSS_EXECUTABLE = getattr(settings, "SCSS_EXECUTABLE", "sass")
 SCSS_USE_COMPASS = getattr(settings, "SCSS_USE_COMPASS", False)
 LESS_EXECUTABLE = getattr(settings, "LESS_EXECUTABLE", "lessc")
+
+LESS_GLOBAL_VARS = getattr(settings, "LESS_GLOBAL_VARS", [])
 
 PREPEND_STATIC_URL = getattr(settings, 'STATIC_PRECOMPILER_PREPEND_STATIC_URL', False)
 
