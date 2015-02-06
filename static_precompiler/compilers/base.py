@@ -262,7 +262,7 @@ class BaseCompiler(object):
         :type source_path: str
         :returns: list
         """
-        raise NotImplementedError
+        return []
 
     #noinspection PyMethodMayBeStatic
     def get_dependencies(self, source_path):

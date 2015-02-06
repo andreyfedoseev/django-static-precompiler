@@ -254,8 +254,7 @@ def test_compile_lazy(monkeypatch):
 
 def test_find_dependencies():
     compiler = BaseCompiler()
-    with pytest.raises(NotImplementedError):
-        compiler.find_dependencies("dummy.coffee")
+    assert compiler.find_dependencies("dummy.coffee") == []
 
 
 @pytest.mark.django_db
