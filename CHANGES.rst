@@ -2,6 +2,18 @@
 Changes
 =======
 
+Dev
+===
+
+- Compiler options are specified with ``STATIC_PRECOMPILER_COMPILERS`` setting.
+- **The following settings DEPRECATED:**
+
+  * ``COFFEESCRIPT_EXECUTABLE``
+  * ``SCSS_EXECUTABLE``
+  * ``SCSS_USE_COMPASS``
+  * ``LESS_EXECUTABLE``
+
+
 0.8
 ===
 

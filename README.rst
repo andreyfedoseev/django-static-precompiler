@@ -23,7 +23,7 @@ Installation
    * On Django >= 1.7 run ``migrate static_precompiler``.
 
 3. Make sure that you have necessary compilers installed.
-4. Optionally, you can specify the full path to compilers (for example ``SCSS_EXECUTABLE='/usr/local/bin/sass'``).
+4. Optionally, you can specify the full path to compilers (see below).
 5. In case you use Django’s staticfiles contrib app you have to add static-precompiler’s file finder to the ``STATICFILES_FINDERS`` setting, for example::
 
     STATICFILES_FINDERS = (
@@ -65,7 +65,7 @@ renders to::
 =======================
 
 Compiles everything between ``{% inlinecompile %}`` and ``{% endinlinecompile %}`` with compiler specified by name.
-Compiler needs to be specified in ``STATIC_PRECOMPILER_COMPILERS`` settings. Names for default compilers are:
+Compiler must be specified in ``STATIC_PRECOMPILER_COMPILERS`` setting. Names for default compilers are:
 
 * ``coffeescript``
 * ``less``
@@ -106,6 +106,14 @@ General settings
         'static_precompiler.compilers.LESS',
     )
 
+  You can specify compiler options using the following format::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffeescript"}),
+        ('static_precompiler.compilers.SCSS', {"compass_enabled": True}),
+    )
+
+
 ``STATIC_PRECOMPILER_ROOT``
   Controls the absolute file path that compiled files will be written to. Default: ``STATIC_ROOT``.
 
@@ -137,23 +145,44 @@ Compiler specific settings
 CoffeeScript
 ------------
 
-``COFFEESCRIPT_EXECUTABLE``
+``executable``
   Path to CoffeeScript compiler executable. Default: ``"coffee"``.
+
+Example::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffee"}),
+    )
+
 
 SASS / SCSS
 -----------
 
-``SCSS_EXECUTABLE``
+``executable``
   Path to SASS compiler executable. Default: "sass".
 
-``SCSS_USE_COMPASS``
+``compass_enabled``
   Boolean. Wheter to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
+
+Example::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.compilers.SCSS', {"executable": "/usr/bin/sass", "compass_enabled": True}),
+    )
+
 
 LESS
 ----
 
-``LESS_EXECUTABLE``
+``executable``
   Path to LESS compiler executable. Default: ``"lessc"``.
+
+Example::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.less.LESS', {"executable": "/usr/bin/lessc"),
+    )
+
 
 Usage with forms media
 ======================
@@ -198,7 +227,7 @@ Troubleshooting
 ===============
 
 If you get ``[Errno 2] No such file or directory`` make sure that you have the required compiler installed. For all
-compilers you can specify the path to executable file, for example ``LESS_EXECUTABLE = "/usr/local/bin/lessc"``
+compilers you can specify the path to executable file using the ``executable`` option, see examples above.
 
 If you run ``migrate`` and get ``ImportError: cannot import name migrations`` then most likely you use Django < 1.7 and
 South < 1.0. You should either upgrade to Django 1.7+ or use South 1.0.
