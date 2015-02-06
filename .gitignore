@@ -14,3 +14,4 @@ test_project/test_project/static/COMPILED
 static_precompiler/tests/static/COMPILED
 /.vagrant/
 /.vagrant.bak/
+.sass-cache/

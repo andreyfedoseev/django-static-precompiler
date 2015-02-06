@@ -32,7 +32,6 @@ class SCSS(BaseCompiler):
         full_source_path = self.get_full_source_path(source_path)
         args = [
             self.executable,
-            "-C",
             full_source_path,
         ]
 
@@ -53,7 +52,6 @@ class SCSS(BaseCompiler):
             self.executable,
             "-s",
             "--scss",
-            "-C",
         ]
 
         if self.is_compass_enabled:
@@ -226,7 +224,6 @@ class SASS(SCSS):
         args = [
             self.executable,
             "-s",
-            "-C",
         ]
 
         if self.is_compass_enabled:
