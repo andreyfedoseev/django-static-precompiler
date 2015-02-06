@@ -51,8 +51,9 @@ class SCSS(BaseCompiler):
         args = [
             self.executable,
             "-s",
-            "--scss",
         ]
+        if self.executable.endswith("sass"):
+            args.append("--scss")
 
         if self.is_compass_enabled:
             args.append("--compass")
@@ -225,6 +226,8 @@ class SASS(SCSS):
             self.executable,
             "-s",
         ]
+        if self.executable.endswith("scss"):
+            args.append("--sass")
 
         if self.is_compass_enabled:
             args.append("--compass")

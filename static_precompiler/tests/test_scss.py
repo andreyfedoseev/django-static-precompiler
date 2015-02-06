@@ -1,6 +1,6 @@
 # coding: utf-8
 from pretend import call_recorder, call
-from static_precompiler.compilers import SCSS
+from static_precompiler.compilers import SCSS, SASS
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.utils import normalize_path, fix_line_breaks
 import os
@@ -14,9 +14,14 @@ def test_compile_file():
 
 
 def test_compile_source():
-    compiler = SCSS()
+    compiler = SCSS(executable="scss")
+    assert fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
 
-    fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    compiler = SCSS(executable="sass")
+    assert fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+
+    with pytest.raises(StaticCompilationError):
+        compiler.compile_source('invalid syntax')
 
     with pytest.raises(StaticCompilationError):
         compiler.compile_source('invalid syntax')
@@ -28,6 +33,11 @@ def test_compile_source():
   background: url(картинка.png); }
 """
     assert fix_line_breaks(compiler.compile_source(NON_ASCII)) == NON_ASCII
+
+    compiler = SASS(executable="sass")
+    assert fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    compiler = SASS(executable="scss")
+    assert fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
 
 
 def test_postprocesss(monkeypatch):
