@@ -22,7 +22,9 @@ before_install:
 install:
   - pip install coveralls
   - pip install django==$DJANGO_VERSION
-  - pip install mock
+  - pip install pytest
+  - pip install pytest-django
+  - pip install pretend
   - pip install watchdog
 script:
   coverage run --source=static_precompiler setup.py test
