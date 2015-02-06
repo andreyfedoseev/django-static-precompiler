@@ -1,7 +1,10 @@
 from django.core.cache import get_cache as base_get_cache, cache as default_cache
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import smart_str, smart_bytes
-from django.utils.importlib import import_module
+try:
+    from importlib import import_module
+except ImportError:
+    from django.utils.importlib import import_module
 from hashlib import md5
 from static_precompiler.exceptions import UnsupportedFile, CompilerNotFound
 from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS, \
