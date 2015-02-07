@@ -21,7 +21,7 @@ def test_compilestatic_command():
 
     output_path = os.path.join(ROOT, OUTPUT_DIR)
 
-    tree = [(root[len(output_path):], dirs, files) for root, dirs, files in os.walk(output_path)]
+    tree = [(root[len(output_path):], sorted(dirs), sorted(files)) for root, dirs, files in os.walk(output_path)]
 
     assert tree == [('', ['scripts', 'styles'], ['another_test.js', 'test-compass.css']),
                     ('/scripts', [], ['test.js']),
