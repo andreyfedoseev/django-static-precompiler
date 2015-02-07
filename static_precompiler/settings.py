@@ -26,8 +26,7 @@ if not ROOT:
     raise ImproperlyConfigured("You must specify either STATIC_ROOT or STATIC_PRECOMPILER_ROOT folder.")
 
 
-OUTPUT_DIR = getattr(settings, "STATIC_PRECOMPILER_OUTPUT_DIR",
-                     "COMPILED")
+OUTPUT_DIR = getattr(settings, "STATIC_PRECOMPILER_OUTPUT_DIR", "COMPILED")
 
 # Use cache for inline compilation
 USE_CACHE = getattr(settings, "STATIC_PRECOMPILER_USE_CACHE", True)
