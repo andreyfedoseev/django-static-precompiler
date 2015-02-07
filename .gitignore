@@ -15,3 +15,5 @@ static_precompiler/tests/static/COMPILED
 /.vagrant/
 /.vagrant.bak/
 .sass-cache/
+
+/htmlcov/

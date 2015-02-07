@@ -42,4 +42,5 @@ echo -e "[global]\ndownload_cache = ~/.cache/pip" > ~/.pip/pip.conf
 
 pip install django==1.7.4
 pip install watchdog
+pip install pytest-cov
 pip install -e .
