@@ -13,6 +13,7 @@ Dev
   * ``SCSS_USE_COMPASS``
   * ``LESS_EXECUTABLE``
 - ``-C`` (``--no-cache``) flag is removed from SASS/SCSS compilers
+- Add ``STATIC_PRECOMPILER_LIST_FILES`` setting
 
 0.8
 ===

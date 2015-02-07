@@ -85,6 +85,11 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'test_project', 'static')
 STATIC_URL = '/static/'
 
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "static_precompiler.finders.StaticPrecompilerFinder",
+)
 
 LOGGING = {
     'version': 1,

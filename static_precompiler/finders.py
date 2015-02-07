@@ -1,6 +1,6 @@
 from django.contrib.staticfiles.finders import BaseStorageFinder
 from django.core.files.storage import FileSystemStorage
-from static_precompiler.settings import ROOT
+from static_precompiler.settings import ROOT, FINDER_LIST_FILES
 
 
 class StaticPrecompilerFileStorage(FileSystemStorage):
@@ -17,12 +17,12 @@ class StaticPrecompilerFileStorage(FileSystemStorage):
 
 class StaticPrecompilerFinder(BaseStorageFinder):
     """
-    A staticfiles finder that looks in STATIC_PRECOMPILER_ROOT
-    for compiled files, to be used during development
-    with staticfiles development file server or during
-    deployment.
+    A staticfiles finder that looks in STATIC_PRECOMPILER_ROOT for compiled files, to be used during development
+    with staticfiles development file server or during deployment.
     """
     storage = StaticPrecompilerFileStorage
 
     def list(self, ignore_patterns):
+        if FINDER_LIST_FILES:
+            return super(StaticPrecompilerFinder, self).list(ignore_patterns)
         return []
