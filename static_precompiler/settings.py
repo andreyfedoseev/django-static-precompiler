@@ -13,6 +13,7 @@ MTIME_DELAY = getattr(settings, "STATIC_PRECOMPILER_MTIME_DELAY", 10)  # 10 seco
 
 COMPILERS = getattr(settings, "STATIC_PRECOMPILER_COMPILERS", (
     "static_precompiler.compilers.CoffeeScript",
+    "static_precompiler.compilers.ES6Script",
     "static_precompiler.compilers.SASS",
     "static_precompiler.compilers.SCSS",
     "static_precompiler.compilers.LESS",
@@ -54,6 +55,7 @@ for deprecated_setting in (
 
 
 COFFEESCRIPT_EXECUTABLE = getattr(settings, "COFFEESCRIPT_EXECUTABLE", "coffee")
+ES6_EXECUTABLE = getattr(settings, "ES6_EXECUTABLE", "6to5")
 SCSS_EXECUTABLE = getattr(settings, "SCSS_EXECUTABLE", "sass")
 SCSS_USE_COMPASS = getattr(settings, "SCSS_USE_COMPASS", False)
 LESS_EXECUTABLE = getattr(settings, "LESS_EXECUTABLE", "lessc")
