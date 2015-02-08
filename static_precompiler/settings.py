@@ -17,6 +17,7 @@ COMPILERS = getattr(settings, "STATIC_PRECOMPILER_COMPILERS", (
     "static_precompiler.compilers.SASS",
     "static_precompiler.compilers.SCSS",
     "static_precompiler.compilers.LESS",
+    "static_precompiler.compilers.Stylus",
 ))
 
 ROOT = getattr(settings, "STATIC_PRECOMPILER_ROOT",

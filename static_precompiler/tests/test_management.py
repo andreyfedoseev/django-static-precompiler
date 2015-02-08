@@ -28,9 +28,14 @@ def test_compilestatic_command():
     compiled_files.sort()
 
     assert compiled_files == [
-        'another_test.js',
-        'scripts/test.js',
-        'styles/imported.css',
-        'styles/test.css',
-        'test-compass.css',
+        "another_test.js",
+        "scripts/test.js",
+        "styles/imported.css",
+        "styles/stylus/A.css",
+        "styles/stylus/B/C.css",
+        "styles/stylus/D.css",
+        "styles/stylus/E/F.css",
+        "styles/stylus/E/index.css",
+        "styles/test.css",
+        "test-compass.css",
     ]
