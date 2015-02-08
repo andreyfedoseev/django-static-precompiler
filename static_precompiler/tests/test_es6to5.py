@@ -1,7 +1,7 @@
 # coding: utf-8
 from static_precompiler.compilers.es6to5 import ES6To5
 from static_precompiler.exceptions import StaticCompilationError
-from test_coffeescript import clean_javascript
+from .test_coffeescript import clean_javascript
 import pytest
 
 
