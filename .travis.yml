@@ -17,6 +17,7 @@ matrix:
 before_install:
   - npm install -g coffee-script
   - npm install -g less@1.7.4
+  - npm install -g 6to5@3.5.3
   - gem install sass --version 3.3.14
   - gem install compass --version 1.0.1
 install:

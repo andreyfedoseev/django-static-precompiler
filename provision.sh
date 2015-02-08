@@ -17,6 +17,7 @@ fi
 
 sudo npm install -g coffee-script@1.7.1
 sudo npm install -g less@1.7.4
+sudo npm install -g 6to5@3.5.3
 
 
 ##############

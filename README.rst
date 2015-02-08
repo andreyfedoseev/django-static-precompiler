@@ -101,6 +101,7 @@ General settings
 
     STATIC_PRECOMPILER_COMPILERS = (
         'static_precompiler.compilers.CoffeeScript',
+        'static_precompiler.compilers.ES6To5',
         'static_precompiler.compilers.SASS',
         'static_precompiler.compilers.SCSS',
         'static_precompiler.compilers.LESS',
@@ -157,6 +158,19 @@ Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffee"}),
+    )
+
+
+6to5
+----
+
+``executable``
+  Path to 6to5 compiler executable. Default: ``"6to5"``.
+
+Example::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.compilers.ES6To5', {"executable": "/usr/bin/6to5"}),
     )
 
 
