@@ -2,7 +2,7 @@
 Changes
 =======
 
-Dev
+0.9
 ===
 
 - Compiler options are specified with ``STATIC_PRECOMPILER_COMPILERS`` setting.

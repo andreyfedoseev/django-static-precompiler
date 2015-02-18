@@ -9,6 +9,10 @@ It works with both inline code and external files.
    :target: https://travis-ci.org/andreyfedoseev/django-static-precompiler
    :alt: Build Status
 
+.. image:: https://readthedocs.org/projects/django-static-precompiler/badge/
+    :target: http://django-static-precompiler.readthedocs.org/
+    :alt: Documentation
+
 .. image:: https://badges.gitter.im/Join Chat.svg
     :target: https://gitter.im/andreyfedoseev/django-static-precompiler?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
     :alt: Gitter
