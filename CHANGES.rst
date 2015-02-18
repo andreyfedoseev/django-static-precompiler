@@ -6,7 +6,7 @@ Dev
 ===
 
 - Compiler options are specified with ``STATIC_PRECOMPILER_COMPILERS`` setting.
-- **The following settings DEPRECATED:**
+- **The following settings are DEPRECATED:**
 
   * ``COFFEESCRIPT_EXECUTABLE``
   * ``SCSS_EXECUTABLE``
