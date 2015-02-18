@@ -4,6 +4,11 @@ import os
 import sys
 
 
+if os.environ.get('USER','') == 'vagrant':
+    # Workaround for http://bugs.python.org/issue8876
+    del os.link
+
+
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
 
@@ -41,7 +46,7 @@ setup(
     author_email="andrey.fedoseev@gmail.com",
     url="https://github.com/andreyfedoseev/django-static-precompiler",
     description="Django template tags to compile all kinds of static files "
-                "(SASS, LESS, CoffeeScript, ECMAScript 6to5).",
+                "(SASS, LESS, CoffeeScript, Babel).",
     long_description="\n\n".join([README, CHANGES]),
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -53,7 +58,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Topic :: Internet :: WWW/HTTP',
     ],
-    keywords=["sass", "scss", "less", "css", "coffeescript", "javascript", "6to5"],
+    keywords=["sass", "scss", "less", "css", "coffeescript", "javascript", "babel"],
     tests_require=[
         "pytest",
         "pytest-django",
