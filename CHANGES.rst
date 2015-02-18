@@ -14,7 +14,7 @@ Dev
   * ``LESS_EXECUTABLE``
 - ``-C`` (``--no-cache``) flag is removed from SASS/SCSS compilers
 - Add ``STATIC_PRECOMPILER_LIST_FILES`` setting
-- Add `6to5 <https://6to5.org/>`_ compiler
+- Add `Babel <https://babeljs.io>`_ compiler
 
 0.8
 ===

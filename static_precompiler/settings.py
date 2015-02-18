@@ -13,7 +13,7 @@ MTIME_DELAY = getattr(settings, "STATIC_PRECOMPILER_MTIME_DELAY", 10)  # 10 seco
 
 COMPILERS = getattr(settings, "STATIC_PRECOMPILER_COMPILERS", (
     "static_precompiler.compilers.CoffeeScript",
-    "static_precompiler.compilers.ES6To5",
+    "static_precompiler.compilers.Babel",
     "static_precompiler.compilers.SASS",
     "static_precompiler.compilers.SCSS",
     "static_precompiler.compilers.LESS",

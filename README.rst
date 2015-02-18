@@ -2,7 +2,7 @@
 Django Static Precompiler
 =========================
 
-Django Static Precompiler provides template tags to compile CoffeeScript, SASS / SCSS and LESS.
+Django Static Precompiler provides template tags to compile CoffeeScript, SASS / SCSS, LESS, and Babel.
 It works with both inline code and external files.
 
 .. image:: https://travis-ci.org/andreyfedoseev/django-static-precompiler.svg?branch=master
@@ -101,7 +101,7 @@ General settings
 
     STATIC_PRECOMPILER_COMPILERS = (
         'static_precompiler.compilers.CoffeeScript',
-        'static_precompiler.compilers.ES6To5',
+        'static_precompiler.compilers.Babel',
         'static_precompiler.compilers.SASS',
         'static_precompiler.compilers.SCSS',
         'static_precompiler.compilers.LESS',
@@ -161,16 +161,16 @@ Example::
     )
 
 
-6to5
-----
+Babel
+-----
 
 ``executable``
-  Path to 6to5 compiler executable. Default: ``"6to5"``.
+  Path to Babel compiler executable. Default: ``"babel"``.
 
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.ES6To5', {"executable": "/usr/bin/6to5"}),
+        ('static_precompiler.compilers.Babel', {"executable": "/usr/bin/babel"}),
     )
 
 
