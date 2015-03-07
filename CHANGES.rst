@@ -2,6 +2,12 @@
 Changes
 =======
 
+Dev
+===
+
+- Add `Stylus <http://learnboost.github.io/stylus/>` compiler
+
+
 0.9
 ===
 

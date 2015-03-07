@@ -72,9 +72,11 @@ Compiles everything between ``{% inlinecompile %}`` and ``{% endinlinecompile %}
 Compiler must be specified in ``STATIC_PRECOMPILER_COMPILERS`` setting. Names for default compilers are:
 
 * ``coffeescript``
+* ``babel``
 * ``less``
 * ``sass``
 * ``scss``
+* ``stylus``
 
 Example Usage
 -------------
@@ -109,6 +111,7 @@ General settings
         'static_precompiler.compilers.SASS',
         'static_precompiler.compilers.SCSS',
         'static_precompiler.compilers.LESS',
+        'static_precompiler.compilers.Stylus',
     )
 
   You can specify compiler options using the following format::
@@ -204,6 +207,19 @@ Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.less.LESS', {"executable": "/usr/bin/lessc"),
+    )
+
+
+Stylus
+------
+
+``executable``
+  Path to Stylus compiler executable. Default: ``"stylus"``.
+
+Example::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.less.Stylus', {"executable": "/usr/bin/stylus"),
     )
 
 
