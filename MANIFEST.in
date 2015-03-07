@@ -5,3 +5,5 @@ include LICENSE
 recursive-include static_precompiler/tests/static *
 recursive-include static_precompiler/tests/staticfiles_dir *
 recursive-include static_precompiler/tests/staticfiles_dir_with_prefix *
+prune static_precompiler/tests/static/.sass-cache
+prune static_precompiler/tests/staticfiles_dir/.sass-cache
