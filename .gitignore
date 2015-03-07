@@ -17,3 +17,5 @@ static_precompiler/tests/static/COMPILED
 .sass-cache/
 
 /htmlcov/
+
+/.tox/
