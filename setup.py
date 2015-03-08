@@ -4,7 +4,7 @@ import os
 import sys
 
 
-if os.environ.get('USER','') == 'vagrant':
+if os.environ.get('USER', '') == 'vagrant':
     # Workaround for http://bugs.python.org/issue8876
     del os.link
 
@@ -22,7 +22,7 @@ class PyTest(TestCommand):
         self.test_suite = True
 
     def run_tests(self):
-        #import here, cause outside the eggs aren't loaded
+        # import here, cause outside the eggs aren't loaded
         import pytest
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)

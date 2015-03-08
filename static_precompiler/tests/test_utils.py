@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from static_precompiler.exceptions import UnsupportedFile, CompilerNotFound
 # noinspection PyProtectedMember
-from static_precompiler.utils import _build_compilers, get_compilers, get_compiler_by_name, get_compiler_by_path, compile_static,\
+from static_precompiler.utils import _build_compilers, get_compiler_by_name, get_compiler_by_path, compile_static,\
     compile_static_lazy
 from static_precompiler.compilers import CoffeeScript
 from pretend import stub
