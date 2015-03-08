@@ -1,19 +1,15 @@
 language: python
-python:
-  - "3.3"
-  - "2.7"
-  - "2.6"
+python: 2.7
 env:
-  global:
-    - DJANGO_SETTINGS_MODULE="static_precompiler.tests.django_settings"
   matrix:
-    - DJANGO_VERSION=1.6.0
-    - DJANGO_VERSION=1.6.6
-    - DJANGO_VERSION=1.7
-matrix:
-  exclude:
-  - python: "2.6"
-    env: DJANGO_VERSION=1.7
+    - TOXENV=flakes
+    - TOXENV=py26-dj1.6
+    - TOXENV=py27-dj1.6
+    - TOXENV=py27-dj1.7
+    - TOXENV=py33-dj1.6
+    - TOXENV=py33-dj1.7
+    - TOXENV=py34-dj1.6
+    - TOXENV=py34-dj1.7
 before_install:
   - npm install -g coffee-script
   - npm install -g less@1.7.4
@@ -21,14 +17,10 @@ before_install:
   - npm install -g stylus@0.50.0
   - gem install sass --version 3.3.14
   - gem install compass --version 1.0.1
-install:
-  - pip install coveralls
-  - pip install django==$DJANGO_VERSION
-  - pip install pytest
-  - pip install pytest-django
-  - pip install pretend
-  - pip install watchdog
 script:
-  coverage run --source=static_precompiler setup.py test
+  coverage run --source=static_precompiler `which tox`
+install:
+  - pip install tox
+  - pip install coveralls
 after_success:
   coveralls
