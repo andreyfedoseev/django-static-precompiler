@@ -29,7 +29,7 @@ class BaseCompiler(object):
         """
         return source_path.endswith(self.input_extension)
 
-    #noinspection PyMethodMayBeStatic
+    # noinspection PyMethodMayBeStatic
     def get_full_source_path(self, source_path):
         """ Return the full path to the given source file.
             Check if the source file exists.
@@ -243,7 +243,7 @@ class BaseCompiler(object):
         """
         raise NotImplementedError
 
-    #noinspection PyMethodMayBeStatic,PyUnusedLocal
+    # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def postprocess(self, compiled, source_path):
         """ Post-process the compiled code.
 
@@ -264,7 +264,7 @@ class BaseCompiler(object):
         """
         return []
 
-    #noinspection PyMethodMayBeStatic
+    # noinspection PyMethodMayBeStatic
     def get_dependencies(self, source_path):
         """ Get the saved dependencies for the given source file.
 
@@ -278,7 +278,7 @@ class BaseCompiler(object):
             "depends_on", flat=True
         ))
 
-    #noinspection PyMethodMayBeStatic
+    # noinspection PyMethodMayBeStatic
     def get_dependents(self, source_path):
         """ Get a list of files that depends on the given source file.
 
@@ -292,7 +292,7 @@ class BaseCompiler(object):
             "source", flat=True
         ))
 
-    #noinspection PyMethodMayBeStatic
+    # noinspection PyMethodMayBeStatic
     def update_dependencies(self, source_path, dependencies):
         """ Updates the saved dependencies for the given source file.
 

@@ -72,7 +72,7 @@ def get_mtime(filename):
     return os.path.getmtime(filename)
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 def run_command(args, input=None, cwd=None):
 
     popen_kwargs = dict(

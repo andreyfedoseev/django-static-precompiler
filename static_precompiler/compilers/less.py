@@ -21,7 +21,6 @@ class LESS(BaseCompiler):
         self.executable = executable
         super(LESS, self).__init__()
 
-
     def should_compile(self, source_path, from_management=False):
         # Do not compile the files that start with "_" if run from management
         if from_management and os.path.basename(source_path).startswith("_"):
