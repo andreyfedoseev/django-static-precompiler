@@ -25,7 +25,10 @@ h1 {
 def test_compile_source():
     compiler = LESS()
 
-    assert compiler.compile_source("p {font-size: 15px; a {color: red;}}") == "p {\n  font-size: 15px;\n}\np a {\n  color: red;\n}\n"
+    assert (
+        compiler.compile_source("p {font-size: 15px; a {color: red;}}") ==
+        "p {\n  font-size: 15px;\n}\np a {\n  color: red;\n}\n"
+    )
 
     with pytest.raises(StaticCompilationError):
         compiler.compile_source('invalid syntax')

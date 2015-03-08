@@ -14,16 +14,25 @@ def clean_javascript(js):
 def test_compile_file():
     compiler = CoffeeScript()
 
-    assert clean_javascript(compiler.compile_file("scripts/test.coffee")) == """(function() {\n  console.log("Hello, World!");\n}).call(this);"""
+    assert (
+        clean_javascript(compiler.compile_file("scripts/test.coffee")) ==
+        """(function() {\n  console.log("Hello, World!");\n}).call(this);"""
+    )
 
 
 def test_compile_source():
     compiler = CoffeeScript()
 
-    assert clean_javascript(compiler.compile_source('console.log "Hello, World!"')) == """(function() {\n  console.log("Hello, World!");\n}).call(this);"""
+    assert (
+        clean_javascript(compiler.compile_source('console.log "Hello, World!"')) ==
+        """(function() {\n  console.log("Hello, World!");\n}).call(this);"""
+    )
 
     with pytest.raises(StaticCompilationError):
         compiler.compile_source('console.log "Hello, World!')
 
     # Test non-ascii
-    assert clean_javascript(compiler.compile_source('console.log "Привет, Мир!"')) == """(function() {\n  console.log("Привет, Мир!");\n}).call(this);"""
+    assert (
+        clean_javascript(compiler.compile_source('console.log "Привет, Мир!"')) ==
+        """(function() {\n  console.log("Привет, Мир!");\n}).call(this);"""
+    )

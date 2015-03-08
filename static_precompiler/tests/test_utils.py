@@ -35,11 +35,13 @@ def test_build_compilers(monkeypatch):
     with pytest.raises(ImproperlyConfigured):
         _build_compilers()
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS", [("static_precompiler.compilers.CoffeeScript", "foo", "bar")])
+    monkeypatch.setattr("static_precompiler.utils.COMPILERS",
+                        [("static_precompiler.compilers.CoffeeScript", "foo", "bar")])
     with pytest.raises(ImproperlyConfigured):
         _build_compilers()
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS", [("static_precompiler.compilers.CoffeeScript", {"executable": "foo"})])
+    monkeypatch.setattr("static_precompiler.utils.COMPILERS",
+                        [("static_precompiler.compilers.CoffeeScript", {"executable": "foo"})])
     compilers = _build_compilers()
     assert list(compilers.keys()) == ["coffeescript"]
     assert isinstance(compilers["coffeescript"], CoffeeScript)

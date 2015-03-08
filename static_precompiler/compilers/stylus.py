@@ -38,7 +38,8 @@ class Stylus(BaseCompiler):
             full_source_path,
         ]
 
-        # `cwd` is a directory containing `source_path`. Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
+        # `cwd` is a directory containing `source_path`.
+        # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
         out, errors = run_command(args, cwd=cwd)
 

@@ -31,26 +31,22 @@ def test_get_full_source_path():
 
     root = os.path.dirname(__file__)
 
-    assert compiler.get_full_source_path("scripts/test.coffee") == os.path.join(root, "static", "scripts",
-                                                                                "test.coffee")
+    assert (
+        compiler.get_full_source_path("scripts/test.coffee") ==
+        os.path.join(root, "static", "scripts", "test.coffee")
+    )
 
     with pytest.raises(ValueError):
         compiler.get_full_source_path("scripts/does-not-exist.coffee")
 
-    assert compiler.get_full_source_path("another_test.coffee") == os.path.normpath(
-        os.path.join(
-            root,
-            "staticfiles_dir",
-            "another_test.coffee"
-        )
+    assert (
+        compiler.get_full_source_path("another_test.coffee") ==
+        os.path.normpath(os.path.join(root, "staticfiles_dir", "another_test.coffee"))
     )
 
-    assert compiler.get_full_source_path("prefix/another_test.coffee") == os.path.normpath(
-        os.path.join(
-            root,
-            "staticfiles_dir_with_prefix",
-            "another_test.coffee"
-        )
+    assert (
+        compiler.get_full_source_path("prefix/another_test.coffee") ==
+        os.path.normpath(os.path.join(root, "staticfiles_dir_with_prefix", "another_test.coffee"))
     )
 
 
@@ -188,10 +184,12 @@ def test_compile(monkeypatch):
                         call_recorder(lambda self, *args: None))
     monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.find_dependencies",
                         call_recorder(lambda self, *args: ["A", "B"]))
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_path", lambda self, *args: "dummy.js")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_path",
+                        lambda self, *args: "dummy.js")
 
     monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.is_supported", lambda self, *args: False)
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile", lambda self, *args, **kwargs: True)
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile",
+                        lambda self, *args, **kwargs: True)
 
     with pytest.raises(ValueError):
         compiler.compile("dummy.coffee")
@@ -204,7 +202,8 @@ def test_compile(monkeypatch):
     assert compiler.postprocess.calls == []
 
     monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.is_supported", lambda self, *args: True)
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile", lambda self, *args, **kwargs: False)
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile",
+                        lambda self, *args, **kwargs: False)
 
     assert compiler.compile("dummy.coffee") == "dummy.js"
     # noinspection PyUnresolvedReferences
@@ -214,7 +213,8 @@ def test_compile(monkeypatch):
     # noinspection PyUnresolvedReferences
     assert compiler.postprocess.calls == []
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile", lambda self, *args, **kwargs: True)
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile",
+                        lambda self, *args, **kwargs: True)
     assert compiler.compile("dummy.coffee") == "dummy.js"
 
     # noinspection PyUnresolvedReferences

@@ -18,9 +18,18 @@ def test_convert(monkeypatch):
     converter = URLConverter()
 
     monkeypatch.setattr("static_precompiler.utils.URLConverter.convert_url", lambda self, *args: "spam.jpg")
-    assert converter.convert("p {\n  background-url: url(ham.jpg);\n}", "") == "p {\n  background-url: url('spam.jpg');\n}"
-    assert converter.convert('p {\n  background-url: url("ham.jpg");\n}', "") == "p {\n  background-url: url('spam.jpg');\n}"
-    assert converter.convert("p {\n  background-url: url('ham.jpg');\n}", "") == "p {\n  background-url: url('spam.jpg');\n}"
+    assert (
+        converter.convert("p {\n  background-url: url(ham.jpg);\n}", "") ==
+        "p {\n  background-url: url('spam.jpg');\n}"
+    )
+    assert (
+        converter.convert('p {\n  background-url: url("ham.jpg");\n}', "") ==
+        "p {\n  background-url: url('spam.jpg');\n}"
+    )
+    assert (
+        converter.convert("p {\n  background-url: url('ham.jpg');\n}", "") ==
+        "p {\n  background-url: url('spam.jpg');\n}"
+    )
     assert converter.convert(""".external_link:first-child:before {
   content: "Zobacz także:";
   background: url(картинка.png); }

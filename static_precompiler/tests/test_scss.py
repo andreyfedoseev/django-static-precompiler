@@ -10,15 +10,24 @@ import pytest
 def test_compile_file():
     compiler = SCSS()
 
-    assert fix_line_breaks(compiler.compile_file("styles/test.scss")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    assert (
+        fix_line_breaks(compiler.compile_file("styles/test.scss")) ==
+        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    )
 
 
 def test_compile_source():
     compiler = SCSS(executable="scss")
-    assert fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    assert (
+        fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) ==
+        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    )
 
     compiler = SCSS(executable="sass")
-    assert fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    assert (
+        fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) ==
+        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    )
 
     with pytest.raises(StaticCompilationError):
         compiler.compile_source('invalid syntax')
@@ -35,9 +44,15 @@ def test_compile_source():
     assert fix_line_breaks(compiler.compile_source(NON_ASCII)) == NON_ASCII
 
     compiler = SASS(executable="sass")
-    assert fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    assert (
+        fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) ==
+        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    )
     compiler = SASS(executable="scss")
-    assert fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    assert (
+        fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) ==
+        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+    )
 
 
 def test_postprocesss(monkeypatch):
@@ -165,13 +180,22 @@ def test_find_dependencies(monkeypatch):
 def test_compass():
     compiler = SCSS(compass_enabled=True)
 
-    assert fix_line_breaks(compiler.compile_file("test-compass.scss")) == "p {\n  background: url('/static/images/test.png'); }\n"
+    assert (
+        fix_line_breaks(compiler.compile_file("test-compass.scss")) ==
+        "p {\n  background: url('/static/images/test.png'); }\n"
+    )
 
 
 def test_compass_import():
     compiler = SCSS(compass_enabled=True)
 
-    assert fix_line_breaks(compiler.compile_file("styles/test-compass-import.scss")) == ".round-corners {\n  -moz-border-radius: 4px / 4px;\n  -webkit-border-radius: 4px 4px;\n  border-radius: 4px / 4px; }\n"
+    assert (
+        fix_line_breaks(compiler.compile_file("styles/test-compass-import.scss")) ==
+        ".round-corners {\n"
+        "  -moz-border-radius: 4px / 4px;\n"
+        "  -webkit-border-radius: 4px 4px;\n"
+        "  border-radius: 4px / 4px; }\n"
+    )
 
     compiler = SCSS(compass_enabled=False)
     with pytest.raises(StaticCompilationError):

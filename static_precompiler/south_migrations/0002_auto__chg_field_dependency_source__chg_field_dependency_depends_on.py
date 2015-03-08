@@ -9,19 +9,23 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'Dependency.source'
-        db.alter_column('static_precompiler_dependency', 'source', self.gf('django.db.models.fields.CharField')(max_length=255))
+        db.alter_column('static_precompiler_dependency', 'source',
+                        self.gf('django.db.models.fields.CharField')(max_length=255))
 
         # Changing field 'Dependency.depends_on'
-        db.alter_column('static_precompiler_dependency', 'depends_on', self.gf('django.db.models.fields.CharField')(max_length=255))
+        db.alter_column('static_precompiler_dependency', 'depends_on',
+                        self.gf('django.db.models.fields.CharField')(max_length=255))
 
     # noinspection PyUnusedLocal
     def backwards(self, orm):
 
         # Changing field 'Dependency.source'
-        db.alter_column('static_precompiler_dependency', 'source', self.gf('django.db.models.fields.CharField')(max_length=500))
+        db.alter_column('static_precompiler_dependency', 'source',
+                        self.gf('django.db.models.fields.CharField')(max_length=500))
 
         # Changing field 'Dependency.depends_on'
-        db.alter_column('static_precompiler_dependency', 'depends_on', self.gf('django.db.models.fields.CharField')(max_length=500))
+        db.alter_column('static_precompiler_dependency', 'depends_on',
+                        self.gf('django.db.models.fields.CharField')(max_length=500))
 
     models = {
         'static_precompiler.dependency': {

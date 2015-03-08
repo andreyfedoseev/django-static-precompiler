@@ -38,7 +38,8 @@ class SCSS(BaseCompiler):
         if self.is_compass_enabled:
             args.append("--compass")
 
-        # `cwd` is a directory containing `source_path`. Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
+        # `cwd` is a directory containing `source_path`.
+        # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
         out, errors = run_command(args, None, cwd=cwd)
 
@@ -155,7 +156,10 @@ class SCSS(BaseCompiler):
                 if import_item.startswith("http://") or \
                    import_item.startswith("https://"):
                     continue
-                if self.is_compass_enabled and (import_item in ("compass", "compass.scss") or import_item.startswith("compass/")):
+                if self.is_compass_enabled and (
+                    import_item in ("compass", "compass.scss") or
+                    import_item.startswith("compass/")
+                ):
                     # Ignore compass imports if Compass is enabled.
                     continue
                 imports.add(import_item)
@@ -198,9 +202,7 @@ class SCSS(BaseCompiler):
                 except ValueError:
                     pass
 
-        raise StaticCompilationError(
-            "Can't locate the imported file: {0}".format(import_path)
-        )
+        raise StaticCompilationError("Can't locate the imported file: {0}".format(import_path))
 
     def find_dependencies(self, source_path):
         source = self.get_source(source_path)

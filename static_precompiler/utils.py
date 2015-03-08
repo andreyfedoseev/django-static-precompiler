@@ -156,7 +156,9 @@ def _build_compilers():
         try:
             compiler_class = getattr(mod, compiler_classname)
         except AttributeError:
-            raise ImproperlyConfigured('Compiler module "{0}" does not define a "{1}" class'.format(compiler_module, compiler_classname))
+            raise ImproperlyConfigured(
+                'Compiler module "{0}" does not define a "{1}" class'.format(compiler_module, compiler_classname)
+            )
 
         compiler_to_add = compiler_class(**compiler_options)
         compiler = compilers.setdefault(compiler_class.name, compiler_to_add)
