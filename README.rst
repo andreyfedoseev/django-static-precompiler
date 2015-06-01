@@ -206,7 +206,7 @@ LESS
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.less.LESS', {"executable": "/usr/bin/lessc"),
+        ('static_precompiler.compilers.LESS', {"executable": "/usr/bin/lessc"),
     )
 
 
@@ -219,7 +219,7 @@ Stylus
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.less.Stylus', {"executable": "/usr/bin/stylus"),
+        ('static_precompiler.compilers.Stylus', {"executable": "/usr/bin/stylus"),
     )
 
 
