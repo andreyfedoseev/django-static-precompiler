@@ -2,4 +2,5 @@ languages:
   Python: true
 exclude_paths:
   - "static_precompiler/migrations/*"
+  - "static_precompiler/south_migrations/*"
   - "static_precompiler/tests/*"
