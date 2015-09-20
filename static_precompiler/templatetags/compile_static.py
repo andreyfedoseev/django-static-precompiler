@@ -13,8 +13,21 @@ from static_precompiler.utils import (compile_static, get_cache, get_cache_key,
 register = Library()
 
 
+@register.filter(name="compile")
+def compile_filter(source_path):
+    compiled = compile_static(source_path)
+    if PREPEND_STATIC_URL:
+        compiled = static(compiled)
+    return compiled
+
+
 @register.simple_tag(name="compile")
 def compile_tag(source_path, compiler=None):
+    warnings.warn(
+        "{% compile %} tag has been deprecated, use `compile` filter from `compile_static` template tag library "
+        "instead.",
+        DeprecationWarning,
+    )
     if compiler:
         compiled = compiler.compile(source_path)
     else:
@@ -49,8 +62,8 @@ def inlinecompile(nodelist, context, compiler):
 
 def _warn(old, new):
     warnings.warn(
-        "{%% %s %%} tag has been deprecated, use {%% %s %%} "
-        "from `compile_static` template tag library instead." % (old, new),
+        "{%% %s %%} tag has been deprecated, use {%% %s %%} from `compile_static` template tag library "
+        "instead." % (old, new),
         DeprecationWarning,
     )
 

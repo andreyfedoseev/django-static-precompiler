@@ -2,22 +2,18 @@ from django.template import Context
 from django.template.loader import get_template_from_string
 from pretend import call, call_recorder, stub
 
-from static_precompiler.templatetags.compile_static import compile_tag
 
+def test_compile_filter(monkeypatch):
 
-def test_compile_tag(monkeypatch):
-
-    monkeypatch.setattr("static_precompiler.templatetags.compile_static.compile_static", lambda *args: "compiled")
-    template = get_template_from_string("""{% load compile_static %}{% compile "source" %}""")
+    compile_static = call_recorder(lambda source_path: "compiled")
+    monkeypatch.setattr("static_precompiler.templatetags.compile_static.compile_static", compile_static)
+    template = get_template_from_string("""{% load compile_static %}{{ "source"|compile }}""")
     assert template.render(Context({})) == "compiled"
 
     monkeypatch.setattr("static_precompiler.templatetags.compile_static.PREPEND_STATIC_URL", True)
     assert template.render(Context({})) == "/static/compiled"
 
-    monkeypatch.setattr("static_precompiler.templatetags.compile_static.PREPEND_STATIC_URL", False)
-    compiler = stub(compile=call_recorder(lambda *args: "compiled"))
-    assert compile_tag("source", compiler) == "compiled"
-    assert compiler.compile.calls == [call("source")]
+    assert compile_static.calls == [call("source"), call("source")]
 
 
 def test_inlinecompile_tag(monkeypatch):

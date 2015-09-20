@@ -42,10 +42,10 @@ You can change this folder with ``STATIC_PRECOMPILER_ROOT`` and ``STATIC_PRECOMP
 
 Note that all relative URLs in your stylesheets are converted to absolute URLs using your ``STATIC_URL`` setting.
 
-{% compile %} tag
-=================
+``compile`` template filter
+===========================
 
-``{% compile %}`` is a template tag that allows to compile any source file supported by compilers configured with
+``compile`` is a template filter that allows to compile any source file supported by compilers configured with
 ``STATIC_PRECOMPILER_COMPILERS`` settings.
 
 Example Usage
@@ -54,10 +54,11 @@ Example Usage
 ::
 
   {% load compile_static %}
+  {% load static %}
 
-  <script src="{{ STATIC_URL}}{% compile "path/to/script.coffee" %}"></script>
-  <link rel="stylesheet" href="{{ STATIC_URL}}{% compile "path/to/styles1.less" %}" />
-  <link rel="stylesheet" href="{{ STATIC_URL}}{% compile "path/to/styles2.scss" %}" />
+  <script src="{% static "path/to/script.coffee"|compile %}"></script>
+  <link rel="stylesheet" href="{% static "path/to/styles1.less"|compile %}" />
+  <link rel="stylesheet" href="{% static "path/to/styles2.scss"|compile %}" />
 
 renders to::
 
@@ -141,7 +142,7 @@ General settings
   Name of the cache to be used. If not specified then the default django cache is used. Default: ``None``.
 
 ``STATIC_PRECOMPILER_PREPEND_STATIC_URL``
-  Add ``STATIC_URL`` to the output of template tags. Default: ``False``
+  Add ``STATIC_URL`` to the output of template tags and filters. Default: ``False``
 
 ``STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE``
   Disable automatic compilation from template tags or ``compile_static`` utility function. Files are compiled
