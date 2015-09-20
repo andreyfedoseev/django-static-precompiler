@@ -1,16 +1,14 @@
 # coding: utf-8
 import os
 
+import pretend
 import pytest
-from pretend import call, call_recorder
 
-from static_precompiler.compilers import LESS
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.utils import normalize_path
+from static_precompiler import compilers, exceptions, utils
 
 
 def test_compile_file():
-    compiler = LESS()
+    compiler = compilers.LESS()
 
     assert compiler.compile_file("styles/test.less") == """p {
   font-size: 15px;
@@ -25,14 +23,14 @@ h1 {
 
 
 def test_compile_source():
-    compiler = LESS()
+    compiler = compilers.LESS()
 
     assert (
         compiler.compile_source("p {font-size: 15px; a {color: red;}}") ==
         "p {\n  font-size: 15px;\n}\np a {\n  color: red;\n}\n"
     )
 
-    with pytest.raises(StaticCompilationError):
+    with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_source('invalid syntax')
 
     # Test non-ascii
@@ -45,18 +43,18 @@ def test_compile_source():
 
 
 def test_postprocesss(monkeypatch):
-    compiler = LESS()
+    compiler = compilers.LESS()
 
-    convert_urls = call_recorder(lambda *args: "spam")
+    convert_urls = pretend.call_recorder(lambda *args: "spam")
 
-    monkeypatch.setattr("static_precompiler.compilers.less.convert_urls", convert_urls)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
 
     assert compiler.postprocess("ham", "eggs") == "spam"
-    assert convert_urls.calls == [call("ham", "eggs")]
+    assert convert_urls.calls == [pretend.call("ham", "eggs")]
 
 
 def test_find_imports():
-    compiler = LESS()
+    compiler = compilers.LESS()
     source = """
 @import "foo.css";
 @import " ";
@@ -87,13 +85,13 @@ def test_find_imports():
 
 
 def test_locate_imported_file(monkeypatch):
-    compiler = LESS()
+    compiler = compilers.LESS()
 
     root = os.path.dirname(__file__)
 
     existing_files = set()
     for f in ("A/B.less", "D.less"):
-        existing_files.add(os.path.join(root, "static", normalize_path(f)))
+        existing_files.add(os.path.join(root, "static", utils.normalize_path(f)))
 
     monkeypatch.setattr("os.path.exists", lambda path: path in existing_files)
 
@@ -102,24 +100,24 @@ def test_locate_imported_file(monkeypatch):
     assert compiler.locate_imported_file("E", "../A/B.less") == "A/B.less"
     assert compiler.locate_imported_file("", "D.less") == "D.less"
 
-    with pytest.raises(StaticCompilationError):
+    with pytest.raises(exceptions.StaticCompilationError):
         compiler.locate_imported_file("", "Z.less")
 
 
 def test_find_dependencies(monkeypatch):
-    compiler = LESS()
+    compiler = compilers.LESS()
     files = {
         "A.less": "@import 'B/C.less';",
         "B/C.less": "@import '../E';",
         "E.less": "p {color: red;}",
     }
-    monkeypatch.setattr("static_precompiler.compilers.less.LESS.get_source", lambda self, x: files[x])
+    monkeypatch.setattr(compiler, "get_source", lambda x: files[x])
 
     root = os.path.dirname(__file__)
 
     existing_files = set()
     for f in files:
-        existing_files.add(os.path.join(root, "static", normalize_path(f)))
+        existing_files.add(os.path.join(root, "static", utils.normalize_path(f)))
 
     monkeypatch.setattr("os.path.exists", lambda path: path in existing_files)
 

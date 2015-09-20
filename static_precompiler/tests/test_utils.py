@@ -1,52 +1,48 @@
+import django.core.exceptions
 import pytest
-from django.core.exceptions import ImproperlyConfigured
 from pretend import stub
 
-from static_precompiler.compilers import CoffeeScript
-from static_precompiler.exceptions import CompilerNotFound, UnsupportedFile
-# noinspection PyProtectedMember
-from static_precompiler.utils import (_build_compilers, compile_static, compile_static_lazy, get_compiler_by_name,
-                                      get_compiler_by_path)
+from static_precompiler import compilers, exceptions, utils
 
 
 def test_build_compilers(monkeypatch):
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS", ["invalid_classpath"])
-    with pytest.raises(ImproperlyConfigured):
-        _build_compilers()
+    monkeypatch.setattr("static_precompiler.settings.COMPILERS", ["invalid_classpath"])
+    with pytest.raises(django.core.exceptions.ImproperlyConfigured):
+        utils.build_compilers()
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS", ["non_existing_module.ClassName"])
-    with pytest.raises(ImproperlyConfigured):
-        _build_compilers()
+    monkeypatch.setattr("static_precompiler.settings.COMPILERS", ["non_existing_module.ClassName"])
+    with pytest.raises(django.core.exceptions.ImproperlyConfigured):
+        utils.build_compilers()
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS", ["static_precompiler.NonExistingClass"])
-    with pytest.raises(ImproperlyConfigured):
-        _build_compilers()
+    monkeypatch.setattr("static_precompiler.settings.COMPILERS", ["static_precompiler.NonExistingClass"])
+    with pytest.raises(django.core.exceptions.ImproperlyConfigured):
+        utils.build_compilers()
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS", ["static_precompiler.compilers.CoffeeScript"])
-    compilers = _build_compilers()
-    assert list(compilers.keys()) == ["coffeescript"]
-    assert isinstance(compilers["coffeescript"], CoffeeScript)
+    monkeypatch.setattr("static_precompiler.settings.COMPILERS", ["static_precompiler.compilers.CoffeeScript"])
+    built_compilers = utils.build_compilers()
+    assert list(built_compilers.keys()) == ["coffeescript"]
+    assert isinstance(built_compilers["coffeescript"], compilers.CoffeeScript)
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS", [("static_precompiler.compilers.CoffeeScript", )])
-    with pytest.raises(ImproperlyConfigured):
-        _build_compilers()
+    monkeypatch.setattr("static_precompiler.settings.COMPILERS", [("static_precompiler.compilers.CoffeeScript", )])
+    with pytest.raises(django.core.exceptions.ImproperlyConfigured):
+        utils.build_compilers()
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS", [("static_precompiler.compilers.CoffeeScript", "foo")])
-    with pytest.raises(ImproperlyConfigured):
-        _build_compilers()
+    monkeypatch.setattr("static_precompiler.settings.COMPILERS", [("static_precompiler.compilers.CoffeeScript", "foo")])
+    with pytest.raises(django.core.exceptions.ImproperlyConfigured):
+        utils.build_compilers()
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS",
+    monkeypatch.setattr("static_precompiler.settings.COMPILERS",
                         [("static_precompiler.compilers.CoffeeScript", "foo", "bar")])
-    with pytest.raises(ImproperlyConfigured):
-        _build_compilers()
+    with pytest.raises(django.core.exceptions.ImproperlyConfigured):
+        utils.build_compilers()
 
-    monkeypatch.setattr("static_precompiler.utils.COMPILERS",
+    monkeypatch.setattr("static_precompiler.settings.COMPILERS",
                         [("static_precompiler.compilers.CoffeeScript", {"executable": "foo"})])
-    compilers = _build_compilers()
-    assert list(compilers.keys()) == ["coffeescript"]
-    assert isinstance(compilers["coffeescript"], CoffeeScript)
-    assert compilers["coffeescript"].executable == "foo"
+    built_compilers = utils.build_compilers()
+    assert list(built_compilers.keys()) == ["coffeescript"]
+    assert isinstance(built_compilers["coffeescript"], compilers.CoffeeScript)
+    assert built_compilers["coffeescript"].executable == "foo"
 
 
 def test_get_compiler_by_name(monkeypatch):
@@ -57,10 +53,10 @@ def test_get_compiler_by_name(monkeypatch):
         "foo": compiler_stub,
     })
 
-    with pytest.raises(CompilerNotFound):
-        get_compiler_by_name("bar")
+    with pytest.raises(exceptions.CompilerNotFound):
+        utils.get_compiler_by_name("bar")
 
-    assert get_compiler_by_name("foo") is compiler_stub
+    assert utils.get_compiler_by_name("foo") is compiler_stub
 
 
 def test_get_compiler_by_path(monkeypatch):
@@ -73,11 +69,11 @@ def test_get_compiler_by_path(monkeypatch):
         "less": less_compiler_stub,
     })
 
-    with pytest.raises(UnsupportedFile):
-        get_compiler_by_path("test.sass")
+    with pytest.raises(exceptions.UnsupportedFile):
+        utils.get_compiler_by_path("test.sass")
 
-    assert get_compiler_by_path("test.coffee") is coffeescript_compiler_stub
-    assert get_compiler_by_path("test.less") is less_compiler_stub
+    assert utils.get_compiler_by_path("test.coffee") is coffeescript_compiler_stub
+    assert utils.get_compiler_by_path("test.less") is less_compiler_stub
 
 
 def test_compile_static(monkeypatch):
@@ -89,5 +85,5 @@ def test_compile_static(monkeypatch):
 
     monkeypatch.setattr("static_precompiler.utils.get_compiler_by_path", lambda path: compiler_stub)
 
-    assert compile_static("foo") == "compiled"
-    assert compile_static_lazy("foo") == "compiled lazy"
+    assert utils.compile_static("foo") == "compiled"
+    assert utils.compile_static_lazy("foo") == "compiled lazy"

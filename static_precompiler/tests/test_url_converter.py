@@ -1,9 +1,9 @@
 # coding: utf-8
-from static_precompiler.utils import URLConverter
+from static_precompiler import utils
 
 
 def test_convert_url():
-    converter = URLConverter()
+    converter = utils.URLConverter()
 
     assert converter.convert_url("http://dummy.jpg", "styles/") == "http://dummy.jpg"
     assert converter.convert_url("https://dummy.jpg", "styles/") == "https://dummy.jpg"
@@ -15,9 +15,9 @@ def test_convert_url():
 
 
 def test_convert(monkeypatch):
-    converter = URLConverter()
+    converter = utils.URLConverter()
 
-    monkeypatch.setattr("static_precompiler.utils.URLConverter.convert_url", lambda self, *args: "spam.jpg")
+    monkeypatch.setattr(converter, "convert_url", lambda *args: "spam.jpg")
     assert (
         converter.convert("p {\n  background-url: url(ham.jpg);\n}", "") ==
         "p {\n  background-url: url('spam.jpg');\n}"

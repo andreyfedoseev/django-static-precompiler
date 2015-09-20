@@ -2,17 +2,18 @@ import logging
 import os
 import posixpath
 
+import django.core.exceptions
 from django.contrib.staticfiles import finders
-from django.core.exceptions import SuspiciousOperation
-from django.utils import six
-from django.utils.encoding import force_text
-from django.utils.functional import lazy
+from django.utils import encoding, functional, six
 
-from static_precompiler.models import Dependency
-from static_precompiler.settings import DISABLE_AUTO_COMPILE, OUTPUT_DIR, ROOT, STATIC_ROOT
-from static_precompiler.utils import get_mtime, normalize_path
+from static_precompiler import models, settings, utils
 
 logger = logging.getLogger("static_precompiler")
+
+
+__all__ = (
+    "BaseCompiler",
+)
 
 
 class BaseCompiler(object):
@@ -44,16 +45,16 @@ class BaseCompiler(object):
         :raises: ValueError
 
         """
-        norm_source_path = normalize_path(source_path.lstrip("/"))
+        norm_source_path = utils.normalize_path(source_path.lstrip("/"))
 
-        if STATIC_ROOT:
-            full_path = os.path.join(STATIC_ROOT, norm_source_path)
+        if settings.STATIC_ROOT:
+            full_path = os.path.join(settings.STATIC_ROOT, norm_source_path)
             if os.path.exists(full_path):
                 return full_path
 
         try:
             full_path = finders.find(norm_source_path)
-        except SuspiciousOperation:
+        except django.core.exceptions.SuspiciousOperation:
             full_path = None
 
         if full_path is None:
@@ -83,7 +84,7 @@ class BaseCompiler(object):
         source_dir = os.path.dirname(source_path)
         source_filename = os.path.basename(source_path)
         output_filename = self.get_output_filename(source_filename)
-        return posixpath.join(OUTPUT_DIR, source_dir, output_filename)
+        return posixpath.join(settings.OUTPUT_DIR, source_dir, output_filename)
 
     def get_full_output_path(self, source_path):
         """ Get full path to compiled file based for the given source file.
@@ -94,7 +95,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        return os.path.join(ROOT, normalize_path(self.get_output_path(source_path.lstrip("/"))))
+        return os.path.join(settings.ROOT, utils.normalize_path(self.get_output_path(source_path.lstrip("/"))))
 
     def get_source_mtime(self, source_path):
         """ Get the modification time of the source file.
@@ -104,7 +105,7 @@ class BaseCompiler(object):
         :returns: int
 
         """
-        return get_mtime(self.get_full_source_path(source_path))
+        return utils.get_mtime(self.get_full_source_path(source_path))
 
     def get_output_mtime(self, source_path):
         """ Get the modification time of the compiled file.
@@ -118,7 +119,7 @@ class BaseCompiler(object):
         full_output_path = self.get_full_output_path(source_path)
         if not os.path.exists(full_output_path):
             return None
-        return get_mtime(full_output_path)
+        return utils.get_mtime(full_output_path)
 
     def should_compile(self, source_path, from_management=False):
         """ Return True iff provided source file should be compiled.
@@ -130,7 +131,7 @@ class BaseCompiler(object):
         :returns: bool
 
         """
-        if DISABLE_AUTO_COMPILE and not from_management:
+        if settings.DISABLE_AUTO_COMPILE and not from_management:
             return False
 
         compiled_mtime = self.get_output_mtime(source_path)
@@ -220,9 +221,9 @@ class BaseCompiler(object):
 
             :returns: str
         """
-        return force_text(self.compile(source_path))
+        return encoding.force_text(self.compile(source_path))
 
-    compile_lazy = lazy(compile_lazy, six.text_type)
+    compile_lazy = functional.lazy(compile_lazy, six.text_type)
 
     def compile_file(self, source_path):
         """ Compile the source file. Return the compiled code.
@@ -275,7 +276,7 @@ class BaseCompiler(object):
         :type source_path: str
         :returns: list of str
         """
-        return list(Dependency.objects.filter(
+        return list(models.Dependency.objects.filter(
             source=source_path
         ).order_by("depends_on").values_list(
             "depends_on", flat=True
@@ -289,7 +290,7 @@ class BaseCompiler(object):
         :type source_path: str
         :returns: list of str
         """
-        return list(Dependency.objects.filter(
+        return list(models.Dependency.objects.filter(
             depends_on=source_path
         ).order_by("source").values_list(
             "source", flat=True
@@ -306,15 +307,15 @@ class BaseCompiler(object):
 
         """
         if not dependencies:
-            Dependency.objects.filter(source=source_path).delete()
+            models.Dependency.objects.filter(source=source_path).delete()
         else:
-            Dependency.objects.filter(
+            models.Dependency.objects.filter(
                 source=source_path
             ).exclude(
                 depends_on__in=dependencies,
             ).delete()
             for dependency in dependencies:
-                Dependency.objects.get_or_create(
+                models.Dependency.objects.get_or_create(
                     source=source_path,
                     depends_on=dependency,
                 )
@@ -331,4 +332,4 @@ class BaseCompiler(object):
             try:
                 self.compile(dependent, from_management=True)
             except ValueError:
-                Dependency.objects.get(source=dependent, depends_on=source_path).delete()
+                models.Dependency.objects.get(source=dependent, depends_on=source_path).delete()

@@ -1,8 +1,7 @@
 # coding: utf-8
 import pytest
 
-from static_precompiler.compilers.coffeescript import CoffeeScript
-from static_precompiler.exceptions import StaticCompilationError
+from static_precompiler import compilers, exceptions
 
 
 def clean_javascript(js):
@@ -13,7 +12,7 @@ def clean_javascript(js):
 
 
 def test_compile_file():
-    compiler = CoffeeScript()
+    compiler = compilers.CoffeeScript()
 
     assert (
         clean_javascript(compiler.compile_file("scripts/test.coffee")) ==
@@ -22,14 +21,14 @@ def test_compile_file():
 
 
 def test_compile_source():
-    compiler = CoffeeScript()
+    compiler = compilers.CoffeeScript()
 
     assert (
         clean_javascript(compiler.compile_source('console.log "Hello, World!"')) ==
         """(function() {\n  console.log("Hello, World!");\n}).call(this);"""
     )
 
-    with pytest.raises(StaticCompilationError):
+    with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_source('console.log "Hello, World!')
 
     # Test non-ascii

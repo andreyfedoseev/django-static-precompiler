@@ -1,31 +1,31 @@
-from django.template import Context
-from django.template.loader import get_template_from_string
-from pretend import call, call_recorder, stub
+import django.template
+import django.template.loader
+import pretend
 
 
 def test_compile_filter(monkeypatch):
 
-    compile_static = call_recorder(lambda source_path: "compiled")
-    monkeypatch.setattr("static_precompiler.templatetags.compile_static.compile_static", compile_static)
-    template = get_template_from_string("""{% load compile_static %}{{ "source"|compile }}""")
-    assert template.render(Context({})) == "compiled"
+    compile_static = pretend.call_recorder(lambda source_path: "compiled")
+    monkeypatch.setattr("static_precompiler.utils.compile_static", compile_static)
+    template = django.template.loader.get_template_from_string("""{% load compile_static %}{{ "source"|compile }}""")
+    assert template.render(django.template.Context({})) == "compiled"
 
-    monkeypatch.setattr("static_precompiler.templatetags.compile_static.PREPEND_STATIC_URL", True)
-    assert template.render(Context({})) == "/static/compiled"
+    monkeypatch.setattr("static_precompiler.settings.PREPEND_STATIC_URL", True)
+    assert template.render(django.template.Context({})) == "/static/compiled"
 
-    assert compile_static.calls == [call("source"), call("source")]
+    assert compile_static.calls == [pretend.call("source"), pretend.call("source")]
 
 
 def test_inlinecompile_tag(monkeypatch):
-    compiler = stub(compile_source=call_recorder(lambda *args: "compiled"))
-    get_compiler_by_name = call_recorder(lambda *args: compiler)
+    compiler = pretend.stub(compile_source=pretend.call_recorder(lambda *args: "compiled"))
+    get_compiler_by_name = pretend.call_recorder(lambda *args: compiler)
 
-    monkeypatch.setattr("static_precompiler.templatetags.compile_static.get_compiler_by_name", get_compiler_by_name)
+    monkeypatch.setattr("static_precompiler.utils.get_compiler_by_name", get_compiler_by_name)
 
-    template = get_template_from_string(
+    template = django.template.loader.get_template_from_string(
         "{% load compile_static %}{% inlinecompile compiler='sass' %}source{% endinlinecompile %}"
     )
-    assert template.render(Context({})) == "compiled"
+    assert template.render(django.template.Context({})) == "compiled"
 
-    assert get_compiler_by_name.calls == [call("sass")]
-    assert compiler.compile_source.calls == [call("source")]
+    assert get_compiler_by_name.calls == [pretend.call("sass")]
+    assert compiler.compile_source.calls == [pretend.call("source")]

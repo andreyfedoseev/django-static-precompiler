@@ -1,43 +1,41 @@
+import optparse
 import os
 import sys
-from optparse import make_option
 
-from django.contrib.staticfiles.finders import get_finders
-from django.core.files.storage import FileSystemStorage
-from django.core.management.base import NoArgsCommand
+import django.contrib.staticfiles.finders
+import django.core.files.storage
+import django.core.management.base
 
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.settings import STATIC_ROOT
-from static_precompiler.utils import get_compilers
+from static_precompiler import exceptions, settings, utils
 
 
 def get_scanned_dirs():
-    dirs = set([STATIC_ROOT])
-    for finder in get_finders():
+    dirs = set([settings.STATIC_ROOT])
+    for finder in django.contrib.staticfiles.finders.get_finders():
         if hasattr(finder, "storages"):
             for storage in finder.storages.values():
-                if isinstance(storage, FileSystemStorage):
+                if isinstance(storage, django.core.files.storage.FileSystemStorage):
                     dirs.add(storage.location)
     return sorted(dirs)
 
 
-class Command(NoArgsCommand):
+class Command(django.core.management.base.NoArgsCommand):
 
     help = "Compile static files."
 
     requires_model_validation = False
 
-    option_list = NoArgsCommand.option_list + (
-        make_option("--watch",
-                    action="store_true",
-                    dest="watch",
-                    default=False,
-                    help="Watch for changes and recompile if necessary."),
-        make_option("--no-initial-scan",
-                    action="store_false",
-                    dest="initial_scan",
-                    default=True,
-                    help="Skip the initial scan of watched directories in --watch mode."),
+    option_list = django.core.management.base.NoArgsCommand.option_list + (
+        optparse.make_option("--watch",
+                             action="store_true",
+                             dest="watch",
+                             default=False,
+                             help="Watch for changes and recompile if necessary."),
+        optparse.make_option("--no-initial-scan",
+                             action="store_false",
+                             dest="initial_scan",
+                             default=True,
+                             help="Skip the initial scan of watched directories in --watch mode."),
     )
 
     def handle_noargs(self, **options):
@@ -49,7 +47,7 @@ class Command(NoArgsCommand):
 
         verbosity = int(options["verbosity"])
 
-        compilers = get_compilers().values()
+        compilers = utils.get_compilers().values()
 
         if not options["watch"] or options["initial_scan"]:
             # Scan the watched directories and compile everything
@@ -63,7 +61,7 @@ class Command(NoArgsCommand):
                             if compiler.is_supported(path):
                                 try:
                                     compiler.handle_changed_file(path)
-                                except (StaticCompilationError, ValueError) as e:
+                                except (exceptions.StaticCompilationError, ValueError) as e:
                                     print(e)
                                 break
 

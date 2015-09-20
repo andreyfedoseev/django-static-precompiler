@@ -1,9 +1,13 @@
-from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.utils import run_command
+from static_precompiler import exceptions, utils
+
+from . import base
+
+__all__ = (
+    "Babel",
+)
 
 
-class Babel(BaseCompiler):
+class Babel(base.BaseCompiler):
 
     name = "babel"
     input_extension = "es6"
@@ -20,8 +24,8 @@ class Babel(BaseCompiler):
         args = [
             self.executable
         ]
-        out, errors = run_command(args, source)
+        out, errors = utils.run_command(args, source)
         if errors:
-            raise StaticCompilationError(errors)
+            raise exceptions.StaticCompilationError(errors)
 
         return out

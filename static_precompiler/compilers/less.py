@@ -2,13 +2,16 @@ import os
 import posixpath
 import re
 
-from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.settings import LESS_EXECUTABLE
-from static_precompiler.utils import convert_urls, run_command
+from static_precompiler import exceptions, settings, utils
+
+from . import base
+
+__all__ = (
+    "LESS",
+)
 
 
-class LESS(BaseCompiler):
+class LESS(base.BaseCompiler):
 
     name = "less"
     supports_dependencies = True
@@ -18,7 +21,7 @@ class LESS(BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
-    def __init__(self, executable=LESS_EXECUTABLE):
+    def __init__(self, executable=settings.LESS_EXECUTABLE):
         self.executable = executable
         super(LESS, self).__init__()
 
@@ -37,9 +40,9 @@ class LESS(BaseCompiler):
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
-        out, errors = run_command(args, None, cwd=cwd)
+        out, errors = utils.run_command(args, None, cwd=cwd)
         if errors:
-            raise StaticCompilationError(errors)
+            raise exceptions.StaticCompilationError(errors)
 
         return out
 
@@ -49,15 +52,15 @@ class LESS(BaseCompiler):
             "-"
         ]
 
-        out, errors = run_command(args, source)
+        out, errors = utils.run_command(args, source)
 
         if errors:
-            raise StaticCompilationError(errors)
+            raise exceptions.StaticCompilationError(errors)
 
         return out
 
     def postprocess(self, compiled, source_path):
-        return convert_urls(compiled, source_path)
+        return utils.convert_urls(compiled, source_path)
 
     def find_imports(self, source):
         """ Find the imported files in the source code.
@@ -121,7 +124,7 @@ class LESS(BaseCompiler):
         except ValueError:
             pass
 
-        raise StaticCompilationError(
+        raise exceptions.StaticCompilationError(
             "Can't locate the imported file: {0}".format(import_path)
         )
 

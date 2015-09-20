@@ -1,8 +1,8 @@
 import os
 import warnings
 
+import django.core.exceptions
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 
 STATIC_ROOT = getattr(settings, "STATIC_ROOT", getattr(settings, "MEDIA_ROOT"))
 STATIC_URL = getattr(settings, "STATIC_URL", getattr(settings, "MEDIA_URL"))
@@ -25,7 +25,9 @@ ROOT = getattr(settings, "STATIC_PRECOMPILER_ROOT",
                        getattr(settings, "MEDIA_ROOT")))
 
 if not ROOT:
-    raise ImproperlyConfigured("You must specify either STATIC_ROOT or STATIC_PRECOMPILER_ROOT folder.")
+    raise django.core.exceptions.ImproperlyConfigured(
+        "You must specify either STATIC_ROOT or STATIC_PRECOMPILER_ROOT folder."
+    )
 
 
 OUTPUT_DIR = getattr(settings, "STATIC_PRECOMPILER_OUTPUT_DIR", "COMPILED")

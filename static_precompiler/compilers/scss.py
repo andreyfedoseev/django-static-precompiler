@@ -2,13 +2,17 @@ import os
 import posixpath
 import re
 
-from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.settings import SCSS_EXECUTABLE, SCSS_USE_COMPASS
-from static_precompiler.utils import convert_urls, run_command
+from static_precompiler import exceptions, settings, utils
+
+from . import base
+
+__all__ = (
+    "SCSS",
+    "SASS",
+)
 
 
-class SCSS(BaseCompiler):
+class SCSS(base.BaseCompiler):
 
     name = "scss"
     supports_dependencies = True
@@ -18,7 +22,7 @@ class SCSS(BaseCompiler):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
 
-    def __init__(self, executable=SCSS_EXECUTABLE, compass_enabled=SCSS_USE_COMPASS):
+    def __init__(self, executable=settings.SCSS_EXECUTABLE, compass_enabled=settings.SCSS_USE_COMPASS):
         self.executable = executable
         self.is_compass_enabled = compass_enabled
         super(SCSS, self).__init__()
@@ -42,10 +46,10 @@ class SCSS(BaseCompiler):
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
-        out, errors = run_command(args, None, cwd=cwd)
+        out, errors = utils.run_command(args, None, cwd=cwd)
 
         if errors:
-            raise StaticCompilationError(errors)
+            raise exceptions.StaticCompilationError(errors)
 
         return out
 
@@ -60,14 +64,14 @@ class SCSS(BaseCompiler):
         if self.is_compass_enabled:
             args.append("--compass")
 
-        out, errors = run_command(args, source)
+        out, errors = utils.run_command(args, source)
         if errors:
-            raise StaticCompilationError(errors)
+            raise exceptions.StaticCompilationError(errors)
 
         return out
 
     def postprocess(self, compiled, source_path):
-        return convert_urls(compiled, source_path)
+        return utils.convert_urls(compiled, source_path)
 
     # noinspection PyMethodMayBeStatic
     def parse_import_string(self, import_string):
@@ -203,7 +207,7 @@ class SCSS(BaseCompiler):
                 except ValueError:
                     pass
 
-        raise StaticCompilationError("Can't locate the imported file: {0}".format(import_path))
+        raise exceptions.StaticCompilationError("Can't locate the imported file: {0}".format(import_path))
 
     def find_dependencies(self, source_path):
         source = self.get_source(source_path)
@@ -216,6 +220,7 @@ class SCSS(BaseCompiler):
         return sorted(dependencies)
 
 
+# noinspection PyAbstractClass
 class SASS(SCSS):
 
     name = "sass"
@@ -235,8 +240,8 @@ class SASS(SCSS):
         if self.is_compass_enabled:
             args.append("--compass")
 
-        out, errors = run_command(args, source)
+        out, errors = utils.run_command(args, source)
         if errors:
-            raise StaticCompilationError(errors)
+            raise exceptions.StaticCompilationError(errors)
 
         return out

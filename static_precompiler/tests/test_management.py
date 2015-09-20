@@ -1,27 +1,29 @@
 import os
 
 import pytest
-from django.core.management import call_command
+from django.core import management
 
-from static_precompiler.management.commands.compilestatic import get_scanned_dirs
-from static_precompiler.settings import OUTPUT_DIR, ROOT, STATIC_ROOT
+from static_precompiler import settings
+from static_precompiler.management.commands import compilestatic
 
 
 def test_get_scanned_dirs():
 
-    assert get_scanned_dirs() == sorted([
+    assert compilestatic.get_scanned_dirs() == sorted([
         os.path.join(os.path.dirname(__file__), "staticfiles_dir"),
         os.path.join(os.path.dirname(__file__), "staticfiles_dir_with_prefix"),
-        STATIC_ROOT
+        settings.STATIC_ROOT
     ])
 
 
 @pytest.mark.django_db
-def test_compilestatic_command():
+def test_compilestatic_command(monkeypatch, tmpdir):
 
-    call_command("compilestatic")
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
-    output_path = os.path.join(ROOT, OUTPUT_DIR)
+    management.call_command("compilestatic")
+
+    output_path = os.path.join(tmpdir.strpath, settings.OUTPUT_DIR)
 
     compiled_files = []
     for root, dirs, files in os.walk(output_path):

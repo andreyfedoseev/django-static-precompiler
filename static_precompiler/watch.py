@@ -1,13 +1,11 @@
 import time
 
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
+from watchdog import events, observers
 
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.utils import get_compilers
+from static_precompiler import exceptions, utils
 
 
-class EventHandler(FileSystemEventHandler):
+class EventHandler(events.FileSystemEventHandler):
 
     def __init__(self, scanned_dir, verbosity, compilers):
         self.scanned_dir = scanned_dir
@@ -27,7 +25,7 @@ class EventHandler(FileSystemEventHandler):
                     print("Modified: '{0}'".format(path))
                 try:
                     compiler.handle_changed_file(path)
-                except (StaticCompilationError, ValueError) as e:
+                except (exceptions.StaticCompilationError, ValueError) as e:
                     print(e)
                 break
 
@@ -38,8 +36,8 @@ def watch_dirs(scanned_dirs, verbosity):
         print(scanned_dir)
     print("\nPress Control+C to exit.\n")
 
-    compilers = get_compilers().values()
-    observer = Observer()
+    compilers = utils.get_compilers().values()
+    observer = observers.Observer()
 
     for scanned_dir in scanned_dirs:
         handler = EventHandler(scanned_dir, verbosity, compilers)

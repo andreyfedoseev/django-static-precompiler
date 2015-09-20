@@ -2,12 +2,16 @@ import os
 import posixpath
 import re
 
-from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.utils import convert_urls, run_command
+from static_precompiler import exceptions, utils
+
+from . import base
+
+__all__ = (
+    "Stylus",
+)
 
 
-class Stylus(BaseCompiler):
+class Stylus(base.BaseCompiler):
 
     name = "stylus"
     input_extension = "styl"
@@ -24,10 +28,10 @@ class Stylus(BaseCompiler):
             self.executable,
             "-p",
         ]
-        out, errors = run_command(args, input=source)
+        out, errors = utils.run_command(args, input=source)
 
         if errors:
-            raise StaticCompilationError(errors)
+            raise exceptions.StaticCompilationError(errors)
 
         return out
 
@@ -42,15 +46,15 @@ class Stylus(BaseCompiler):
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
-        out, errors = run_command(args, cwd=cwd)
+        out, errors = utils.run_command(args, cwd=cwd)
 
         if errors:
-            raise StaticCompilationError(errors)
+            raise exceptions.StaticCompilationError(errors)
 
         return out
 
     def postprocess(self, compiled, source_path):
-        return convert_urls(compiled, source_path)
+        return utils.convert_urls(compiled, source_path)
 
     def find_imports(self, source):
         """ Find the imported files in the source code.
@@ -90,7 +94,7 @@ class Stylus(BaseCompiler):
         try:
             self.get_full_source_path(path)
         except ValueError:
-            raise StaticCompilationError(
+            raise exceptions.StaticCompilationError(
                 "Can't locate the imported file: {0}".format(import_path)
             )
         return path
@@ -110,11 +114,11 @@ class Stylus(BaseCompiler):
                 try:
                     imported_dir_full_path = self.get_full_source_path(imported_dir)
                 except ValueError:
-                    raise StaticCompilationError(
+                    raise exceptions.StaticCompilationError(
                         "Can't locate the imported directory: {0}".format(import_path)
                     )
                 if not os.path.isdir(imported_dir_full_path):
-                    raise StaticCompilationError(
+                    raise exceptions.StaticCompilationError(
                         "Imported path is not a directory: {0}".format(import_path)
                     )
                 for filename in os.listdir(imported_dir_full_path):

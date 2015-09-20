@@ -1,18 +1,16 @@
 import os
 
+import pretend
 import pytest
-from django.utils.encoding import force_bytes, force_text
-from pretend import call, call_recorder
+from django.utils import encoding
 
-from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.models import Dependency
-from static_precompiler.settings import OUTPUT_DIR, ROOT
+from static_precompiler import compilers, models, settings
 
 
 def test_is_supported(monkeypatch):
 
     monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.input_extension", ".foo")
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
     assert compiler.is_supported("test.foo") is True
     assert compiler.is_supported("test.bar") is False
@@ -21,16 +19,17 @@ def test_is_supported(monkeypatch):
 
 def test_get_output_filename(monkeypatch):
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.input_extension", ".coffee")
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.output_extension", ".js")
+    compiler = compilers.BaseCompiler()
 
-    compiler = BaseCompiler()
+    monkeypatch.setattr(compiler, "input_extension", ".coffee")
+    monkeypatch.setattr(compiler, "output_extension", ".js")
+
     assert compiler.get_output_filename("dummy.coffee") == "dummy.js"
     assert compiler.get_output_filename("dummy.coffee.coffee") == "dummy.coffee.js"
 
 
 def test_get_full_source_path():
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
     root = os.path.dirname(__file__)
 
@@ -55,53 +54,49 @@ def test_get_full_source_path():
 
 def test_get_output_path(monkeypatch):
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_filename",
-                        lambda self, source_path: source_path.replace(".coffee", ".js"))
+    compiler = compilers.BaseCompiler()
+    monkeypatch.setattr(compiler, "get_output_filename", lambda source_path: source_path.replace(".coffee", ".js"))
 
-    compiler = BaseCompiler()
-    assert compiler.get_output_path("scripts/test.coffee") == OUTPUT_DIR + "/scripts/test.js"
+    assert compiler.get_output_path("scripts/test.coffee") == settings.OUTPUT_DIR + "/scripts/test.js"
 
 
 def test_get_full_output_path(monkeypatch):
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_path",
-                        lambda self, source_path: OUTPUT_DIR + "/dummy.js")
+    compiler = compilers.BaseCompiler()
+    monkeypatch.setattr(compiler, "get_output_path", lambda source_path: settings.OUTPUT_DIR + "/dummy.js")
 
-    compiler = BaseCompiler()
-    assert compiler.get_full_output_path("dummy.coffee") == os.path.join(ROOT, OUTPUT_DIR, "dummy.js")
+    assert compiler.get_full_output_path("dummy.coffee") == os.path.join(settings.ROOT, settings.OUTPUT_DIR, "dummy.js")
 
 
 def test_get_source_mtime(monkeypatch):
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_full_source_path",
-                        lambda self, source_path: "dummy.coffee")
-    monkeypatch.setattr("static_precompiler.compilers.base.get_mtime", lambda filename: 1)
+    compiler = compilers.BaseCompiler()
 
-    compiler = BaseCompiler()
+    monkeypatch.setattr(compiler, "get_full_source_path", lambda source_path: "dummy.coffee")
+    monkeypatch.setattr("static_precompiler.utils.get_mtime", lambda filename: 1)
+
     assert compiler.get_source_mtime("dummy.coffee") == 1
 
 
 def test_get_output_mtime(monkeypatch):
 
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_full_output_path",
-                        lambda self, output_path: "dummy.js")
+    monkeypatch.setattr(compiler, "get_full_output_path", lambda output_path: "dummy.js")
     monkeypatch.setattr("os.path.exists", lambda path: False)
 
     assert compiler.get_output_mtime("dummy.coffee") is None
 
     monkeypatch.setattr("os.path.exists", lambda path: True)
 
-    monkeypatch.setattr("static_precompiler.compilers.base.get_mtime", lambda filename: 1)
+    monkeypatch.setattr("static_precompiler.utils.get_mtime", lambda filename: 1)
     assert compiler.get_output_mtime("dummy.coffee") == 1
 
 
 def test_should_compile(monkeypatch):
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_dependencies",
-                        lambda self, source_path: ["B", "C"])
+    monkeypatch.setattr(compiler, "get_dependencies", lambda source_path: ["B", "C"])
 
     mtimes = dict(
         A=1,
@@ -109,52 +104,51 @@ def test_should_compile(monkeypatch):
         C=5,
     )
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_source_mtime", lambda self, x: mtimes[x])
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: None)
+    monkeypatch.setattr(compiler, "get_source_mtime", lambda x: mtimes[x])
+    monkeypatch.setattr(compiler, "get_output_mtime", lambda x: None)
 
     assert compiler.should_compile("A") is True
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.supports_dependencies", True)
+    monkeypatch.setattr(compiler, "supports_dependencies", True)
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 6)
+    monkeypatch.setattr(compiler, "get_output_mtime", lambda x: 6)
     assert compiler.should_compile("A") is False
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 5)
+    monkeypatch.setattr(compiler, "get_output_mtime", lambda x: 5)
     assert compiler.should_compile("A") is True
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 4)
+    monkeypatch.setattr(compiler, "get_output_mtime", lambda x: 4)
     assert compiler.should_compile("A") is True
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 2)
+    monkeypatch.setattr(compiler, "get_output_mtime", lambda x: 2)
     assert compiler.should_compile("A") is True
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.supports_dependencies", False)
+    monkeypatch.setattr(compiler, "supports_dependencies", False)
 
     assert compiler.should_compile("A") is False
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 1)
+    monkeypatch.setattr(compiler, "get_output_mtime", lambda x: 1)
     assert compiler.should_compile("A") is True
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_mtime", lambda self, x: 0)
+    monkeypatch.setattr(compiler, "get_output_mtime", lambda x: 0)
     assert compiler.should_compile("A") is True
 
-    monkeypatch.setattr("static_precompiler.compilers.base.DISABLE_AUTO_COMPILE", True)
+    monkeypatch.setattr("static_precompiler.settings.DISABLE_AUTO_COMPILE", True)
     assert compiler.should_compile("A") is False
 
 
 def test_get_source():
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
     assert compiler.get_source("scripts/test.coffee") == 'console.log "Hello, World!"'
 
 
 def test_write_output(monkeypatch, tmpdir):
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
     output_path = os.path.join(tmpdir.dirname, "dummy.js")
     assert os.path.exists(output_path) is False
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_full_output_path",
-                        lambda self, x: output_path)
+    monkeypatch.setattr(compiler, "get_full_output_path", lambda x: output_path)
 
     compiler.write_output("compiled", "dummy.coffee")
     assert os.path.exists(output_path) is True
@@ -164,35 +158,27 @@ def test_write_output(monkeypatch, tmpdir):
 
 
 def test_compile_source():
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
     with pytest.raises(NotImplementedError):
         compiler.compile_source("source")
 
 
 def test_postprocess():
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
     assert compiler.postprocess("compiled", "dummy.coffee") == "compiled"
 
 
 def test_compile(monkeypatch):
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.compile_file",
-                        call_recorder(lambda self, *args: "compiled"))
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.write_output",
-                        call_recorder(lambda self, *args: None))
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.postprocess",
-                        call_recorder(lambda self, compiled, source_path: compiled))
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.update_dependencies",
-                        call_recorder(lambda self, *args: None))
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.find_dependencies",
-                        call_recorder(lambda self, *args: ["A", "B"]))
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.get_output_path",
-                        lambda self, *args: "dummy.js")
-
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.is_supported", lambda self, *args: False)
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile",
-                        lambda self, *args, **kwargs: True)
+    monkeypatch.setattr(compiler, "compile_file", pretend.call_recorder(lambda *args: "compiled"))
+    monkeypatch.setattr(compiler, "write_output", pretend.call_recorder(lambda *args: None))
+    monkeypatch.setattr(compiler, "postprocess", pretend.call_recorder(lambda compiled, source_path: compiled))
+    monkeypatch.setattr(compiler, "update_dependencies", pretend.call_recorder(lambda *args: None))
+    monkeypatch.setattr(compiler, "find_dependencies", pretend.call_recorder(lambda *args: ["A", "B"]))
+    monkeypatch.setattr(compiler, "get_output_path", lambda *args: "dummy.js")
+    monkeypatch.setattr(compiler, "is_supported", lambda *args: False)
+    monkeypatch.setattr(compiler, "should_compile", lambda *args, **kwargs: True)
 
     with pytest.raises(ValueError):
         compiler.compile("dummy.coffee")
@@ -204,9 +190,8 @@ def test_compile(monkeypatch):
     # noinspection PyUnresolvedReferences
     assert compiler.postprocess.calls == []
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.is_supported", lambda self, *args: True)
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile",
-                        lambda self, *args, **kwargs: False)
+    monkeypatch.setattr(compiler, "is_supported", lambda *args: True)
+    monkeypatch.setattr(compiler, "should_compile", lambda *args, **kwargs: False)
 
     assert compiler.compile("dummy.coffee") == "dummy.js"
     # noinspection PyUnresolvedReferences
@@ -216,65 +201,64 @@ def test_compile(monkeypatch):
     # noinspection PyUnresolvedReferences
     assert compiler.postprocess.calls == []
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.should_compile",
-                        lambda self, *args, **kwargs: True)
+    monkeypatch.setattr(compiler, "should_compile", lambda *args, **kwargs: True)
     assert compiler.compile("dummy.coffee") == "dummy.js"
 
     # noinspection PyUnresolvedReferences
-    assert compiler.compile_file.calls == [call(compiler, "dummy.coffee")]
+    assert compiler.compile_file.calls == [pretend.call("dummy.coffee")]
     # noinspection PyUnresolvedReferences
-    assert compiler.write_output.calls == [call(compiler, "compiled", "dummy.coffee")]
+    assert compiler.write_output.calls == [pretend.call("compiled", "dummy.coffee")]
     # noinspection PyUnresolvedReferences
-    assert compiler.postprocess.calls == [call(compiler, "compiled", "dummy.coffee")]
+    assert compiler.postprocess.calls == [pretend.call("compiled", "dummy.coffee")]
 
     # noinspection PyUnresolvedReferences
     assert compiler.update_dependencies.calls == []
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.supports_dependencies", True)
+    monkeypatch.setattr(compiler, "supports_dependencies", True)
     compiler.supports_dependencies = True
     compiler.compile("dummy.coffee")
     # noinspection PyUnresolvedReferences
-    assert compiler.find_dependencies.calls == [call(compiler, "dummy.coffee")]
+    assert compiler.find_dependencies.calls == [pretend.call("dummy.coffee")]
     # noinspection PyUnresolvedReferences
-    assert compiler.update_dependencies.calls == [call(compiler, "dummy.coffee", ["A", "B"])]
+    assert compiler.update_dependencies.calls == [pretend.call("dummy.coffee", ["A", "B"])]
 
 
 def test_compile_lazy(monkeypatch):
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
-    monkeypatch.setattr(compiler, "compile", call_recorder(lambda path: path))
+    monkeypatch.setattr(compiler, "compile", pretend.call_recorder(lambda path: path))
 
     lazy_compiled = compiler.compile_lazy("dummy.coffee")
     # noinspection PyUnresolvedReferences
     assert compiler.compile.calls == []
 
-    assert force_text(lazy_compiled) == "dummy.coffee"
+    assert encoding.force_text(lazy_compiled) == "dummy.coffee"
 
     # noinspection PyUnresolvedReferences
-    assert compiler.compile.calls == [call("dummy.coffee")]
+    assert compiler.compile.calls == [pretend.call("dummy.coffee")]
 
-    assert compiler.compile(force_text("foo")).startswith("") is True
-    assert compiler.compile(force_bytes("foo")).startswith("") is True
+    assert compiler.compile(encoding.force_text("foo")).startswith("") is True
+    assert compiler.compile(encoding.force_bytes("foo")).startswith("") is True
 
 
 def test_find_dependencies():
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
     assert compiler.find_dependencies("dummy.coffee") == []
 
 
 @pytest.mark.django_db
 def test_get_dependencies():
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
-    assert Dependency.objects.exists() is False
+    assert models.Dependency.objects.exists() is False
 
     assert compiler.get_dependencies("spam.scss") == []
 
-    Dependency.objects.create(
+    models.Dependency.objects.create(
         source="spam.scss",
         depends_on="ham.scss"
     )
-    Dependency.objects.create(
+    models.Dependency.objects.create(
         source="spam.scss",
         depends_on="eggs.scss"
     )
@@ -284,17 +268,17 @@ def test_get_dependencies():
 
 @pytest.mark.django_db
 def test_get_dependents():
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
-    assert Dependency.objects.exists() is False
+    assert models.Dependency.objects.exists() is False
 
     assert compiler.get_dependents("spam.scss") == []
 
-    Dependency.objects.create(
+    models.Dependency.objects.create(
         source="ham.scss",
         depends_on="spam.scss"
     )
-    Dependency.objects.create(
+    models.Dependency.objects.create(
         source="eggs.scss",
         depends_on="spam.scss"
     )
@@ -304,21 +288,21 @@ def test_get_dependents():
 
 @pytest.mark.django_db
 def test_update_dependencies():
-    compiler = BaseCompiler()
+    compiler = compilers.BaseCompiler()
 
-    assert Dependency.objects.exists() is False
+    assert models.Dependency.objects.exists() is False
 
     compiler.update_dependencies("A", ["B", "C"])
-    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("A", "B"), ("A", "C")]
+    assert sorted(models.Dependency.objects.values_list("source", "depends_on")) == [("A", "B"), ("A", "C")]
 
     compiler.update_dependencies("A", ["B", "C", "D"])
-    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("A", "B"), ("A", "C"), ("A", "D")]
+    assert sorted(models.Dependency.objects.values_list("source", "depends_on")) == [("A", "B"), ("A", "C"), ("A", "D")]
 
     compiler.update_dependencies("A", ["E"])
-    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("A", "E")]
+    assert sorted(models.Dependency.objects.values_list("source", "depends_on")) == [("A", "E")]
 
     compiler.update_dependencies("B", ["C"])
-    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("A", "E"), ("B", "C")]
+    assert sorted(models.Dependency.objects.values_list("source", "depends_on")) == [("A", "E"), ("B", "C")]
 
     compiler.update_dependencies("A", [])
-    assert sorted(Dependency.objects.values_list("source", "depends_on")) == [("B", "C")]
+    assert sorted(models.Dependency.objects.values_list("source", "depends_on")) == [("B", "C")]

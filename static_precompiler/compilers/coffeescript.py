@@ -1,16 +1,19 @@
-from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.settings import COFFEESCRIPT_EXECUTABLE
-from static_precompiler.utils import run_command
+from static_precompiler import exceptions, settings, utils
+
+from . import base
+
+__all__ = (
+    "CoffeeScript",
+)
 
 
-class CoffeeScript(BaseCompiler):
+class CoffeeScript(base.BaseCompiler):
 
     name = "coffeescript"
     input_extension = "coffee"
     output_extension = "js"
 
-    def __init__(self, executable=COFFEESCRIPT_EXECUTABLE):
+    def __init__(self, executable=settings.COFFEESCRIPT_EXECUTABLE):
         self.executable = executable
         super(CoffeeScript, self).__init__()
 
@@ -24,9 +27,9 @@ class CoffeeScript(BaseCompiler):
             "-s",
             "-p",
         ]
-        out, errors = run_command(args, source)
+        out, errors = utils.run_command(args, source)
         if errors:
-            raise StaticCompilationError(errors)
+            raise exceptions.StaticCompilationError(errors)
 
         return out
 

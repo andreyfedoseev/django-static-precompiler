@@ -1,38 +1,36 @@
 # coding: utf-8
 import os
 
+import pretend
 import pytest
-from pretend import call, call_recorder
 
-from static_precompiler.compilers import Stylus
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.utils import fix_line_breaks, normalize_path
+from static_precompiler import compilers, exceptions, utils
 
 
 def test_compile_file():
-    compiler = Stylus()
+    compiler = compilers.Stylus()
 
-    assert fix_line_breaks(compiler.compile_file("styles/stylus/A.styl")) == "p {\n  color: #f00;\n}\n"
+    assert utils.fix_line_breaks(compiler.compile_file("styles/stylus/A.styl")) == "p {\n  color: #f00;\n}\n"
 
-    with pytest.raises(StaticCompilationError):
+    with pytest.raises(exceptions.StaticCompilationError):
         assert compiler.compile_file("styles/stylus/broken1.styl")
 
 
 def test_compile_source():
-    compiler = Stylus()
+    compiler = compilers.Stylus()
 
-    assert fix_line_breaks(compiler.compile_source("p\n  color: red;")) == "p {\n  color: #f00;\n}\n\n"
+    assert utils.fix_line_breaks(compiler.compile_source("p\n  color: red;")) == "p {\n  color: #f00;\n}\n\n"
 
-    with pytest.raises(StaticCompilationError):
+    with pytest.raises(exceptions.StaticCompilationError):
         assert compiler.compile_source("broken")
 
 
 def test_postprocesss(monkeypatch):
-    compiler = Stylus()
-    convert_urls = call_recorder(lambda *args: "spam")
-    monkeypatch.setattr("static_precompiler.compilers.stylus.convert_urls", convert_urls)
+    compiler = compilers.Stylus()
+    convert_urls = pretend.call_recorder(lambda *args: "spam")
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
     assert compiler.postprocess("ham", "eggs") == "spam"
-    assert convert_urls.calls == [call("ham", "eggs")]
+    assert convert_urls.calls == [pretend.call("ham", "eggs")]
 
 
 def test_find_imports():
@@ -56,31 +54,31 @@ def test_find_imports():
         "foo/*",
     ]
 
-    compiler = Stylus()
+    compiler = compilers.Stylus()
     assert compiler.find_imports(source) == expected
 
 
 def test_locate_imported_file(monkeypatch):
-    compiler = Stylus()
+    compiler = compilers.Stylus()
 
     root = os.path.dirname(__file__)
 
     existing_files = set()
     for f in ("A/B.styl", "C.styl"):
-        existing_files.add(os.path.join(root, "static", normalize_path(f)))
+        existing_files.add(os.path.join(root, "static", utils.normalize_path(f)))
 
     monkeypatch.setattr("os.path.exists", lambda x: x in existing_files)
 
     assert compiler.locate_imported_file("A", "B.styl") == "A/B.styl"
     assert compiler.locate_imported_file("", "C.styl") == "C.styl"
 
-    with pytest.raises(StaticCompilationError):
+    with pytest.raises(exceptions.StaticCompilationError):
         compiler.locate_imported_file("", "Z.styl")
 
 
 def test_find_dependencies():
 
-    compiler = Stylus()
+    compiler = compilers.Stylus()
 
     assert compiler.find_dependencies("styles/stylus/A.styl") == [
         "styles/stylus/B/C.styl",
@@ -89,11 +87,11 @@ def test_find_dependencies():
         "styles/stylus/E/index.styl",
     ]
 
-    with pytest.raises(StaticCompilationError):
+    with pytest.raises(exceptions.StaticCompilationError):
         compiler.find_dependencies("styles/stylus/broken1.styl")
 
-    with pytest.raises(StaticCompilationError):
+    with pytest.raises(exceptions.StaticCompilationError):
         compiler.find_dependencies("styles/stylus/broken2.styl")
 
-    with pytest.raises(StaticCompilationError):
+    with pytest.raises(exceptions.StaticCompilationError):
         compiler.find_dependencies("styles/stylus/broken3.styl")

@@ -1,18 +1,15 @@
+import hashlib
 import os
 import re
 import socket
 import subprocess
-from hashlib import md5
-from warnings import warn
+import warnings
 
-from django.core.cache import cache as default_cache
-from django.core.cache import get_cache as base_get_cache
-from django.core.exceptions import ImproperlyConfigured
-from django.utils import six
-from django.utils.encoding import smart_bytes, smart_str
+import django.core.cache
+import django.core.exceptions
+from django.utils import encoding, six
 
-from static_precompiler.exceptions import CompilerNotFound, UnsupportedFile
-from static_precompiler.settings import CACHE_NAME, COMPILERS, MTIME_DELAY, POSIX_COMPATIBLE, STATIC_URL
+from static_precompiler import exceptions, settings
 
 try:
     from importlib import import_module
@@ -31,7 +28,7 @@ else:
 def normalize_path(posix_path):
     """ Convert posix style path to OS-dependent path.
     """
-    if POSIX_COMPATIBLE:
+    if settings.POSIX_COMPATIBLE:
         return posix_path
     return os.path.join(*posix_path.split("/"))
 
@@ -43,16 +40,16 @@ def fix_line_breaks(text):
 
 
 def get_hexdigest(plaintext, length=None):
-    digest = md5(smart_bytes(plaintext)).hexdigest()
+    digest = hashlib.md5(encoding.smart_bytes(plaintext)).hexdigest()
     if length:
         return digest[:length]
     return digest
 
 
 def get_cache():
-    if CACHE_NAME:
-        return base_get_cache(CACHE_NAME)
-    return default_cache
+    if settings.CACHE_NAME:
+        return django.core.cache.get_cache(settings.CACHE_NAME)
+    return django.core.cache.cache
 
 
 def get_cache_key(key):
@@ -64,13 +61,13 @@ def get_mtime_cachekey(filename):
 
 
 def get_mtime(filename):
-    if MTIME_DELAY:
+    if settings.MTIME_DELAY:
         key = get_mtime_cachekey(filename)
         cache = get_cache()
         mtime = cache.get(key)
         if mtime is None:
             mtime = os.path.getmtime(filename)
-            cache.set(key, mtime, MTIME_DELAY)
+            cache.set(key, mtime, settings.MTIME_DELAY)
         return mtime
     return os.path.getmtime(filename)
 
@@ -95,11 +92,11 @@ def run_command(args, input=None, cwd=None):
     p = subprocess.Popen(args, **popen_kwargs)
 
     if input:
-        input = smart_bytes(input)
+        input = encoding.smart_bytes(input)
 
     output, error = p.communicate(input)
 
-    return smart_str(output), smart_str(error)
+    return encoding.smart_str(output), encoding.smart_str(error)
 
 
 class URLConverter(object):
@@ -112,7 +109,7 @@ class URLConverter(object):
         url = url.strip(' \'"')
         if url.startswith(('http://', 'https://', '/', 'data:')):
             return url
-        return urljoin(STATIC_URL, urljoin(source_dir, url))
+        return urljoin(settings.STATIC_URL, urljoin(source_dir, url))
 
     def convert(self, content, path):
         source_dir = os.path.dirname(path)
@@ -133,40 +130,44 @@ def convert_urls(content, path):
     return url_converter.convert(content, path)
 
 
-def _build_compilers():
+def build_compilers():
     # noinspection PyShadowingNames
     compilers = {}
-    for compiler_path in COMPILERS:
+    for compiler_path in settings.COMPILERS:
         compiler_options = {}
         if isinstance(compiler_path, (tuple, list)):
             if len(compiler_path) != 2:
-                raise ImproperlyConfigured(
+                raise django.core.exceptions.ImproperlyConfigured(
                     'Compiler must be specified in the format ("path.to.CompilerClass", {{compiler options...}}),'
                     ' got {0}'.format(compiler_path)
                 )
             compiler_path, compiler_options = compiler_path
             if not isinstance(compiler_options, dict):
-                raise ImproperlyConfigured('Compiler options must be a dict, got {0}'.format(compiler_options))
+                raise django.core.exceptions.ImproperlyConfigured(
+                    'Compiler options must be a dict, got {0}'.format(compiler_options)
+                )
 
         try:
             compiler_module, compiler_classname = compiler_path.rsplit('.', 1)
         except ValueError:
-            raise ImproperlyConfigured('{0} isn\'t a compiler module'.format(compiler_path))
+            raise django.core.exceptions.ImproperlyConfigured('{0} isn\'t a compiler module'.format(compiler_path))
         try:
             mod = import_module(compiler_module)
         except ImportError as e:
-            raise ImproperlyConfigured('Error importing compiler {0}: "{1}"'.format(compiler_module, e))
+            raise django.core.exceptions.ImproperlyConfigured(
+                'Error importing compiler {0}: "{1}"'.format(compiler_module, e)
+            )
         try:
             compiler_class = getattr(mod, compiler_classname)
         except AttributeError:
-            raise ImproperlyConfigured(
+            raise django.core.exceptions.ImproperlyConfigured(
                 'Compiler module "{0}" does not define a "{1}" class'.format(compiler_module, compiler_classname)
             )
 
         compiler_to_add = compiler_class(**compiler_options)
         compiler = compilers.setdefault(compiler_class.name, compiler_to_add)
         if compiler_to_add != compiler:
-            warn("Both compilers {0} and {1} have the same name.".format(compiler_to_add, compiler))
+            warnings.warn("Both compilers {0} and {1} have the same name.".format(compiler_to_add, compiler))
 
     return compilers
 
@@ -177,7 +178,7 @@ compilers = None
 def get_compilers():
     global compilers
     if compilers is None:
-        compilers = _build_compilers()
+        compilers = build_compilers()
     return compilers
 
 
@@ -185,7 +186,7 @@ def get_compiler_by_name(name):
     try:
         return get_compilers()[name]
     except KeyError:
-        raise CompilerNotFound("There is no compiler with name '{0}'.".format(name))
+        raise exceptions.CompilerNotFound("There is no compiler with name '{0}'.".format(name))
 
 
 def get_compiler_by_path(path):
@@ -193,7 +194,9 @@ def get_compiler_by_path(path):
         if compiler.is_supported(path):
             return compiler
 
-    raise UnsupportedFile("The source file '{0}' is not supported by any of available compilers.".format(path))
+    raise exceptions.UnsupportedFile(
+        "The source file '{0}' is not supported by any of available compilers.".format(path)
+    )
 
 
 def compile_static(path):
