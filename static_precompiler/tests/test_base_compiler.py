@@ -1,3 +1,4 @@
+from django.utils.encoding import force_text, force_bytes
 from static_precompiler.models import Dependency
 from static_precompiler.compilers.base import BaseCompiler
 from static_precompiler.settings import OUTPUT_DIR, ROOT
@@ -239,17 +240,19 @@ def test_compile(monkeypatch):
 def test_compile_lazy(monkeypatch):
     compiler = BaseCompiler()
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.compile",
-                        call_recorder(lambda self, *args: "dummy.js"))
+    monkeypatch.setattr(compiler, "compile", call_recorder(lambda path: path))
 
     lazy_compiled = compiler.compile_lazy("dummy.coffee")
     # noinspection PyUnresolvedReferences
     assert compiler.compile.calls == []
 
-    assert str(lazy_compiled) == "dummy.js"
+    assert force_text(lazy_compiled) == "dummy.coffee"
 
     # noinspection PyUnresolvedReferences
-    assert compiler.compile.calls == [call(compiler, "dummy.coffee")]
+    assert compiler.compile.calls == [call("dummy.coffee")]
+
+    assert compiler.compile(force_text("foo")).startswith("") is True
+    assert compiler.compile(force_bytes("foo")).startswith("") is True
 
 
 def test_find_dependencies():

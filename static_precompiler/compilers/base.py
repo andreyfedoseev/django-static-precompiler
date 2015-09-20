@@ -1,5 +1,7 @@
 from django.contrib.staticfiles import finders
 from django.core.exceptions import SuspiciousOperation
+from django.utils import six
+from django.utils.encoding import force_text
 from django.utils.functional import lazy
 from static_precompiler.models import Dependency
 from static_precompiler.settings import STATIC_ROOT, ROOT, OUTPUT_DIR, DISABLE_AUTO_COMPILE
@@ -217,9 +219,9 @@ class BaseCompiler(object):
 
             :returns: str
         """
-        return self.compile(source_path)
+        return force_text(self.compile(source_path))
 
-    compile_lazy = lazy(compile_lazy, str)
+    compile_lazy = lazy(compile_lazy, six.text_type)
 
     def compile_file(self, source_path):
         """ Compile the source file. Return the compiled code.
