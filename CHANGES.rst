@@ -6,6 +6,8 @@ Dev
 ===
 
 - Add `Stylus <http://learnboost.github.io/stylus/>` compiler
+- Add ``compile`` template filter
+- Deprecate ``{% compile %}`` template tag
 
 
 0.9
