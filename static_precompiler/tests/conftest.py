@@ -1,7 +1,9 @@
-from static_precompiler.settings import ROOT, OUTPUT_DIR
-import shutil
 import os
+import shutil
+
 import pytest
+
+from static_precompiler.settings import OUTPUT_DIR, ROOT
 
 
 @pytest.fixture(autouse=True)

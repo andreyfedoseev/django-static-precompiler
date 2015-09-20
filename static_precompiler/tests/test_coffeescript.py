@@ -1,7 +1,8 @@
 # coding: utf-8
+import pytest
+
 from static_precompiler.compilers.coffeescript import CoffeeScript
 from static_precompiler.exceptions import StaticCompilationError
-import pytest
 
 
 def clean_javascript(js):

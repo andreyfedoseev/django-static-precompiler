@@ -1,10 +1,12 @@
 # coding: utf-8
-from pretend import call_recorder, call
+import os
+
+import pytest
+from pretend import call, call_recorder
+
 from static_precompiler.compilers import Stylus
 from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.utils import normalize_path, fix_line_breaks
-import os
-import pytest
+from static_precompiler.utils import fix_line_breaks, normalize_path
 
 
 def test_compile_file():

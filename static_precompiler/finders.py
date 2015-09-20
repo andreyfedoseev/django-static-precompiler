@@ -1,6 +1,7 @@
 from django.contrib.staticfiles.finders import BaseStorageFinder
 from django.core.files.storage import FileSystemStorage
-from static_precompiler.settings import ROOT, FINDER_LIST_FILES
+
+from static_precompiler.settings import FINDER_LIST_FILES, ROOT
 
 
 class StaticPrecompilerFileStorage(FileSystemStorage):

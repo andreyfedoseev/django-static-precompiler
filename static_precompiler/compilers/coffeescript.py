@@ -1,5 +1,5 @@
-from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.compilers.base import BaseCompiler
+from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.settings import COFFEESCRIPT_EXECUTABLE
 from static_precompiler.utils import run_command
 

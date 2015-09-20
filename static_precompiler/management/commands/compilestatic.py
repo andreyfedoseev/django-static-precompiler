@@ -1,10 +1,11 @@
 import os
 import sys
+from optparse import make_option
 
 from django.contrib.staticfiles.finders import get_finders
 from django.core.files.storage import FileSystemStorage
 from django.core.management.base import NoArgsCommand
-from optparse import make_option
+
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.settings import STATIC_ROOT
 from static_precompiler.utils import get_compilers

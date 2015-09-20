@@ -1,10 +1,11 @@
-from static_precompiler.exceptions import StaticCompilationError
-from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.settings import LESS_EXECUTABLE
-from static_precompiler.utils import run_command, convert_urls
 import os
 import posixpath
 import re
+
+from static_precompiler.compilers.base import BaseCompiler
+from static_precompiler.exceptions import StaticCompilationError
+from static_precompiler.settings import LESS_EXECUTABLE
+from static_precompiler.utils import convert_urls, run_command
 
 
 class LESS(BaseCompiler):

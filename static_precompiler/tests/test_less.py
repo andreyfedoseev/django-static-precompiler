@@ -1,10 +1,12 @@
 # coding: utf-8
-from pretend import call_recorder, call
+import os
+
+import pytest
+from pretend import call, call_recorder
+
 from static_precompiler.compilers import LESS
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.utils import normalize_path
-import os
-import pytest
 
 
 def test_compile_file():

@@ -1,6 +1,6 @@
 from inspect import getargspec
 
-from django.template.base import parse_bits, TagHelperNode
+from django.template.base import TagHelperNode, parse_bits
 
 
 def container_tag(register, name=None):

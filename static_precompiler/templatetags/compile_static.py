@@ -1,12 +1,14 @@
-from django.utils import six
 import warnings
 
 from django.template import Library
 from django.templatetags.static import static
-from static_precompiler.settings import PREPEND_STATIC_URL, USE_CACHE, CACHE_TIMEOUT
-from static_precompiler.utils import compile_static, get_compiler_by_name, get_cache_key, get_hexdigest, get_cache
-from static_precompiler.templatetags.base import container_tag
+from django.utils import six
 
+from static_precompiler.settings import (CACHE_TIMEOUT, PREPEND_STATIC_URL,
+                                         USE_CACHE)
+from static_precompiler.templatetags.base import container_tag
+from static_precompiler.utils import (compile_static, get_cache, get_cache_key,
+                                      get_compiler_by_name, get_hexdigest)
 
 register = Library()
 

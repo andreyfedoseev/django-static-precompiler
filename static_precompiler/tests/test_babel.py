@@ -1,8 +1,10 @@
 # coding: utf-8
+import pytest
+
 from static_precompiler.compilers.babel import Babel
 from static_precompiler.exceptions import StaticCompilationError
+
 from .test_coffeescript import clean_javascript
-import pytest
 
 
 def test_compile_file():

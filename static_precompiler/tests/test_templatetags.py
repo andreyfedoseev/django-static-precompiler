@@ -1,6 +1,7 @@
 from django.template import Context
 from django.template.loader import get_template_from_string
-from pretend import stub, call_recorder, call
+from pretend import call, call_recorder, stub
+
 from static_precompiler.templatetags.compile_static import compile_tag
 
 

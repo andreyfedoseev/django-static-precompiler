@@ -1,8 +1,8 @@
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 import os
 import warnings
 
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 
 STATIC_ROOT = getattr(settings, "STATIC_ROOT", getattr(settings, "MEDIA_ROOT"))
 STATIC_URL = getattr(settings, "STATIC_URL", getattr(settings, "MEDIA_URL"))

@@ -1,11 +1,14 @@
-from django.core.exceptions import ImproperlyConfigured
-from static_precompiler.exceptions import UnsupportedFile, CompilerNotFound
-# noinspection PyProtectedMember
-from static_precompiler.utils import _build_compilers, get_compiler_by_name, get_compiler_by_path, compile_static,\
-    compile_static_lazy
-from static_precompiler.compilers import CoffeeScript
-from pretend import stub
 import pytest
+from django.core.exceptions import ImproperlyConfigured
+from pretend import stub
+
+from static_precompiler.compilers import CoffeeScript
+from static_precompiler.exceptions import CompilerNotFound, UnsupportedFile
+# noinspection PyProtectedMember
+from static_precompiler.utils import (_build_compilers, compile_static,
+                                      compile_static_lazy,
+                                      get_compiler_by_name,
+                                      get_compiler_by_path)
 
 
 def test_build_compilers(monkeypatch):

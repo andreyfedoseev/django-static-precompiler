@@ -1,10 +1,12 @@
-from django.utils.encoding import force_text, force_bytes
-from static_precompiler.models import Dependency
-from static_precompiler.compilers.base import BaseCompiler
-from static_precompiler.settings import OUTPUT_DIR, ROOT
-from pretend import call_recorder, call
 import os
+
 import pytest
+from django.utils.encoding import force_bytes, force_text
+from pretend import call, call_recorder
+
+from static_precompiler.compilers.base import BaseCompiler
+from static_precompiler.models import Dependency
+from static_precompiler.settings import OUTPUT_DIR, ROOT
 
 
 def test_is_supported(monkeypatch):

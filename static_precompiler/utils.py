@@ -1,20 +1,24 @@
-from django.core.cache import get_cache as base_get_cache, cache as default_cache
-from django.core.exceptions import ImproperlyConfigured
-from django.utils.encoding import smart_str, smart_bytes
-try:
-    from importlib import import_module
-except ImportError:
-    from django.utils.importlib import import_module
-from hashlib import md5
-from static_precompiler.exceptions import UnsupportedFile, CompilerNotFound
-from static_precompiler.settings import MTIME_DELAY, POSIX_COMPATIBLE, COMPILERS, \
-    STATIC_URL, CACHE_NAME
-from django.utils import six
-from warnings import warn
 import os
 import re
 import socket
 import subprocess
+from hashlib import md5
+from warnings import warn
+
+from django.core.cache import cache as default_cache
+from django.core.cache import get_cache as base_get_cache
+from django.core.exceptions import ImproperlyConfigured
+from django.utils import six
+from django.utils.encoding import smart_bytes, smart_str
+
+from static_precompiler.exceptions import CompilerNotFound, UnsupportedFile
+from static_precompiler.settings import (CACHE_NAME, COMPILERS, MTIME_DELAY,
+                                         POSIX_COMPATIBLE, STATIC_URL)
+
+try:
+    from importlib import import_module
+except ImportError:
+    from django.utils.importlib import import_module
 
 
 if six.PY2:
