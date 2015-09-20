@@ -63,6 +63,7 @@ setup(
         "pytest",
         "pytest-django",
         "pretend",
+        "coverage==3.7.1"
     ],
     cmdclass={
         "test": PyTest
