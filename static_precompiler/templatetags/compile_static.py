@@ -4,11 +4,9 @@ from django.template import Library
 from django.templatetags.static import static
 from django.utils import six
 
-from static_precompiler.settings import (CACHE_TIMEOUT, PREPEND_STATIC_URL,
-                                         USE_CACHE)
+from static_precompiler.settings import CACHE_TIMEOUT, PREPEND_STATIC_URL, USE_CACHE
 from static_precompiler.templatetags.base import container_tag
-from static_precompiler.utils import (compile_static, get_cache, get_cache_key,
-                                      get_compiler_by_name, get_hexdigest)
+from static_precompiler.utils import compile_static, get_cache, get_cache_key, get_compiler_by_name, get_hexdigest
 
 register = Library()
 

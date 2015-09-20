@@ -5,9 +5,7 @@ from pretend import stub
 from static_precompiler.compilers import CoffeeScript
 from static_precompiler.exceptions import CompilerNotFound, UnsupportedFile
 # noinspection PyProtectedMember
-from static_precompiler.utils import (_build_compilers, compile_static,
-                                      compile_static_lazy,
-                                      get_compiler_by_name,
+from static_precompiler.utils import (_build_compilers, compile_static, compile_static_lazy, get_compiler_by_name,
                                       get_compiler_by_path)
 
 

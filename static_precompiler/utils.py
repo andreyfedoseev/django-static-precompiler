@@ -12,8 +12,7 @@ from django.utils import six
 from django.utils.encoding import smart_bytes, smart_str
 
 from static_precompiler.exceptions import CompilerNotFound, UnsupportedFile
-from static_precompiler.settings import (CACHE_NAME, COMPILERS, MTIME_DELAY,
-                                         POSIX_COMPATIBLE, STATIC_URL)
+from static_precompiler.settings import CACHE_NAME, COMPILERS, MTIME_DELAY, POSIX_COMPATIBLE, STATIC_URL
 
 try:
     from importlib import import_module

@@ -9,8 +9,7 @@ from django.utils.encoding import force_text
 from django.utils.functional import lazy
 
 from static_precompiler.models import Dependency
-from static_precompiler.settings import (DISABLE_AUTO_COMPILE, OUTPUT_DIR,
-                                         ROOT, STATIC_ROOT)
+from static_precompiler.settings import DISABLE_AUTO_COMPILE, OUTPUT_DIR, ROOT, STATIC_ROOT
 from static_precompiler.utils import get_mtime, normalize_path
 
 logger = logging.getLogger("static_precompiler")

@@ -3,8 +3,7 @@ import os
 import pytest
 from django.core.management import call_command
 
-from static_precompiler.management.commands.compilestatic import \
-    get_scanned_dirs
+from static_precompiler.management.commands.compilestatic import get_scanned_dirs
 from static_precompiler.settings import OUTPUT_DIR, ROOT, STATIC_ROOT
 
 
