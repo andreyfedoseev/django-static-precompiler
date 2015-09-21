@@ -8,6 +8,7 @@ Changes
 - Add ``compile`` template filter
 - Deprecate ``{% compile %}`` template tag
 - **The following compiler specific template tags are REMOVED:**
+
   * ``{% coffeescript %}``
   * ``{% inlinecoffeescript %}``
   * ``{% sass %}``
@@ -16,7 +17,7 @@ Changes
   * ``{% inlinescss %}``
   * ``{% less %}``
   * ``{% inlineless %}``
-- Add `Stylus <http://learnboost.github.io/stylus/>` compiler
+- Add `Stylus <http://learnboost.github.io/stylus/>`_ compiler
 
 0.9
 ===
