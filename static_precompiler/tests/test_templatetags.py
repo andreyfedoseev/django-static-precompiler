@@ -1,5 +1,4 @@
 import django.template
-import django.template.loader
 import pretend
 
 
@@ -7,7 +6,7 @@ def test_compile_filter(monkeypatch):
 
     compile_static = pretend.call_recorder(lambda source_path: "compiled")
     monkeypatch.setattr("static_precompiler.utils.compile_static", compile_static)
-    template = django.template.loader.get_template_from_string("""{% load compile_static %}{{ "source"|compile }}""")
+    template = django.template.Template("""{% load compile_static %}{{ "source"|compile }}""")
     assert template.render(django.template.Context({})) == "compiled"
 
     monkeypatch.setattr("static_precompiler.settings.PREPEND_STATIC_URL", True)
@@ -22,7 +21,7 @@ def test_inlinecompile_tag(monkeypatch):
 
     monkeypatch.setattr("static_precompiler.utils.get_compiler_by_name", get_compiler_by_name)
 
-    template = django.template.loader.get_template_from_string(
+    template = django.template.Template(
         "{% load compile_static %}{% inlinecompile compiler='sass' %}source{% endinlinecompile %}"
     )
     assert template.render(django.template.Context({})) == "compiled"
