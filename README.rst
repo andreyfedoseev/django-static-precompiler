@@ -5,7 +5,7 @@ Django Static Precompiler
 Django Static Precompiler provides template tags to compile CoffeeScript, SASS / SCSS, LESS, and Babel.
 It works with both inline code and external files.
 
-.. image:: https://circleci.com/gh/andreyfedoseev/django-static-precompiler.svg?style=svg
+.. image:: https://circleci.com/gh/andreyfedoseev/django-static-precompiler.svg?style=shield
     :target: https://circleci.com/gh/andreyfedoseev/django-static-precompiler
 
 .. image:: http://codecov.io/github/andreyfedoseev/django-static-precompiler/coverage.svg?branch=master
