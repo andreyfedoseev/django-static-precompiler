@@ -1,18 +1,18 @@
 dependencies:
   pre:
-    - npm install -g coffee-script
+    - npm install -g coffee-script@1.7.1
     - npm install -g less@1.7.4
     - npm install -g babel@4.3.0
     - npm install -g stylus@0.50.0
-    - gem install sass --version 3.3.14
-    - gem install compass --version 1.0.1
+    - gem install sass -v 3.4.9
+    - gem install compass -v 1.0.1
     - pip install tox
     - pip install coveralls
     - pip install flake8
+  override:
+    - python setup.py install
 
 test:
   override:
     - flake8
     - tox
-  post:
-    - coveralls
