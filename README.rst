@@ -7,9 +7,15 @@ It works with both inline code and external files.
 
 .. image:: https://circleci.com/gh/andreyfedoseev/django-static-precompiler.svg?style=shield
     :target: https://circleci.com/gh/andreyfedoseev/django-static-precompiler
+    :alt: Build Status
 
 .. image:: http://codecov.io/github/andreyfedoseev/django-static-precompiler/coverage.svg?branch=master
     :target: http://codecov.io/github/andreyfedoseev/django-static-precompiler?branch=master
+    :alt: Code Coverage
+
+.. image:: https://codeclimate.com/github/andreyfedoseev/django-static-precompiler/badges/gpa.svg
+    :target: https://codeclimate.com/github/andreyfedoseev/django-static-precompiler
+    :alt: Code Climate
 
 .. image:: https://readthedocs.org/projects/django-static-precompiler/badge/
     :target: http://django-static-precompiler.readthedocs.org/
