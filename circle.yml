@@ -8,7 +8,7 @@ dependencies:
     - gem install sass -v 3.4.9
     - gem install compass -v 1.0.1
     - pip install tox
-    - pip install coveralls
+    - pip install codecov
     - pip install flake8
   override:
     - python setup.py install
@@ -18,4 +18,4 @@ test:
     - flake8
     - tox
   post:
-    - coveralls
+    - codecov
