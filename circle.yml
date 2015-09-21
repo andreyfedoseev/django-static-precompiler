@@ -17,3 +17,5 @@ test:
   override:
     - flake8
     - tox
+  post:
+    - coveralls
