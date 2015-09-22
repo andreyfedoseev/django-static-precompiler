@@ -28,7 +28,7 @@ It works with both inline code and external files.
 Installation
 ============
 
-``django-static-precompiler`` is avaiable through [pip](http://pypi.python.org/pypi/pip):
+``django-static-precompiler`` is avaiable through `pip <http://pypi.python.org/pypi/pip/>`_::
 
     $ pip install django-static-precompiler
 
@@ -272,7 +272,7 @@ You can run ``compilestatic`` in watch mode (``--watch`` option). In watch mode 
 source files and re-compile them on the fly. It can be handy if you use tools such as
 `LiveReload <http://livereload.com/>`_.
 
-You should install `Watchdog <http://pythonhosted.org/watchdog/>`_ to use watch mode or install ``django-static-precompiler`` with the ``watch`` extra:
+You should install `Watchdog <http://pythonhosted.org/watchdog/>`_ to use watch mode or install ``django-static-precompiler`` with the ``watch`` extra::
 
     $ pip install django-static-precompiler[watch]
 
