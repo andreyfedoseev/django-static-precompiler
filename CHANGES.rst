@@ -2,6 +2,11 @@
 Changes
 =======
 
+Dev
+===
+
+- Add ``modules`` parameter to Babel compiler
+
 1.0
 ===
 
