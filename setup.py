@@ -64,6 +64,9 @@ setup(
         "pytest-django",
         "pretend",
     ],
+    extras_require={
+        'watch': ['watchdog']
+    },
     cmdclass={
         "test": PyTest
     },
