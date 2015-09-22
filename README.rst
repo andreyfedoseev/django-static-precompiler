@@ -28,6 +28,10 @@ It works with both inline code and external files.
 Installation
 ============
 
+``django-static-precompiler`` is avaiable through `pip <http://pypi.python.org/pypi/pip/>`_::
+
+    $ pip install django-static-precompiler
+
 1. Add "static_precompiler" to INSTALLED_APPS setting.
 2. Initialize DB:
 
@@ -260,7 +264,7 @@ If you want to use ``static_precompiler`` in form media definitions, you can use
 ``compilestatic`` management command
 ====================================
 
-Django Static Precompiler includes a management command ``compilestatic``. If will scan your static files for source
+Django Static Precompiler includes a management command ``compilestatic``. It will scan your static files for source
 files and compile all of them.
 
 You can use this command in conjunction with ``STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE`` setting if you use custom
@@ -271,7 +275,9 @@ You can run ``compilestatic`` in watch mode (``--watch`` option). In watch mode 
 source files and re-compile them on the fly. It can be handy if you use tools such as
 `LiveReload <http://livereload.com/>`_.
 
-You should install `Watchdog <http://pythonhosted.org/watchdog/>`_ to use watch mode.
+You should install `Watchdog <http://pythonhosted.org/watchdog/>`_ to use watch mode or install ``django-static-precompiler`` with the ``watch`` extra::
+
+    $ pip install django-static-precompiler[watch]
 
 
 Troubleshooting
