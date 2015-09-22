@@ -183,10 +183,13 @@ Babel
 ``executable``
   Path to Babel compiler executable. Default: ``"babel"``.
 
+``modules``
+  Babel [modules](https://babeljs.io/docs/usage/modules/) command line option. Default: ``None`` (uses Babel's default option).
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Babel', {"executable": "/usr/bin/babel"}),
+        ('static_precompiler.compilers.Babel', {"executable": "/usr/bin/babel", "modules": "amd"}),
     )
 
 
@@ -197,7 +200,7 @@ SASS / SCSS
   Path to SASS compiler executable. Default: "sass".
 
 ``compass_enabled``
-  Boolean. Wheter to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
+  Boolean. Whether to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
 
 Example::
 
