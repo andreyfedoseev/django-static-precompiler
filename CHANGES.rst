@@ -2,8 +2,8 @@
 Changes
 =======
 
-Dev
-===
+1.0.1
+=====
 
 - Add ``modules`` parameter to Babel compiler
 - Allow to install Watchdog with ``pip install django-static-precompiler[watch]``
