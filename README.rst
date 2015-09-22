@@ -184,7 +184,7 @@ Babel
   Path to Babel compiler executable. Default: ``"babel"``.
 
 ``modules``
-  Babel [modules](https://babeljs.io/docs/usage/modules/) command line option. Default: ``None`` (uses Babel's default option).
+  Babel `modules <https://babeljs.io/docs/usage/modules/>`_ command line option. Default: ``None`` (uses Babel's default option).
 
 Example::
 
