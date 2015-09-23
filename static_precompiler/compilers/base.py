@@ -24,7 +24,7 @@ class BaseCompiler(object):
     output_extension = None
 
     def is_supported(self, source_path):
-        """ Return True iff provided source file type is supported by this precompiler.
+        """ Return True if provided source file type is supported by this precompiler.
 
         :param source_path: relative path to a source file
         :type source_path: str
@@ -122,7 +122,7 @@ class BaseCompiler(object):
         return utils.get_mtime(full_output_path)
 
     def should_compile(self, source_path, from_management=False):
-        """ Return True iff provided source file should be compiled.
+        """ Return True if provided source file should be compiled.
 
         :param source_path: relative path to a source file
         :type source_path: str
@@ -178,9 +178,8 @@ class BaseCompiler(object):
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        compiled_file = open(output_path, "w+")
-        compiled_file.write(output)
-        compiled_file.close()
+        with open(output_path, "w") as compiled_file:
+            compiled_file.write(output)
 
     def compile(self, source_path, from_management=False):
         """ Compile the given source path and return relative path to the compiled file.
