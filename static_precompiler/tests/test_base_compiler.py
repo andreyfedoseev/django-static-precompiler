@@ -142,38 +142,16 @@ def test_get_source():
     assert compiler.get_source("scripts/test.coffee") == 'console.log "Hello, World!"'
 
 
-def test_write_output(monkeypatch, tmpdir):
-    compiler = compilers.BaseCompiler()
-
-    output_path = os.path.join(tmpdir.dirname, "dummy.js")
-    assert os.path.exists(output_path) is False
-
-    monkeypatch.setattr(compiler, "get_full_output_path", lambda x: output_path)
-
-    compiler.write_output("compiled", "dummy.coffee")
-    assert os.path.exists(output_path) is True
-
-    with open(output_path) as output:
-        assert output.read() == "compiled"
-
-
 def test_compile_source():
     compiler = compilers.BaseCompiler()
     with pytest.raises(NotImplementedError):
         compiler.compile_source("source")
 
 
-def test_postprocess():
-    compiler = compilers.BaseCompiler()
-    assert compiler.postprocess("compiled", "dummy.coffee") == "compiled"
-
-
 def test_compile(monkeypatch):
     compiler = compilers.BaseCompiler()
 
-    monkeypatch.setattr(compiler, "compile_file", pretend.call_recorder(lambda *args: "compiled"))
-    monkeypatch.setattr(compiler, "write_output", pretend.call_recorder(lambda *args: None))
-    monkeypatch.setattr(compiler, "postprocess", pretend.call_recorder(lambda compiled, source_path: compiled))
+    monkeypatch.setattr(compiler, "compile_file", pretend.call_recorder(lambda *args: "dummy.js"))
     monkeypatch.setattr(compiler, "update_dependencies", pretend.call_recorder(lambda *args: None))
     monkeypatch.setattr(compiler, "find_dependencies", pretend.call_recorder(lambda *args: ["A", "B"]))
     monkeypatch.setattr(compiler, "get_output_path", lambda *args: "dummy.js")
@@ -185,10 +163,6 @@ def test_compile(monkeypatch):
 
     # noinspection PyUnresolvedReferences
     assert compiler.compile_file.calls == []
-    # noinspection PyUnresolvedReferences
-    assert compiler.write_output.calls == []
-    # noinspection PyUnresolvedReferences
-    assert compiler.postprocess.calls == []
 
     monkeypatch.setattr(compiler, "is_supported", lambda *args: True)
     monkeypatch.setattr(compiler, "should_compile", lambda *args, **kwargs: False)
@@ -196,20 +170,12 @@ def test_compile(monkeypatch):
     assert compiler.compile("dummy.coffee") == "dummy.js"
     # noinspection PyUnresolvedReferences
     assert compiler.compile_file.calls == []
-    # noinspection PyUnresolvedReferences
-    assert compiler.write_output.calls == []
-    # noinspection PyUnresolvedReferences
-    assert compiler.postprocess.calls == []
 
     monkeypatch.setattr(compiler, "should_compile", lambda *args, **kwargs: True)
     assert compiler.compile("dummy.coffee") == "dummy.js"
 
     # noinspection PyUnresolvedReferences
     assert compiler.compile_file.calls == [pretend.call("dummy.coffee")]
-    # noinspection PyUnresolvedReferences
-    assert compiler.write_output.calls == [pretend.call("compiled", "dummy.coffee")]
-    # noinspection PyUnresolvedReferences
-    assert compiler.postprocess.calls == [pretend.call("compiled", "dummy.coffee")]
 
     # noinspection PyUnresolvedReferences
     assert compiler.update_dependencies.calls == []

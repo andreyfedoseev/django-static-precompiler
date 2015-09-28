@@ -126,8 +126,11 @@ class URLConverter(object):
 url_converter = URLConverter()
 
 
-def convert_urls(content, path):
-    return url_converter.convert(content, path)
+def convert_urls(compiled_full_path, source_path):
+    with open(compiled_full_path, "r+") as compiled_file:
+        content = compiled_file.read()
+    with open(compiled_full_path, "w") as compiled_file:
+        compiled_file.write(url_converter.convert(content, source_path))
 
 
 def build_compilers():

@@ -1,3 +1,5 @@
+import os
+
 from static_precompiler import exceptions, settings, utils
 
 from . import base
@@ -18,7 +20,16 @@ class CoffeeScript(base.BaseCompiler):
         super(CoffeeScript, self).__init__()
 
     def compile_file(self, source_path):
-        return self.compile_source(self.get_source(source_path))
+        args = [
+            self.executable,
+            "-c",
+            "-o", os.path.dirname(self.get_full_output_path(source_path)),
+            self.get_full_source_path(source_path),
+        ]
+        out, errors = utils.run_command(args)
+        if errors:
+            raise exceptions.StaticCompilationError(errors)
+        return self.get_output_path(source_path)
 
     def compile_source(self, source):
         args = [

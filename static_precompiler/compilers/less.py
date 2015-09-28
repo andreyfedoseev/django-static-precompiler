@@ -33,18 +33,22 @@ class LESS(base.BaseCompiler):
 
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)
+        full_output_path = self.get_full_output_path(source_path)
         args = [
             self.executable,
-            full_source_path,
+            self.get_full_source_path(source_path),
+            full_output_path,
         ]
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
-        out, errors = utils.run_command(args, None, cwd=cwd)
+        out, errors = utils.run_command(args, cwd=cwd)
         if errors:
             raise exceptions.StaticCompilationError(errors)
 
-        return out
+        utils.convert_urls(full_output_path, source_path)
+
+        return self.get_output_path(source_path)
 
     def compile_source(self, source):
         args = [
@@ -58,9 +62,6 @@ class LESS(base.BaseCompiler):
             raise exceptions.StaticCompilationError(errors)
 
         return out
-
-    def postprocess(self, compiled, source_path):
-        return utils.convert_urls(compiled, source_path)
 
     def find_imports(self, source):
         """ Find the imported files in the source code.

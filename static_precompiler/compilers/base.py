@@ -164,24 +164,6 @@ class BaseCompiler(object):
         with open(self.get_full_source_path(source_path)) as source:
             return source.read()
 
-    def write_output(self, output, source_path):
-        """ Write the compiled output to a file.
-
-        :param output: compiled code
-        :type output: str
-        :param source_path: relative path to a source file
-        :type source_path: str
-
-        """
-        output_path = self.get_full_output_path(source_path)
-        output_dir = os.path.dirname(output_path)
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-
-        compiled_file = open(output_path, "w+")
-        compiled_file.write(output)
-        compiled_file.close()
-
     def compile(self, source_path, from_management=False):
         """ Compile the given source path and return relative path to the compiled file.
             Raise ValueError is the source file type is not supported.
@@ -198,18 +180,19 @@ class BaseCompiler(object):
             raise ValueError("'{0}' file type is not supported by '{1}'".format(
                 source_path, self.__class__.__name__
             ))
+
+        compliled_path = self.get_output_path(source_path)
+
         if self.should_compile(source_path, from_management=from_management):
 
-            compiled = self.compile_file(source_path)
-            compiled = self.postprocess(compiled, source_path)
-            self.write_output(compiled, source_path)
+            compliled_path = self.compile_file(source_path)
 
             if self.supports_dependencies:
                 self.update_dependencies(source_path, self.find_dependencies(source_path))
 
             logging.info("Compiled: '{0}'".format(source_path))
 
-        return self.get_output_path(source_path)
+        return compliled_path
 
     def compile_lazy(self, source_path):
         """ Return a lazy object which, when translated to string, compiles the specified source path and returns
@@ -226,7 +209,7 @@ class BaseCompiler(object):
     compile_lazy = functional.lazy(compile_lazy, six.text_type)
 
     def compile_file(self, source_path):
-        """ Compile the source file. Return the compiled code.
+        """ Compile the source file. Return the relative path to compiled file.
             May raise a StaticCompilationError if something goes wrong with compilation.
 
         :param source_path: path to the source file
@@ -246,18 +229,6 @@ class BaseCompiler(object):
 
         """
         raise NotImplementedError
-
-    # noinspection PyMethodMayBeStatic,PyUnusedLocal
-    def postprocess(self, compiled, source_path):
-        """ Post-process the compiled code.
-
-        :param compiled: compiled code
-        :type compiled: str
-        :param source_path: relative path to a source file
-        :type source_path: str
-        :returns: str
-        """
-        return compiled
 
     def find_dependencies(self, source_path):
         """ Find the dependencies for the given source file.
