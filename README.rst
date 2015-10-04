@@ -222,10 +222,13 @@ LESS
 ``executable``
   Path to LESS compiler executable. Default: ``"lessc"``.
 
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.LESS', {"executable": "/usr/bin/lessc"),
+        ('static_precompiler.compilers.LESS', {"executable": "/usr/bin/lessc", "sourcemap_enabled": True),
     )
 
 

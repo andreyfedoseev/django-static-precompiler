@@ -6,6 +6,7 @@ Dev
 ===
 
 - Add source maps support for SASS/SCSS
+- Add source maps support for LESS
 
 
 1.0.1
