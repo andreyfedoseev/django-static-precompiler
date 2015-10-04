@@ -29,6 +29,22 @@ def test_compile_file(monkeypatch, tmpdir):
 """
 
 
+def test_sourcemap(monkeypatch, tmpdir):
+
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+
+    compiler = compilers.SCSS(sourcemap_enabled=False)
+    compiler.compile_file("styles/test.scss") == "COMPILED/styles/test.css"
+    full_output_path = compiler.get_full_output_path("styles/test.scss")
+    assert not os.path.exists(full_output_path + ".map")
+
+    compiler = compilers.SCSS(sourcemap_enabled=True)
+    compiler.compile_file("styles/test.scss") == "COMPILED/styles/test.css"
+    full_output_path = compiler.get_full_output_path("styles/test.scss")
+    assert os.path.exists(full_output_path + ".map")
+
+
 def test_compile_source():
     compiler = compilers.SCSS(executable="scss")
     assert (

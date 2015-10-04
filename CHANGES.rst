@@ -2,6 +2,12 @@
 Changes
 =======
 
+Dev
+===
+
+- Add source maps support for SASS/SCSS
+
+
 1.0.1
 =====
 
