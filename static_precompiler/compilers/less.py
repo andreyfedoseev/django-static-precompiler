@@ -69,7 +69,7 @@ class LESS(base.BaseCompiler):
             # is not in the same dir as the source file. We fix it here.
             sourcemap["sourceRoot"] = "../" * len(source_path.split("/")) + posixpath.dirname(source_path)
 
-            sourcemap["file"] = posixpath.basename(source_path)
+            sourcemap["file"] = posixpath.basename(full_output_path)
 
             with open(sourcemap_full_path, "w") as sourcemap_file:
                 sourcemap_file.write(json.dumps(sourcemap))
