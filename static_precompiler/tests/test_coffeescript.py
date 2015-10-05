@@ -29,12 +29,12 @@ def test_sourcemap(monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.CoffeeScript(sourcemap_enabled=False)
-    compiler.compile_file("scripts/test.coffee") == "COMPILED/scripts/test.js"
+    compiler.compile_file("scripts/test.coffee")
     full_output_path = compiler.get_full_output_path("scripts/test.coffee")
     assert not os.path.exists(os.path.splitext(full_output_path)[0] + ".map")
 
     compiler = compilers.CoffeeScript(sourcemap_enabled=True)
-    compiler.compile_file("scripts/test.coffee") == "COMPILED/scripts/test.js"
+    compiler.compile_file("scripts/test.coffee")
     full_output_path = compiler.get_full_output_path("scripts/test.coffee")
     assert os.path.exists(os.path.splitext(full_output_path)[0] + ".map")
 
