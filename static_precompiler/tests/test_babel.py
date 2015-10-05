@@ -26,6 +26,21 @@ console.log("Hello, World!");
 """
 
 
+def test_sourcemap(monkeypatch, tmpdir):
+
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+
+    compiler = compilers.Babel(sourcemap_enabled=False)
+    compiler.compile_file("scripts/test.es6")
+    full_output_path = compiler.get_full_output_path("scripts/test.es6")
+    assert not os.path.exists(full_output_path + ".map")
+
+    compiler = compilers.Babel(sourcemap_enabled=True)
+    compiler.compile_file("scripts/test.es6")
+    full_output_path = compiler.get_full_output_path("scripts/test.es6")
+    assert os.path.exists(full_output_path + ".map")
+
+
 def test_compile_source():
     compiler = compilers.Babel()
 

@@ -9,6 +9,7 @@ Dev
 - Add source maps support for LESS
 - Add source maps support for CoffeeScript
 - Add source maps support for Stylus
+- Add source maps support for Babel
 
 
 1.0.1
