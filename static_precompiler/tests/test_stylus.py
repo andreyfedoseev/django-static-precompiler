@@ -28,6 +28,22 @@ def test_compile_file(monkeypatch, tmpdir):
 """
 
 
+def test_sourcemap(monkeypatch, tmpdir):
+
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+
+    compiler = compilers.Stylus(sourcemap_enabled=False)
+    compiler.compile_file("styles/stylus/A.styl")
+    full_output_path = compiler.get_full_output_path("styles/stylus/A.styl")
+    assert not os.path.exists(full_output_path + ".map")
+
+    compiler = compilers.Stylus(sourcemap_enabled=True)
+    compiler.compile_file("styles/stylus/A.styl")
+    full_output_path = compiler.get_full_output_path("styles/stylus/A.styl")
+    assert os.path.exists(full_output_path + ".map")
+
+
 def test_compile_source():
     compiler = compilers.Stylus()
 

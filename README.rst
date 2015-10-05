@@ -241,10 +241,13 @@ Stylus
 ``executable``
   Path to Stylus compiler executable. Default: ``"stylus"``.
 
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Stylus', {"executable": "/usr/bin/stylus"),
+        ('static_precompiler.compilers.Stylus', {"executable": "/usr/bin/stylus", "sourcemap_enabled": True),
     )
 
 

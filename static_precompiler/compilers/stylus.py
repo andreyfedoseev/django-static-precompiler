@@ -19,8 +19,9 @@ class Stylus(base.BaseCompiler):
 
     IMPORT_RE = re.compile(r"@(?:import|require)\s+(.+?)\s*$", re.MULTILINE)
 
-    def __init__(self, executable="stylus"):
+    def __init__(self, executable="stylus", sourcemap_enabled=False):
         self.executable = executable
+        self.is_sourcemap_enabled = sourcemap_enabled
         super(Stylus, self).__init__()
 
     def compile_source(self, source):
@@ -40,9 +41,13 @@ class Stylus(base.BaseCompiler):
         full_output_path = self.get_full_output_path(source_path)
         args = [
             self.executable,
+        ]
+        if self.is_sourcemap_enabled:
+            args.append("-m")
+        args.extend([
             full_source_path,
             "-o", os.path.dirname(full_output_path),
-        ]
+        ])
 
         full_output_dirname = os.path.dirname(full_output_path)
         if not os.path.exists(full_output_dirname):
