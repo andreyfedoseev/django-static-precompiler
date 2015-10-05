@@ -174,10 +174,13 @@ CoffeeScript
 ``executable``
   Path to CoffeeScript compiler executable. Default: ``"coffee"``.
 
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffee"}),
+        ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffee", "sourcemap_enabled": True}),
     )
 
 

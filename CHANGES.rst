@@ -7,6 +7,7 @@ Dev
 
 - Add source maps support for SASS/SCSS
 - Add source maps support for LESS
+- Add source maps support for CoffeeScript
 
 
 1.0.1
