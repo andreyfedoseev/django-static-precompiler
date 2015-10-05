@@ -19,8 +19,9 @@ class Stylus(base.BaseCompiler):
 
     IMPORT_RE = re.compile(r"@(?:import|require)\s+(.+?)\s*$", re.MULTILINE)
 
-    def __init__(self, executable="stylus"):
+    def __init__(self, executable="stylus", sourcemap_enabled=False):
         self.executable = executable
+        self.is_sourcemap_enabled = sourcemap_enabled
         super(Stylus, self).__init__()
 
     def compile_source(self, source):
@@ -37,11 +38,20 @@ class Stylus(base.BaseCompiler):
 
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)
+        full_output_path = self.get_full_output_path(source_path)
         args = [
             self.executable,
-            "-p",
-            full_source_path,
         ]
+        if self.is_sourcemap_enabled:
+            args.append("-m")
+        args.extend([
+            full_source_path,
+            "-o", os.path.dirname(full_output_path),
+        ])
+
+        full_output_dirname = os.path.dirname(full_output_path)
+        if not os.path.exists(full_output_dirname):
+            os.makedirs(full_output_dirname)
 
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
@@ -51,10 +61,9 @@ class Stylus(base.BaseCompiler):
         if errors:
             raise exceptions.StaticCompilationError(errors)
 
-        return out
+        utils.convert_urls(full_output_path, source_path)
 
-    def postprocess(self, compiled, source_path):
-        return utils.convert_urls(compiled, source_path)
+        return self.get_output_path(source_path)
 
     def find_imports(self, source):
         """ Find the imported files in the source code.

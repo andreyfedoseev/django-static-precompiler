@@ -22,8 +22,10 @@ class SCSS(base.BaseCompiler):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
 
-    def __init__(self, executable=settings.SCSS_EXECUTABLE, compass_enabled=settings.SCSS_USE_COMPASS):
+    def __init__(self, executable=settings.SCSS_EXECUTABLE, sourcemap_enabled=False,
+                 compass_enabled=settings.SCSS_USE_COMPASS):
         self.executable = executable
+        self.is_sourcemap_enabled = sourcemap_enabled
         self.is_compass_enabled = compass_enabled
         super(SCSS, self).__init__()
 
@@ -35,13 +37,23 @@ class SCSS(base.BaseCompiler):
 
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)
+        full_output_path = self.get_full_output_path(source_path)
         args = [
             self.executable,
-            full_source_path,
+            "--sourcemap={}".format("auto" if self.is_sourcemap_enabled else "none"),
         ]
 
         if self.is_compass_enabled:
             args.append("--compass")
+
+        args.extend([
+            self.get_full_source_path(source_path),
+            full_output_path,
+        ])
+
+        full_output_dirname = os.path.dirname(full_output_path)
+        if not os.path.exists(full_output_dirname):
+            os.makedirs(full_output_dirname)
 
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
@@ -49,9 +61,13 @@ class SCSS(base.BaseCompiler):
         out, errors = utils.run_command(args, None, cwd=cwd)
 
         if errors:
+            if os.path.exists(full_output_path):
+                os.remove(full_output_path)
             raise exceptions.StaticCompilationError(errors)
 
-        return out
+        utils.convert_urls(full_output_path, source_path)
+
+        return self.get_output_path(source_path)
 
     def compile_source(self, source):
         args = [
@@ -69,9 +85,6 @@ class SCSS(base.BaseCompiler):
             raise exceptions.StaticCompilationError(errors)
 
         return out
-
-    def postprocess(self, compiled, source_path):
-        return utils.convert_urls(compiled, source_path)
 
     # noinspection PyMethodMayBeStatic
     def parse_import_string(self, import_string):

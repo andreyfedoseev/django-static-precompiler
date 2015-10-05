@@ -1,3 +1,4 @@
+import json
 import os
 import posixpath
 import re
@@ -21,8 +22,9 @@ class LESS(base.BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
-    def __init__(self, executable=settings.LESS_EXECUTABLE):
+    def __init__(self, executable=settings.LESS_EXECUTABLE, sourcemap_enabled=False):
         self.executable = executable
+        self.is_sourcemap_enabled = sourcemap_enabled
         super(LESS, self).__init__()
 
     def should_compile(self, source_path, from_management=False):
@@ -33,18 +35,46 @@ class LESS(base.BaseCompiler):
 
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)
-        args = [
-            self.executable,
-            full_source_path,
-        ]
+        full_output_path = self.get_full_output_path(source_path)
+
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
-        out, errors = utils.run_command(args, None, cwd=cwd)
+
+        args = [
+            self.executable
+        ]
+        if self.is_sourcemap_enabled:
+            args.extend([
+                "--source-map"
+            ])
+
+        args.extend([
+            self.get_full_source_path(source_path),
+            full_output_path,
+        ])
+        out, errors = utils.run_command(args, cwd=cwd)
         if errors:
             raise exceptions.StaticCompilationError(errors)
 
-        return out
+        utils.convert_urls(full_output_path, source_path)
+
+        if self.is_sourcemap_enabled:
+            sourcemap_full_path = full_output_path + ".map"
+
+            with open(sourcemap_full_path) as sourcemap_file:
+                sourcemap = json.loads(sourcemap_file.read())
+
+            # LESS, unlike SASS, can't add correct relative paths in source map when the compiled file
+            # is not in the same dir as the source file. We fix it here.
+            sourcemap["sourceRoot"] = "../" * len(source_path.split("/")) + posixpath.dirname(source_path)
+
+            sourcemap["file"] = posixpath.basename(full_output_path)
+
+            with open(sourcemap_full_path, "w") as sourcemap_file:
+                sourcemap_file.write(json.dumps(sourcemap))
+
+        return self.get_output_path(source_path)
 
     def compile_source(self, source):
         args = [
@@ -58,9 +88,6 @@ class LESS(base.BaseCompiler):
             raise exceptions.StaticCompilationError(errors)
 
         return out
-
-    def postprocess(self, compiled, source_path):
-        return utils.convert_urls(compiled, source_path)
 
     def find_imports(self, source):
         """ Find the imported files in the source code.

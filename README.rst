@@ -174,10 +174,13 @@ CoffeeScript
 ``executable``
   Path to CoffeeScript compiler executable. Default: ``"coffee"``.
 
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffee"}),
+        ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffee", "sourcemap_enabled": True}),
     )
 
 
@@ -187,13 +190,16 @@ Babel
 ``executable``
   Path to Babel compiler executable. Default: ``"babel"``.
 
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
 ``modules``
   Babel `modules <https://babeljs.io/docs/usage/modules/>`_ command line option. Default: ``None`` (uses Babel's default option).
 
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Babel', {"executable": "/usr/bin/babel", "modules": "amd"}),
+        ('static_precompiler.compilers.Babel', {"executable": "/usr/bin/babel", "sourcemap_enabled": True, "modules": "amd"}),
     )
 
 
@@ -203,13 +209,16 @@ SASS / SCSS
 ``executable``
   Path to SASS compiler executable. Default: "sass".
 
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
 ``compass_enabled``
   Boolean. Whether to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
 
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.SCSS', {"executable": "/usr/bin/sass", "compass_enabled": True}),
+        ('static_precompiler.compilers.SCSS', {"executable": "/usr/bin/sass", "sourcemap_enabled": True, "compass_enabled": True}),
     )
 
 
@@ -219,10 +228,13 @@ LESS
 ``executable``
   Path to LESS compiler executable. Default: ``"lessc"``.
 
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.LESS', {"executable": "/usr/bin/lessc"),
+        ('static_precompiler.compilers.LESS', {"executable": "/usr/bin/lessc", "sourcemap_enabled": True),
     )
 
 
@@ -232,10 +244,13 @@ Stylus
 ``executable``
   Path to Stylus compiler executable. Default: ``"stylus"``.
 
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Stylus', {"executable": "/usr/bin/stylus"),
+        ('static_precompiler.compilers.Stylus', {"executable": "/usr/bin/stylus", "sourcemap_enabled": True),
     )
 
 

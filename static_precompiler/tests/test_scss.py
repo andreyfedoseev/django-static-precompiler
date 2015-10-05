@@ -7,13 +7,42 @@ import pytest
 from static_precompiler import compilers, exceptions, utils
 
 
-def test_compile_file():
+def test_compile_file(monkeypatch, tmpdir):
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    convert_urls = pretend.call_recorder(lambda *args: None)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
+
     compiler = compilers.SCSS()
 
-    assert (
-        utils.fix_line_breaks(compiler.compile_file("styles/test.scss")) ==
-        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
-    )
+    assert compiler.compile_file("styles/test.scss") == "COMPILED/styles/test.css"
+
+    full_output_path = compiler.get_full_output_path("styles/test.scss")
+    assert convert_urls.calls == [pretend.call(full_output_path, "styles/test.scss")]
+
+    assert os.path.exists(full_output_path)
+
+    with open(full_output_path) as compiled:
+        assert compiled.read() == """p {
+  font-size: 15px; }
+  p a {
+    color: red; }
+"""
+
+
+def test_sourcemap(monkeypatch, tmpdir):
+
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+
+    compiler = compilers.SCSS(sourcemap_enabled=False)
+    compiler.compile_file("styles/test.scss")
+    full_output_path = compiler.get_full_output_path("styles/test.scss")
+    assert not os.path.exists(full_output_path + ".map")
+
+    compiler = compilers.SCSS(sourcemap_enabled=True)
+    compiler.compile_file("styles/test.scss")
+    full_output_path = compiler.get_full_output_path("styles/test.scss")
+    assert os.path.exists(full_output_path + ".map")
 
 
 def test_compile_source():
@@ -53,14 +82,6 @@ def test_compile_source():
         utils.fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) ==
         "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
     )
-
-
-def test_postprocesss(monkeypatch):
-    compiler = compilers.SCSS()
-    convert_urls = pretend.call_recorder(lambda *args: "spam")
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
-    assert compiler.postprocess("ham", "eggs") == "spam"
-    assert convert_urls.calls == [pretend.call("ham", "eggs")]
 
 
 def test_parse_import_string():
@@ -177,25 +198,37 @@ def test_find_dependencies(monkeypatch):
     assert compiler.find_dependencies("_E.scss") == []
 
 
-def test_compass():
+def test_compass(monkeypatch, tmpdir):
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+
     compiler = compilers.SCSS(compass_enabled=True)
 
-    assert (
-        utils.fix_line_breaks(compiler.compile_file("test-compass.scss")) ==
-        "p {\n  background: url('/static/images/test.png'); }\n"
-    )
+    assert compiler.compile_file("test-compass.scss") == "COMPILED/test-compass.css"
+
+    full_output_path = compiler.get_full_output_path("test-compass.scss")
+    assert os.path.exists(full_output_path)
+    with open(full_output_path) as compiled:
+        assert compiled.read() == """p {
+  background: url('/static/images/test.png'); }
+"""
 
 
-def test_compass_import():
+def test_compass_import(monkeypatch, tmpdir):
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+
     compiler = compilers.SCSS(compass_enabled=True)
 
-    assert (
-        utils.fix_line_breaks(compiler.compile_file("styles/test-compass-import.scss")) ==
-        ".round-corners {\n"
-        "  -moz-border-radius: 4px / 4px;\n"
-        "  -webkit-border-radius: 4px 4px;\n"
-        "  border-radius: 4px / 4px; }\n"
-    )
+    assert compiler.compile_file("styles/test-compass-import.scss") == "COMPILED/styles/test-compass-import.css"
+
+    full_output_path = compiler.get_full_output_path("styles/test-compass-import.scss")
+    assert os.path.exists(full_output_path)
+
+    with open(full_output_path) as compiled:
+        assert compiled.read() == """.round-corners {
+  -moz-border-radius: 4px / 4px;
+  -webkit-border-radius: 4px 4px;
+  border-radius: 4px / 4px; }
+"""
 
     compiler = compilers.SCSS(compass_enabled=False)
     with pytest.raises(exceptions.StaticCompilationError):

@@ -7,10 +7,22 @@ import pytest
 from static_precompiler import compilers, exceptions, utils
 
 
-def test_compile_file():
+def test_compile_file(monkeypatch, tmpdir):
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    convert_urls = pretend.call_recorder(lambda *args: None)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
+
     compiler = compilers.LESS()
 
-    assert compiler.compile_file("styles/test.less") == """p {
+    assert compiler.compile_file("styles/test.less") == "COMPILED/styles/test.css"
+
+    full_output_path = compiler.get_full_output_path("styles/test.less")
+    assert convert_urls.calls == [pretend.call(full_output_path, "styles/test.less")]
+
+    assert os.path.exists(full_output_path)
+
+    with open(full_output_path) as compiled:
+        assert compiled.read() == """p {
   font-size: 15px;
 }
 p a {
@@ -20,6 +32,22 @@ h1 {
   color: blue;
 }
 """
+
+
+def test_sourcemap(monkeypatch, tmpdir):
+
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+
+    compiler = compilers.LESS(sourcemap_enabled=False)
+    compiler.compile_file("styles/test.less")
+    full_output_path = compiler.get_full_output_path("styles/test.less")
+    assert not os.path.exists(full_output_path + ".map")
+
+    compiler = compilers.LESS(sourcemap_enabled=True)
+    compiler.compile_file("styles/test.less")
+    full_output_path = compiler.get_full_output_path("styles/test.less")
+    assert os.path.exists(full_output_path + ".map")
 
 
 def test_compile_source():
@@ -40,17 +68,6 @@ def test_compile_source():
 }
 """
     assert compiler.compile_source(NON_ASCII) == NON_ASCII
-
-
-def test_postprocesss(monkeypatch):
-    compiler = compilers.LESS()
-
-    convert_urls = pretend.call_recorder(lambda *args: "spam")
-
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
-
-    assert compiler.postprocess("ham", "eggs") == "spam"
-    assert convert_urls.calls == [pretend.call("ham", "eggs")]
 
 
 def test_find_imports():

@@ -7,13 +7,41 @@ import pytest
 from static_precompiler import compilers, exceptions, utils
 
 
-def test_compile_file():
+def test_compile_file(monkeypatch, tmpdir):
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    convert_urls = pretend.call_recorder(lambda *args: None)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
+
     compiler = compilers.Stylus()
 
-    assert utils.fix_line_breaks(compiler.compile_file("styles/stylus/A.styl")) == "p {\n  color: #f00;\n}\n"
+    assert compiler.compile_file("styles/stylus/A.styl") == "COMPILED/styles/stylus/A.css"
 
-    with pytest.raises(exceptions.StaticCompilationError):
-        assert compiler.compile_file("styles/stylus/broken1.styl")
+    full_output_path = compiler.get_full_output_path("styles/stylus/A.styl")
+    assert convert_urls.calls == [pretend.call(full_output_path, "styles/stylus/A.styl")]
+
+    assert os.path.exists(full_output_path)
+
+    with open(full_output_path) as compiled:
+        assert compiled.read() == """p {
+  color: #f00;
+}
+"""
+
+
+def test_sourcemap(monkeypatch, tmpdir):
+
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+
+    compiler = compilers.Stylus(sourcemap_enabled=False)
+    compiler.compile_file("styles/stylus/A.styl")
+    full_output_path = compiler.get_full_output_path("styles/stylus/A.styl")
+    assert not os.path.exists(full_output_path + ".map")
+
+    compiler = compilers.Stylus(sourcemap_enabled=True)
+    compiler.compile_file("styles/stylus/A.styl")
+    full_output_path = compiler.get_full_output_path("styles/stylus/A.styl")
+    assert os.path.exists(full_output_path + ".map")
 
 
 def test_compile_source():
@@ -23,14 +51,6 @@ def test_compile_source():
 
     with pytest.raises(exceptions.StaticCompilationError):
         assert compiler.compile_source("broken")
-
-
-def test_postprocesss(monkeypatch):
-    compiler = compilers.Stylus()
-    convert_urls = pretend.call_recorder(lambda *args: "spam")
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
-    assert compiler.postprocess("ham", "eggs") == "spam"
-    assert convert_urls.calls == [pretend.call("ham", "eggs")]
 
 
 def test_find_imports():
