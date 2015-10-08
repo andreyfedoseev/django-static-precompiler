@@ -191,7 +191,8 @@ SASS / SCSS
   Boolean. Whether to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
 
 ``load_paths``
-  Iterable of string path names to add as include search paths using the sass "--load-path" argument
+  Iterable of string path names to add as include search paths using the sass "--load-path" argument.  May also specify
+  a single string instead of iterable.
 
 Example::
 
