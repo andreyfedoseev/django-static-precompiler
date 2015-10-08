@@ -21,6 +21,8 @@ class SCSS(BaseCompiler):
     def __init__(self, executable=SCSS_EXECUTABLE, compass_enabled=SCSS_USE_COMPASS, load_paths=()):
         self.executable = executable
         self.is_compass_enabled = compass_enabled
+        if not hasattr(load_paths, '__iter__'):
+            load_paths = (load_paths,)
         self.load_paths = load_paths
         super(SCSS, self).__init__()
 
