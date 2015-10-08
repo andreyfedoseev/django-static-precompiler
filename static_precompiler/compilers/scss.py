@@ -1,3 +1,4 @@
+import string
 from static_precompiler.settings import SCSS_EXECUTABLE, SCSS_USE_COMPASS
 from static_precompiler.exceptions import StaticCompilationError
 from static_precompiler.compilers.base import BaseCompiler
@@ -17,9 +18,10 @@ class SCSS(BaseCompiler):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
 
-    def __init__(self, executable=SCSS_EXECUTABLE, compass_enabled=SCSS_USE_COMPASS):
+    def __init__(self, executable=SCSS_EXECUTABLE, compass_enabled=SCSS_USE_COMPASS, load_paths=()):
         self.executable = executable
         self.is_compass_enabled = compass_enabled
+        self.load_paths = load_paths
         super(SCSS, self).__init__()
 
     def should_compile(self, source_path, from_management=False):
@@ -37,6 +39,10 @@ class SCSS(BaseCompiler):
 
         if self.is_compass_enabled:
             args.append("--compass")
+
+        for load_path in self.load_paths:
+            args.append("--load-path")
+            args.append(load_path)
 
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
@@ -58,6 +64,10 @@ class SCSS(BaseCompiler):
 
         if self.is_compass_enabled:
             args.append("--compass")
+
+        for load_path in self.load_paths:
+            args.append("--load-path")
+            args.append(load_path)
 
         out, errors = run_command(args, source)
         if errors:
@@ -233,6 +243,10 @@ class SASS(SCSS):
 
         if self.is_compass_enabled:
             args.append("--compass")
+
+        for load_path in self.load_paths:
+            args.append("--load-path")
+            args.append(load_path)
 
         out, errors = run_command(args, source)
         if errors:

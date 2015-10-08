@@ -188,12 +188,16 @@ SASS / SCSS
   Path to SASS compiler executable. Default: "sass".
 
 ``compass_enabled``
-  Boolean. Wheter to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
+  Boolean. Whether to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
+
+``load_paths``
+  Iterable of string path names to add as include search paths using the sass "--load-path" argument
 
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.SCSS', {"executable": "/usr/bin/sass", "compass_enabled": True}),
+        ('static_precompiler.compilers.SCSS', {"executable": "/usr/bin/sass", "compass_enabled": True,
+                                               "load_paths": ("include/dir/1","sass_lib/include"}) ),
     )
 
 
