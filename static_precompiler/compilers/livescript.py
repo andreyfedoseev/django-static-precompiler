@@ -2,7 +2,7 @@ import json
 import os
 import posixpath
 
-from static_precompiler import exceptions, settings, utils
+from static_precompiler import exceptions, utils
 
 from . import base
 
