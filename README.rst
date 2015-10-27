@@ -2,7 +2,7 @@
 Django Static Precompiler
 =========================
 
-Django Static Precompiler provides template tags and filters to compile CoffeeScript, SASS / SCSS, LESS, Stylus, and Babel.
+Django Static Precompiler provides template tags and filters to compile CoffeeScript, LiveScript, SASS / SCSS, LESS, Stylus, and Babel.
 It works with both inline code and external files.
 
 .. image:: https://circleci.com/gh/andreyfedoseev/django-static-precompiler.svg?style=shield
@@ -69,12 +69,14 @@ Example Usage
   {% load static %}
 
   <script src="{% static "path/to/script.coffee"|compile %}"></script>
+  <script src="{% static "path/to/script2.ls"|compile %}"></script>
   <link rel="stylesheet" href="{% static "path/to/styles1.less"|compile %}" />
   <link rel="stylesheet" href="{% static "path/to/styles2.scss"|compile %}" />
 
 renders to::
 
   <script src="/static/COMPILED/path/to/script.js"></script>
+  <script src="/static/COMPILED/path/to/script2.js"></script>
   <link rel="stylesheet" href="/static/COMPILED/path/to/styles1.css" />
   <link rel="stylesheet" href="/static/COMPILED/path/to/styles2.css" />
 
@@ -90,6 +92,7 @@ Compiler must be specified in ``STATIC_PRECOMPILER_COMPILERS`` setting. Names fo
 * ``sass``
 * ``scss``
 * ``stylus``
+* ``livescript``
 
 Example Usage
 -------------
@@ -125,6 +128,7 @@ General settings
         'static_precompiler.compilers.SCSS',
         'static_precompiler.compilers.LESS',
         'static_precompiler.compilers.Stylus',
+        'static_precompiler.compilers.LiveScript',
     )
 
   You can specify compiler options using the following format::
@@ -181,6 +185,22 @@ Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffee", "sourcemap_enabled": True}),
+    )
+
+
+LiveScript
+------------
+
+``executable``
+  Path to LiveScript compiler executable. Default: ``"lsc"``.
+
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
+Example::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.compilers.LiveScript', {"executable": "/usr/bin/lsc", "sourcemap_enabled": True}),
     )
 
 

@@ -10,7 +10,7 @@ Dev
 - Add source maps support for CoffeeScript
 - Add source maps support for Stylus
 - Add source maps support for Babel
-
+- Add the implementation of LiveScript
 
 1.0.1
 =====
