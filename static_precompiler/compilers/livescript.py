@@ -24,6 +24,9 @@ class LiveScript(base.BaseCompiler):
 
     def compile_file(self, source_path):
         full_output_path = self.get_full_output_path(source_path)
+        # LiveScript bug with source map if the folder isn't already present
+        if not os.path.exists(os.path.dirname(full_output_path)):
+            os.makedirs(os.path.dirname(full_output_path))
         args = [
             self.executable,
             "-c",
@@ -41,7 +44,7 @@ class LiveScript(base.BaseCompiler):
             raise exceptions.StaticCompilationError(errors)
 
         if self.is_sourcemap_enabled:
-            # Livescript writes source maps to compiled.map, not compiled.js.map
+            # Livescript writes source maps to compiled.js.map
             sourcemap_full_path = full_output_path + ".map"
 
             with open(sourcemap_full_path) as sourcemap_file:
