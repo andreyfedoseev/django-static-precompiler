@@ -26,7 +26,7 @@ class Handlebars(base.BaseCompiler):
         self.is_sourcemap_enabled = sourcemap_enabled
         if known_helpers is None:
             self.known_helpers = []
-        elif not hasattr(known_helpers, "__iter__"):
+        elif not isinstance(known_helpers, (list, tuple)):
             raise ValueError("known_helpers option must be an iterable object (list, tuple)")
         else:
             self.known_helpers = known_helpers
