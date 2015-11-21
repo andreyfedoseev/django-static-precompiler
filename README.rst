@@ -2,7 +2,7 @@
 Django Static Precompiler
 =========================
 
-Django Static Precompiler provides template tags and filters to compile CoffeeScript, SASS / SCSS, LESS, Stylus, and Babel.
+Django Static Precompiler provides template tags and filters to compile CoffeeScript, SASS / SCSS, LESS, Stylus, Babel and Handlebars.
 It works with both inline code and external files.
 
 .. image:: https://circleci.com/gh/andreyfedoseev/django-static-precompiler.svg?style=shield
@@ -121,6 +121,7 @@ General settings
     STATIC_PRECOMPILER_COMPILERS = (
         'static_precompiler.compilers.CoffeeScript',
         'static_precompiler.compilers.Babel',
+        'static_precompiler.compilers.Handlebars',
         'static_precompiler.compilers.SASS',
         'static_precompiler.compilers.SCSS',
         'static_precompiler.compilers.LESS',
@@ -200,6 +201,31 @@ Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.Babel', {"executable": "/usr/bin/babel", "sourcemap_enabled": True, "modules": "amd"}),
+    )
+
+
+Handlebars
+----------
+
+``executable``
+  Path to Handlebars compiler executable. Default: ``"handlebars"``.
+
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
+``known_helpers``
+  List of known helpers (``-k`` compiler option). Default: ``None``.
+
+``namespace``
+  Template namespace (``-n`` compiler option). Default: ``None``.
+
+``simple``
+  Output template function only (``-s`` compiler option). Default: ``False``.
+
+Example::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.compilers.Handlebars', {"executable": "/usr/bin/handlebars", "sourcemap_enabled": True, "simple": True}),
     )
 
 
