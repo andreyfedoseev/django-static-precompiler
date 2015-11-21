@@ -69,6 +69,3 @@ class CoffeeScript(base.BaseCompiler):
             raise exceptions.StaticCompilationError(errors)
 
         return out
-
-    def find_dependencies(self, source_path):
-        return []
