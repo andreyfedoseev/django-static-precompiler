@@ -11,6 +11,7 @@ Dev
 - Add source maps support for Stylus
 - Add source maps support for Babel
 - Add `Handlebars <http://handlebarsjs.com/>`_ compiler
+- Add support for Django 1.9
 
 
 1.0.1
