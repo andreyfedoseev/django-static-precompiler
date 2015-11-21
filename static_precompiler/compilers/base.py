@@ -31,7 +31,7 @@ class BaseCompiler(object):
         :returns: bool
 
         """
-        return source_path.endswith(self.input_extension)
+        return os.path.splitext(source_path)[1].lstrip(".") == self.input_extension
 
     # noinspection PyMethodMayBeStatic
     def get_full_source_path(self, source_path):
@@ -70,7 +70,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        return source_filename[:-len(self.input_extension)] + self.output_extension
+        return "{}.{}".format(os.path.splitext(source_filename)[0], self.output_extension)
 
     def get_output_path(self, source_path):
         """ Get relative path to compiled file based for the given source file.

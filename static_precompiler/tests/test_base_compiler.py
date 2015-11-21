@@ -9,7 +9,7 @@ from static_precompiler import compilers, models, settings
 
 def test_is_supported(monkeypatch):
 
-    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.input_extension", ".foo")
+    monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.input_extension", "foo")
     compiler = compilers.BaseCompiler()
 
     assert compiler.is_supported("test.foo") is True
@@ -21,8 +21,8 @@ def test_get_output_filename(monkeypatch):
 
     compiler = compilers.BaseCompiler()
 
-    monkeypatch.setattr(compiler, "input_extension", ".coffee")
-    monkeypatch.setattr(compiler, "output_extension", ".js")
+    monkeypatch.setattr(compiler, "input_extension", "coffee")
+    monkeypatch.setattr(compiler, "output_extension", "js")
 
     assert compiler.get_output_filename("dummy.coffee") == "dummy.js"
     assert compiler.get_output_filename("dummy.coffee.coffee") == "dummy.coffee.js"
