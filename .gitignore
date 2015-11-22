@@ -16,3 +16,6 @@ test_project/db.sqlite3
 /htmlcov/
 /.tox/
 /.cache/
+/docs/_build/
+/docs/_static/
+/docs/_templates/
