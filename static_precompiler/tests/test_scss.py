@@ -233,3 +233,17 @@ def test_compass_import(monkeypatch, tmpdir):
     compiler = compilers.SCSS(compass_enabled=False)
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_file("styles/test-compass-import.scss")
+
+
+def test_get_extra_args():
+
+    assert compilers.SCSS().get_extra_args() == []
+
+    assert compilers.SCSS(compass_enabled=True, load_paths=["foo", "bar"]).get_extra_args() == [
+        "-I", "foo",
+        "-I", "bar",
+        "--compass",
+    ]
+
+    with pytest.raises(ValueError):
+        compilers.SCSS(load_paths="foo")

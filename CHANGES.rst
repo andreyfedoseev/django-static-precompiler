@@ -13,6 +13,7 @@ Dev
 - Add `Handlebars <http://handlebarsjs.com/>`_ compiler
 - Add support for Django 1.9
 - Add ``plugins`` parameter to Babel compiler
+- Add ``load_paths`` parameter to SASS/SCSS compilers
 
 
 1.0.1

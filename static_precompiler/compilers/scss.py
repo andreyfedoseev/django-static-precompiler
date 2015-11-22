@@ -23,11 +23,28 @@ class SCSS(base.BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
 
     def __init__(self, executable=settings.SCSS_EXECUTABLE, sourcemap_enabled=False,
-                 compass_enabled=settings.SCSS_USE_COMPASS):
+                 compass_enabled=settings.SCSS_USE_COMPASS, load_paths=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         self.is_compass_enabled = compass_enabled
+        if load_paths is None:
+            self.load_paths = []
+        elif not isinstance(load_paths, (list, tuple)):
+            raise ValueError("load_paths option must be an iterable object (list, tuple)")
+        else:
+            self.load_paths = load_paths
         super(SCSS, self).__init__()
+
+    def get_extra_args(self):
+        args = []
+
+        for path in self.load_paths:
+            args += ["-I", path]
+
+        if self.is_compass_enabled:
+            args.append("--compass")
+
+        return args
 
     def should_compile(self, source_path, from_management=False):
         # Do not compile the files that start with "_" if run from management
@@ -41,10 +58,7 @@ class SCSS(base.BaseCompiler):
         args = [
             self.executable,
             "--sourcemap={}".format("auto" if self.is_sourcemap_enabled else "none"),
-        ]
-
-        if self.is_compass_enabled:
-            args.append("--compass")
+        ] + self.get_extra_args()
 
         args.extend([
             self.get_full_source_path(source_path),
@@ -73,12 +87,10 @@ class SCSS(base.BaseCompiler):
         args = [
             self.executable,
             "-s",
-        ]
+        ] + self.get_extra_args()
+
         if self.executable.endswith("sass"):
             args.append("--scss")
-
-        if self.is_compass_enabled:
-            args.append("--compass")
 
         out, errors = utils.run_command(args, source)
         if errors:
@@ -249,9 +261,6 @@ class SASS(SCSS):
         ]
         if self.executable.endswith("scss"):
             args.append("--sass")
-
-        if self.is_compass_enabled:
-            args.append("--compass")
 
         out, errors = utils.run_command(args, source)
         if errors:

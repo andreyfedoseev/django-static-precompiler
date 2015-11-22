@@ -241,10 +241,13 @@ SASS / SCSS
 ``compass_enabled``
   Boolean. Whether to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
 
+``load_paths``
+  List of import paths (``--load-path`` command line option).
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.SCSS', {"executable": "/usr/bin/sass", "sourcemap_enabled": True, "compass_enabled": True}),
+        ('static_precompiler.compilers.SCSS', {"executable": "/usr/bin/sass", "sourcemap_enabled": True, "compass_enabled": True, "load_paths": ["path"]}),
     )
 
 
