@@ -2,7 +2,7 @@
 Changes
 =======
 
-Dev
+1.1
 ===
 
 - Add source maps support for SASS/SCSS
