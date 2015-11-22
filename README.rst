@@ -194,13 +194,13 @@ Babel
 ``sourcemap_enabled``
   Boolean. Set to ``True`` to enable source maps. Default: ``False``
 
-``modules``
-  Babel `modules <https://babeljs.io/docs/usage/modules/>`_ command line option. Default: ``None`` (uses Babel's default option).
+``plugins``
+  Babel `plugins <http://babeljs.io/docs/plugins/>`_ command line option. Default: ``None`` (uses Babel's default option).
 
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Babel', {"executable": "/usr/bin/babel", "sourcemap_enabled": True, "modules": "amd"}),
+        ('static_precompiler.compilers.Babel', {"executable": "/usr/bin/babel", "sourcemap_enabled": True, "plugins": "transform-react-jsx"}),
     )
 
 

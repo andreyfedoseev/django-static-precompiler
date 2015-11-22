@@ -12,6 +12,7 @@ Dev
 - Add source maps support for Babel
 - Add `Handlebars <http://handlebarsjs.com/>`_ compiler
 - Add support for Django 1.9
+- Add ``plugins`` parameter to Babel compiler
 
 
 1.0.1

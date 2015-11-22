@@ -20,10 +20,10 @@ def test_compile_file(monkeypatch, tmpdir):
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert compiled.read() == """"use strict";
+        assert compiled.read() == """console.log("Hello, World!");\n"""
 
-console.log("Hello, World!");
-"""
+    with pytest.raises(exceptions.StaticCompilationError):
+        compiler.compile_file("scripts/broken.es6")
 
 
 def test_sourcemap(monkeypatch, tmpdir):
@@ -46,7 +46,7 @@ def test_compile_source():
 
     assert (
         clean_javascript(compiler.compile_source('console.log("Hello, World!");')) ==
-        """"use strict";\nconsole.log("Hello, World!");"""
+        """console.log("Hello, World!");"""
     )
 
     with pytest.raises(exceptions.StaticCompilationError):
@@ -55,5 +55,15 @@ def test_compile_source():
     # Test non-ascii
     assert (
         clean_javascript(compiler.compile_source('console.log("Привет, Мир!");')) ==
-        """"use strict";\nconsole.log("Привет, Мир!");"""
+        """console.log("Привет, Мир!");"""
     )
+
+
+def test_get_extra_args():
+
+    compiler = compilers.Babel(modules="foo", plugins="bar")
+
+    assert compiler.get_extra_args() == [
+        "--modules", "foo",
+        "--plugins", "bar",
+    ]
