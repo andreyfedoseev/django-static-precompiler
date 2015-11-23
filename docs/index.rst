@@ -184,6 +184,22 @@ Example::
     )
 
 
+LiveScript
+----------
+
+``executable``
+  Path to LiveScript compiler executable. Default: ``"lsc"``.
+
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
+Example::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.compilers.LiveScript', {"executable": "/usr/bin/lsc", "sourcemap_enabled": True}),
+    )
+
+
 Handlebars
 ----------
 

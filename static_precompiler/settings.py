@@ -19,6 +19,7 @@ COMPILERS = getattr(settings, "STATIC_PRECOMPILER_COMPILERS", (
     "static_precompiler.compilers.SCSS",
     "static_precompiler.compilers.LESS",
     "static_precompiler.compilers.Stylus",
+    "static_precompiler.compilers.LiveScript",
 ))
 
 ROOT = getattr(settings, "STATIC_PRECOMPILER_ROOT",

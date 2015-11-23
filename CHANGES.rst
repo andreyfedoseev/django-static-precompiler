@@ -2,6 +2,12 @@
 Changes
 =======
 
+Dev
+===
+
+- Add the implementation of LiveScript
+
+
 1.1
 ===
 
