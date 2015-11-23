@@ -46,7 +46,7 @@ setup(
     author_email="andrey.fedoseev@gmail.com",
     url="https://github.com/andreyfedoseev/django-static-precompiler",
     description="Django template tags to compile all kinds of static files "
-                "(SASS, LESS, Stylus, CoffeeScript, Babel, LiveScript).",
+                "(SASS, LESS, Stylus, CoffeeScript, Babel, LiveScript, Handlebars).",
     long_description="\n\n".join([README, CHANGES]),
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -58,7 +58,8 @@ setup(
         'Programming Language :: Python :: 3',
         'Topic :: Internet :: WWW/HTTP',
     ],
-    keywords=["sass", "scss", "less", "stylus", "css", "coffeescript", "javascript", "babel", "livescript"],
+    keywords=["sass", "scss", "less", "stylus", "css", "coffeescript", "javascript", "babel", "livescript",
+              "handlebars"],
     tests_require=[
         "pytest",
         "pytest-django",
