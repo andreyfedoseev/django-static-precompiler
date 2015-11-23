@@ -18,7 +18,9 @@ fi
 sudo npm install -g coffee-script@1.7.1
 sudo npm install -g livescript@1.4.0
 sudo npm install -g less@1.7.4
-sudo npm install -g babel@4.3.0
+sudo npm install -g babel-cli@6.2.0
+sudo npm install -g handlebars@4.0.2
+sudo npm install -g stylus@0.50.0
 
 
 ##############
