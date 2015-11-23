@@ -1,4 +1,3 @@
-import json
 import os
 import posixpath
 import re
@@ -60,19 +59,7 @@ class LESS(base.BaseCompiler):
         utils.convert_urls(full_output_path, source_path)
 
         if self.is_sourcemap_enabled:
-            sourcemap_full_path = full_output_path + ".map"
-
-            with open(sourcemap_full_path) as sourcemap_file:
-                sourcemap = json.loads(sourcemap_file.read())
-
-            # LESS, unlike SASS, can't add correct relative paths in source map when the compiled file
-            # is not in the same dir as the source file. We fix it here.
-            sourcemap["sourceRoot"] = "../" * len(source_path.split("/")) + posixpath.dirname(source_path)
-
-            sourcemap["file"] = posixpath.basename(full_output_path)
-
-            with open(sourcemap_full_path, "w") as sourcemap_file:
-                sourcemap_file.write(json.dumps(sourcemap))
+            utils.fix_sourcemap(full_output_path + ".map", source_path, full_output_path)
 
         return self.get_output_path(source_path)
 

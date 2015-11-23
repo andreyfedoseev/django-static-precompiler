@@ -1,6 +1,4 @@
-import json
 import os
-import posixpath
 
 from static_precompiler import exceptions, settings, utils
 
@@ -40,20 +38,7 @@ class CoffeeScript(base.BaseCompiler):
             raise exceptions.StaticCompilationError(errors)
 
         if self.is_sourcemap_enabled:
-            # Coffeescript writes source maps to compiled.map, not compiled.js.map
-            sourcemap_full_path = os.path.splitext(full_output_path)[0] + ".map"
-
-            with open(sourcemap_full_path) as sourcemap_file:
-                sourcemap = json.loads(sourcemap_file.read())
-
-            # CoffeeScript, unlike SASS, can't add correct relative paths in source map when the compiled file
-            # is not in the same dir as the source file. We fix it here.
-            sourcemap["sourceRoot"] = "../" * len(source_path.split("/")) + posixpath.dirname(source_path)
-            sourcemap["sources"] = [os.path.basename(source) for source in sourcemap["sources"]]
-            sourcemap["file"] = posixpath.basename(os.path.basename(full_output_path))
-
-            with open(sourcemap_full_path, "w") as sourcemap_file:
-                sourcemap_file.write(json.dumps(sourcemap))
+            utils.fix_sourcemap(os.path.splitext(full_output_path)[0] + ".map", source_path, full_output_path)
 
         return self.get_output_path(source_path)
 

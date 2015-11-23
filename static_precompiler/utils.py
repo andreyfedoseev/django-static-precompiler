@@ -1,4 +1,7 @@
 import hashlib
+import json
+import posixpath
+
 import os
 import re
 import socket
@@ -210,3 +213,18 @@ def compile_static(path):
 def compile_static_lazy(path):
 
     return get_compiler_by_path(path).compile_lazy(path)
+
+
+def fix_sourcemap(sourcemap_full_path, source_path, compiled_full_path):
+
+    with open(sourcemap_full_path) as sourcemap_file:
+        sourcemap = json.loads(sourcemap_file.read())
+
+    # Stylus, unlike SASS, can't add correct relative paths in source map when the compiled file
+    # is not in the same dir as the source file. We fix it here.
+    sourcemap["sourceRoot"] = "../" * len(source_path.split("/")) + posixpath.dirname(source_path)
+    sourcemap["sources"] = [os.path.basename(source) for source in sourcemap["sources"]]
+    sourcemap["file"] = posixpath.basename(os.path.basename(compiled_full_path))
+
+    with open(sourcemap_full_path, "w") as sourcemap_file:
+        sourcemap_file.write(json.dumps(sourcemap))

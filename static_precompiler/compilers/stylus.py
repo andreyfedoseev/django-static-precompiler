@@ -63,6 +63,9 @@ class Stylus(base.BaseCompiler):
 
         utils.convert_urls(full_output_path, source_path)
 
+        if self.is_sourcemap_enabled:
+            utils.fix_sourcemap(full_output_path + ".map", source_path, full_output_path)
+
         return self.get_output_path(source_path)
 
     def find_imports(self, source):

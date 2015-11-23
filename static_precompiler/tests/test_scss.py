@@ -1,4 +1,5 @@
 # coding: utf-8
+import json
 import os
 
 import pretend
@@ -43,6 +44,11 @@ def test_sourcemap(monkeypatch, tmpdir):
     compiler.compile_file("styles/test.scss")
     full_output_path = compiler.get_full_output_path("styles/test.scss")
     assert os.path.exists(full_output_path + ".map")
+
+    sourcemap = json.loads(open(full_output_path + ".map").read())
+    assert sourcemap["sourceRoot"] == "../../styles"
+    assert sourcemap["sources"] == ["test.scss"]
+    assert sourcemap["file"] == "test.css"
 
 
 def test_compile_source():

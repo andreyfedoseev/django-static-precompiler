@@ -1,4 +1,5 @@
 # coding: utf-8
+import json
 import os
 
 import pytest
@@ -37,6 +38,11 @@ def test_sourcemap(monkeypatch, tmpdir):
     compiler.compile_file("scripts/test.ls")
     full_output_path = compiler.get_full_output_path("scripts/test.ls")
     assert os.path.exists(full_output_path + ".map")
+
+    sourcemap = json.loads(open(full_output_path + ".map").read())
+    assert sourcemap["sourceRoot"] == "../../scripts"
+    assert sourcemap["sources"] == ["test.ls"]
+    assert sourcemap["file"] == "test.js"
 
 
 def test_compile_source():
