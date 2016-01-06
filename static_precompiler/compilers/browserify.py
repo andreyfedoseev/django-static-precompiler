@@ -54,8 +54,8 @@ class Browserify(base.BaseCompiler):
 
     def compile_source(self, source):
         args = [
-            "-",
             self.executable,
+            "-",
         ] + self.get_extra_args()
 
         out, errors = utils.run_command(args, source)
