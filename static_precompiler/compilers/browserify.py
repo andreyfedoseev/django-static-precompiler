@@ -25,7 +25,7 @@ class Browserify(base.BaseCompiler):
         args = []
 
         if self.transform:
-            args += ["-t", self.transform]
+            args += ["-t"] + self.transform.split(' ')
 
         return args
 
