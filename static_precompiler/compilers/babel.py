@@ -16,13 +16,14 @@ class Babel(base.BaseCompiler):
     input_extension = "es6"
     output_extension = "js"
 
-    def __init__(self, executable="babel", sourcemap_enabled=False, modules=None, plugins=None):
+    def __init__(self, executable="babel", sourcemap_enabled=False, modules=None, plugins=None, presets=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         if modules:
             warnings.warn("'modules' option is removed in Babel 6.0. Use `plugins` instead.", DeprecationWarning)
         self.modules = modules
         self.plugins = plugins
+        self.presets = presets
         super(Babel, self).__init__()
 
     def get_extra_args(self):
@@ -33,6 +34,9 @@ class Babel(base.BaseCompiler):
 
         if self.plugins is not None:
             args += ["--plugins", self.plugins]
+
+        if self.presets is not None:
+            args += ["--presets", self.presets]
 
         return args
 
