@@ -147,3 +147,35 @@ def test_find_dependencies(monkeypatch):
     assert compiler.find_dependencies("A.less") == ["B/C.less", "E.less"]
     assert compiler.find_dependencies("B/C.less") == ["E.less"]
     assert compiler.find_dependencies("E.less") == []
+
+
+def test_global_vars(monkeypatch, tmpdir):
+
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+
+    compiler = compilers.LESS()
+
+    with pytest.raises(exceptions.StaticCompilationError):
+        # Global var is not defined
+        compiler.compile_file("styles/less/global-vars.less")
+
+    compiler = compilers.LESS(global_vars={
+        "paragraph-color": "#008000",
+        "link-color": "#800000",
+    })
+
+    compiler.compile_file("styles/less/global-vars.less")
+
+    full_output_path = compiler.get_full_output_path("styles/less/global-vars.less")
+
+    assert os.path.exists(full_output_path)
+
+    with open(full_output_path) as compiled:
+        assert compiled.read() == """p {
+  color: #008000;
+}
+p a {
+  color: #800000;
+}
+"""

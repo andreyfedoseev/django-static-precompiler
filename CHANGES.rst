@@ -6,6 +6,7 @@ Dev
 ===
 
 - Add the implementation of LiveScript
+- Add support for `--global-var` option in LESS compiler
 
 
 1.1

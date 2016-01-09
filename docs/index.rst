@@ -256,10 +256,17 @@ LESS
 ``sourcemap_enabled``
   Boolean. Set to ``True`` to enable source maps. Default: ``False``
 
+``global_vars``
+  Dictionary of global variables (``--global-var`` command line option). Default: ``None``
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.LESS', {"executable": "/usr/bin/lessc", "sourcemap_enabled": True),
+        ('static_precompiler.compilers.LESS', {
+            "executable": "/usr/bin/lessc",
+            "sourcemap_enabled": True,
+            "global_vars": {"link-color": "red"}
+        ),
     )
 
 
