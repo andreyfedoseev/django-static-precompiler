@@ -13,7 +13,7 @@ dependencies:
     - pip install codecov
     - pip install flake8
   override:
-    - python setup.py install
+    - pip install -e .[libsass]
 
 test:
   override:
