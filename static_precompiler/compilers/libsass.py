@@ -50,7 +50,7 @@ class SCSS(scss.SCSS):
             else:
                 compiled = sass.compile(filename=full_source_path, include_paths=self.load_paths)
         except sass.CompileError as e:
-            raise exceptions.StaticCompilationError(e.message)
+            raise exceptions.StaticCompilationError(encoding.force_str(e))
 
         compiled = encoding.force_str(compiled)
         sourcemap = encoding.force_str(sourcemap)
@@ -72,7 +72,7 @@ class SCSS(scss.SCSS):
         try:
             compiled = sass.compile(string=source, indented=self.indented)
         except sass.CompileError as e:
-            raise exceptions.StaticCompilationError(e.message)
+            raise exceptions.StaticCompilationError(encoding.force_str(e))
 
         compiled = encoding.force_str(compiled)
 
