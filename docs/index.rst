@@ -161,7 +161,10 @@ CoffeeScript
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffee", "sourcemap_enabled": True}),
+        ('static_precompiler.compilers.CoffeeScript', {
+            "executable": "/usr/bin/coffee",
+            "sourcemap_enabled": True
+        }),
     )
 
 
@@ -180,7 +183,11 @@ Babel
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Babel', {"executable": "/usr/bin/babel", "sourcemap_enabled": True, "plugins": "transform-react-jsx"}),
+        ('static_precompiler.compilers.Babel', {
+            "executable": "/usr/bin/babel",
+            "sourcemap_enabled": True,
+            "plugins": "transform-react-jsx"
+        }),
     )
 
 
@@ -196,7 +203,10 @@ LiveScript
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.LiveScript', {"executable": "/usr/bin/lsc", "sourcemap_enabled": True}),
+        ('static_precompiler.compilers.LiveScript', {
+            "executable": "/usr/bin/lsc",
+            "sourcemap_enabled": True
+        }),
     )
 
 
@@ -221,7 +231,11 @@ Handlebars
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Handlebars', {"executable": "/usr/bin/handlebars", "sourcemap_enabled": True, "simple": True}),
+        ('static_precompiler.compilers.Handlebars', {
+            "executable": "/usr/bin/handlebars",
+            "sourcemap_enabled": True,
+            "simple": True
+        }),
     )
 
 
@@ -235,16 +249,53 @@ SASS / SCSS
   Boolean. Set to ``True`` to enable source maps. Default: ``False``
 
 ``compass_enabled``
-  Boolean. Whether to use compass or not. Compass must be installed in your system. Run "sass --compass" and if no error is shown it means that compass is installed.
+  Boolean. Whether to use compass or not. Compass must be installed in your system.
+  Run ``sass --compass`` and if no error is shown it means that compass is installed.
 
 ``load_paths``
-  List of import paths (``--load-path`` command line option).
+  List of import paths (``--load-path`` command line option). Default: ``None``
 
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.SCSS', {"executable": "/usr/bin/sass", "sourcemap_enabled": True, "compass_enabled": True, "load_paths": ["path"]}),
+        ('static_precompiler.compilers.SCSS', {
+            "executable": "/usr/bin/sass",
+            "sourcemap_enabled": True,
+            "compass_enabled": True,
+            "load_paths": ["/path"]
+        }),
     )
+
+
+Libsass
+-------
+
+`Libsass <https://github.com/sass/libsass>`_ is a C/C++ implementation of SASS.
+``django-static-precompiler`` uses `libsass-python <http://hongminhee.org/libsass-python/>`_ bindings for ``libsass``
+
+To use SASS / SCSS compiler based on ``libsass`` install ``django-static-precompiler`` with ``libsass`` flavor::
+
+    pip install django-static-precompiler[libsass]
+
+
+.. note:: Libsass compiler is disabled by default. See how to enable it in the example below.
+
+Options:
+
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+
+``load_paths``
+  List of additional paths to find imports. Default: ``None``
+
+Example::
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        ('static_precompiler.compilers.libsass.SCSS', {"sourcemap_enabled": True, "load_paths": ["/path"]}),
+        ('static_precompiler.compilers.libsass.SASS', {"sourcemap_enabled": True, "load_paths": ["/path"]}),
+    )
+
+.. note:: Libsass compiler doesn't support Compass extension, but you can replace it with `compass-mixins <https://github.com/Igosuki/compass-mixins>`_.
 
 
 LESS

@@ -7,6 +7,7 @@ Dev
 
 - Add the implementation of LiveScript
 - Add support for `--global-var` option in LESS compiler
+- Add SCSS / SASS compiler based on Libsass
 
 
 1.1

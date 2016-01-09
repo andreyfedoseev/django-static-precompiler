@@ -64,9 +64,11 @@ setup(
         "pytest",
         "pytest-django",
         "pretend",
+        "libsass",
     ],
     extras_require={
-        'watch': ['watchdog']
+        'watch': ['watchdog'],
+        'libsass': ['libsass']
     },
     cmdclass={
         "test": PyTest

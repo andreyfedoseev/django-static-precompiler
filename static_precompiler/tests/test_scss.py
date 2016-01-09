@@ -5,15 +5,17 @@ import os
 import pretend
 import pytest
 
-from static_precompiler import compilers, exceptions, utils
+from static_precompiler import exceptions, utils
+from static_precompiler.compilers import libsass, scss
 
 
-def test_compile_file(monkeypatch, tmpdir):
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_compile_file(compiler_module, monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     convert_urls = pretend.call_recorder(lambda *args: None)
     monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
 
-    compiler = compilers.SCSS()
+    compiler = compiler_module.SCSS()
 
     assert compiler.compile_file("styles/sass/test.scss") == "COMPILED/styles/sass/test.css"
 
@@ -29,18 +31,22 @@ def test_compile_file(monkeypatch, tmpdir):
     color: red; }
 """
 
+    with pytest.raises(exceptions.StaticCompilationError):
+        compiler.compile_file("styles/sass/invalid-syntax.scss")
 
-def test_sourcemap(monkeypatch, tmpdir):
+
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_sourcemap(compiler_module, monkeypatch, tmpdir):
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
 
-    compiler = compilers.SCSS(sourcemap_enabled=False)
+    compiler = compiler_module.SCSS(sourcemap_enabled=False)
     compiler.compile_file("styles/sass/test.scss")
     full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
     assert not os.path.exists(full_output_path + ".map")
 
-    compiler = compilers.SCSS(sourcemap_enabled=True)
+    compiler = compiler_module.SCSS(sourcemap_enabled=True)
     compiler.compile_file("styles/sass/test.scss")
     full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
     assert os.path.exists(full_output_path + ".map")
@@ -51,21 +57,14 @@ def test_sourcemap(monkeypatch, tmpdir):
     assert sourcemap["file"] == "test.css"
 
 
-def test_compile_source():
-    compiler = compilers.SCSS(executable="scss")
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_compile_source(compiler_module):
+
+    compiler = compiler_module.SCSS()
     assert (
         utils.fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) ==
         "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
     )
-
-    compiler = compilers.SCSS(executable="sass")
-    assert (
-        utils.fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) ==
-        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
-    )
-
-    with pytest.raises(exceptions.StaticCompilationError):
-        compiler.compile_source('invalid syntax')
 
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_source('invalid syntax')
@@ -74,24 +73,20 @@ def test_compile_source():
     NON_ASCII = """@charset "UTF-8";
 .external_link:first-child:before {
   content: "Zobacz także:";
-  background: url(картинка.png); }
+  background: url("картинка.png"); }
 """
     assert utils.fix_line_breaks(compiler.compile_source(NON_ASCII)) == NON_ASCII
 
-    compiler = compilers.SASS(executable="sass")
-    assert (
-        utils.fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) ==
-        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
-    )
-    compiler = compilers.SASS(executable="scss")
+    compiler = compiler_module.SASS()
     assert (
         utils.fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) ==
         "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
     )
 
 
-def test_parse_import_string():
-    compiler = compilers.SCSS()
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_parse_import_string(compiler_module):
+    compiler = compiler_module.SCSS()
     import_string = """"foo, bar" , "foo", url(bar,baz),
      'bar,foo',bar screen, projection"""
     assert compiler.parse_import_string(import_string) == [
@@ -143,10 +138,10 @@ def test_find_imports():
         "rounded-corners",
         "text-shadow",
     ]
-    compiler = compilers.SCSS(compass_enabled=False)
+    compiler = scss.SCSS(compass_enabled=False)
     assert compiler.find_imports(source) == expected
 
-    compiler = compilers.SCSS(compass_enabled=True)
+    compiler = scss.SCSS(compass_enabled=True)
     expected = [
         "bar,foo",
         "foo",
@@ -158,8 +153,9 @@ def test_find_imports():
     assert compiler.find_imports(source) == expected
 
 
-def test_locate_imported_file(monkeypatch):
-    compiler = compilers.SCSS()
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_locate_imported_file(compiler_module, monkeypatch):
+    compiler = compiler_module.SCSS()
 
     root = os.path.dirname(__file__)
 
@@ -181,8 +177,9 @@ def test_locate_imported_file(monkeypatch):
         compiler.locate_imported_file("", "Z.scss")
 
 
-def test_find_dependencies(monkeypatch):
-    compiler = compilers.SCSS()
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_find_dependencies(compiler_module, monkeypatch):
+    compiler = compiler_module.SCSS()
     files = {
         "A.scss": "@import 'B/C.scss';",
         "B/C.scss": "@import '../E';",
@@ -207,7 +204,7 @@ def test_find_dependencies(monkeypatch):
 def test_compass(monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
-    compiler = compilers.SCSS(compass_enabled=True)
+    compiler = scss.SCSS(compass_enabled=True)
 
     assert compiler.compile_file("test-compass.scss") == "COMPILED/test-compass.css"
 
@@ -222,7 +219,7 @@ def test_compass(monkeypatch, tmpdir):
 def test_compass_import(monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
-    compiler = compilers.SCSS(compass_enabled=True)
+    compiler = scss.SCSS(compass_enabled=True)
 
     assert (
         compiler.compile_file("styles/sass/test-compass-import.scss") ==
@@ -239,20 +236,46 @@ def test_compass_import(monkeypatch, tmpdir):
   border-radius: 4px / 4px; }
 """
 
-    compiler = compilers.SCSS(compass_enabled=False)
+    compiler = scss.SCSS(compass_enabled=False)
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_file("styles/sass/test-compass-import.scss")
 
 
 def test_get_extra_args():
 
-    assert compilers.SCSS().get_extra_args() == []
+    assert scss.SCSS().get_extra_args() == []
 
-    assert compilers.SCSS(compass_enabled=True, load_paths=["foo", "bar"]).get_extra_args() == [
+    assert scss.SCSS(compass_enabled=True, load_paths=["foo", "bar"]).get_extra_args() == [
         "-I", "foo",
         "-I", "bar",
         "--compass",
     ]
 
     with pytest.raises(ValueError):
-        compilers.SCSS(load_paths="foo")
+        scss.SCSS(load_paths="foo")
+
+
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    convert_urls = pretend.call_recorder(lambda *args: None)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
+
+    compiler = compiler_module.SCSS()
+    with pytest.raises(exceptions.StaticCompilationError):
+        compiler.compile_file("styles/sass/load-paths.scss")
+
+    compiler = compiler_module.SCSS(load_paths=[os.path.join(settings.STATIC_ROOT, "styles", "sass", "extra-path")])
+
+    compiler.compile_file("styles/sass/load-paths.scss")
+
+    full_output_path = compiler.get_full_output_path("styles/sass/load-paths.scss")
+    assert os.path.exists(full_output_path)
+
+    with open(full_output_path) as compiled:
+        assert compiled.read() == """p {
+  font-weight: bold; }
+"""
+
+    with pytest.raises(ValueError):
+        compiler_module.SCSS(load_paths="path")
