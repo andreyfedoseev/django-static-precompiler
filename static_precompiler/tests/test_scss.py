@@ -15,10 +15,10 @@ def test_compile_file(monkeypatch, tmpdir):
 
     compiler = compilers.SCSS()
 
-    assert compiler.compile_file("styles/test.scss") == "COMPILED/styles/test.css"
+    assert compiler.compile_file("styles/sass/test.scss") == "COMPILED/styles/sass/test.css"
 
-    full_output_path = compiler.get_full_output_path("styles/test.scss")
-    assert convert_urls.calls == [pretend.call(full_output_path, "styles/test.scss")]
+    full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
+    assert convert_urls.calls == [pretend.call(full_output_path, "styles/sass/test.scss")]
 
     assert os.path.exists(full_output_path)
 
@@ -36,17 +36,17 @@ def test_sourcemap(monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
 
     compiler = compilers.SCSS(sourcemap_enabled=False)
-    compiler.compile_file("styles/test.scss")
-    full_output_path = compiler.get_full_output_path("styles/test.scss")
+    compiler.compile_file("styles/sass/test.scss")
+    full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
     assert not os.path.exists(full_output_path + ".map")
 
     compiler = compilers.SCSS(sourcemap_enabled=True)
-    compiler.compile_file("styles/test.scss")
-    full_output_path = compiler.get_full_output_path("styles/test.scss")
+    compiler.compile_file("styles/sass/test.scss")
+    full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
     assert os.path.exists(full_output_path + ".map")
 
     sourcemap = json.loads(open(full_output_path + ".map").read())
-    assert sourcemap["sourceRoot"] == "../../styles"
+    assert sourcemap["sourceRoot"] == "../../../styles/sass"
     assert sourcemap["sources"] == ["test.scss"]
     assert sourcemap["file"] == "test.css"
 
@@ -224,9 +224,12 @@ def test_compass_import(monkeypatch, tmpdir):
 
     compiler = compilers.SCSS(compass_enabled=True)
 
-    assert compiler.compile_file("styles/test-compass-import.scss") == "COMPILED/styles/test-compass-import.css"
+    assert (
+        compiler.compile_file("styles/sass/test-compass-import.scss") ==
+        "COMPILED/styles/sass/test-compass-import.css"
+    )
 
-    full_output_path = compiler.get_full_output_path("styles/test-compass-import.scss")
+    full_output_path = compiler.get_full_output_path("styles/sass/test-compass-import.scss")
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
@@ -238,7 +241,7 @@ def test_compass_import(monkeypatch, tmpdir):
 
     compiler = compilers.SCSS(compass_enabled=False)
     with pytest.raises(exceptions.StaticCompilationError):
-        compiler.compile_file("styles/test-compass-import.scss")
+        compiler.compile_file("styles/sass/test-compass-import.scss")
 
 
 def test_get_extra_args():

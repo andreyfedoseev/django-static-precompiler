@@ -37,11 +37,11 @@ def test_compilestatic_command(monkeypatch, tmpdir):
         "scripts/test.js",
         "styles/less/imported.css",
         "styles/less/test.css",
+        "styles/sass/test.css",
         "styles/stylus/A.css",
         "styles/stylus/B/C.css",
         "styles/stylus/D.css",
         "styles/stylus/E/F.css",
         "styles/stylus/E/index.css",
-        "styles/test.css",
         "test-compass.css",
     ]
