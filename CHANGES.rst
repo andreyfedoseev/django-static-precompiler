@@ -2,10 +2,10 @@
 Changes
 =======
 
-Dev
+1.2
 ===
 
-- Add the implementation of LiveScript
+- Add LiveScript compiler
 - Add support for `--global-var` option in LESS compiler
 - Add SCSS / SASS compiler based on Libsass
 
