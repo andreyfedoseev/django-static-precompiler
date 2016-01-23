@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 import os
+import re
 import sys
 
 
@@ -38,10 +39,20 @@ def read(fname):
 README = read('README.rst')
 CHANGES = read('CHANGES.rst')
 
+
+version = ""
+
+with open("static_precompiler/__init__.py") as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
+
+if not version:
+    raise RuntimeError('Cannot find version information')
+
+
 setup(
     name="django-static-precompiler",
     packages=find_packages(),
-    version="1.1",
+    version=version,
     author="Andrey Fedoseev",
     author_email="andrey.fedoseev@gmail.com",
     url="https://github.com/andreyfedoseev/django-static-precompiler",
@@ -64,9 +75,11 @@ setup(
         "pytest",
         "pytest-django",
         "pretend",
+        "libsass",
     ],
     extras_require={
-        'watch': ['watchdog']
+        'watch': ['watchdog'],
+        'libsass': ['libsass']
     },
     cmdclass={
         "test": PyTest
