@@ -181,18 +181,18 @@ class BaseCompiler(object):
                 source_path, self.__class__.__name__
             ))
 
-        compliled_path = self.get_output_path(source_path)
+        compiled_path = self.get_output_path(source_path)
 
         if self.should_compile(source_path, from_management=from_management):
 
-            compliled_path = self.compile_file(source_path)
+            compiled_path = self.compile_file(source_path)
 
             if self.supports_dependencies:
                 self.update_dependencies(source_path, self.find_dependencies(source_path))
 
             logging.info("Compiled: '{0}'".format(source_path))
 
-        return compliled_path
+        return compiled_path
 
     def compile_lazy(self, source_path):
         """ Return a lazy object which, when translated to string, compiles the specified source path and returns

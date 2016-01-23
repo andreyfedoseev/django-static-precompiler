@@ -21,9 +21,10 @@ class LESS(base.BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
-    def __init__(self, executable=settings.LESS_EXECUTABLE, sourcemap_enabled=False):
+    def __init__(self, executable=settings.LESS_EXECUTABLE, sourcemap_enabled=False, global_vars=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
+        self.global_vars = global_vars
         super(LESS, self).__init__()
 
     def should_compile(self, source_path, from_management=False):
@@ -47,12 +48,18 @@ class LESS(base.BaseCompiler):
             args.extend([
                 "--source-map"
             ])
+        if self.global_vars:
+            for variable_name, variable_value in self.global_vars.items():
+                args.extend([
+                    "--global-var={}={}".format(variable_name, variable_value),
+                ])
 
         args.extend([
             self.get_full_source_path(source_path),
             full_output_path,
         ])
         out, errors = utils.run_command(args, cwd=cwd)
+
         if errors:
             raise exceptions.StaticCompilationError(errors)
 
