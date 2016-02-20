@@ -144,10 +144,7 @@ class BaseCompiler(object):
 
         if self.supports_dependencies:
             for dependency in self.get_dependencies(source_path):
-                try:
-                    dependency_mtime = self.get_source_mtime(dependency)
-                except ValueError:
-                    return True
+                dependency_mtime = self.get_source_mtime(dependency)
                 if compiled_mtime <= dependency_mtime:
                     return True
 
@@ -247,11 +244,16 @@ class BaseCompiler(object):
         :type source_path: str
         :returns: list of str
         """
-        return list(models.Dependency.objects.filter(
-            source=source_path
-        ).order_by("depends_on").values_list(
-            "depends_on", flat=True
-        ))
+        dependencies = []
+        for dependency in models.Dependency.objects.filter(source=source_path).order_by("depends_on"):
+            try:
+                self.get_full_source_path(dependency.depends_on)
+            except ValueError:
+                # File referenced in Dependency can't be located. Remove the Dependency object.
+                dependency.delete()
+            else:
+                dependencies.append(dependency.depends_on)
+        return dependencies
 
     # noinspection PyMethodMayBeStatic
     def get_dependents(self, source_path):
@@ -261,11 +263,16 @@ class BaseCompiler(object):
         :type source_path: str
         :returns: list of str
         """
-        return list(models.Dependency.objects.filter(
-            depends_on=source_path
-        ).order_by("source").values_list(
-            "source", flat=True
-        ))
+        dependents = []
+        for dependency in models.Dependency.objects.filter(depends_on=source_path).order_by("source"):
+            try:
+                self.get_full_source_path(dependency.source)
+            except ValueError:
+                # File referenced in Dependency can't be located. Remove the Dependency object.
+                dependency.delete()
+            else:
+                dependents.append(dependency.source)
+        return dependents
 
     # noinspection PyMethodMayBeStatic
     def update_dependencies(self, source_path, dependencies):
@@ -300,7 +307,4 @@ class BaseCompiler(object):
         """
         self.compile(source_path, from_management=True)
         for dependent in self.get_dependents(source_path):
-            try:
-                self.compile(dependent, from_management=True)
-            except ValueError:
-                models.Dependency.objects.get(source=dependent, depends_on=source_path).delete()
+            self.compile(dependent, from_management=True)

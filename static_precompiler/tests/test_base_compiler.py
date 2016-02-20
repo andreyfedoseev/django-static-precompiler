@@ -213,50 +213,76 @@ def test_find_dependencies():
 
 
 @pytest.mark.django_db
-def test_get_dependencies():
+def test_get_dependencies(monkeypatch):
     compiler = compilers.BaseCompiler()
 
     assert models.Dependency.objects.exists() is False
 
     assert compiler.get_dependencies("spam.scss") == []
 
-    models.Dependency.objects.create(
+    dependency_1 = models.Dependency.objects.create(
         source="spam.scss",
         depends_on="ham.scss"
     )
-    models.Dependency.objects.create(
+    dependency_2 = models.Dependency.objects.create(
         source="spam.scss",
         depends_on="eggs.scss"
     )
 
-    assert compiler.get_dependencies("spam.scss") == ["eggs.scss", "ham.scss"]
+    def get_full_source_path(source_path):
+        # File "eggs.scss" does not exist
+        if source_path == "eggs.scss":
+            raise ValueError()
+        return source_path
+
+    monkeypatch.setattr(compiler, "get_full_source_path", get_full_source_path)
+
+    assert list(models.Dependency.objects.all()) == [dependency_1, dependency_2]
+
+    assert compiler.get_dependencies("spam.scss") == ["ham.scss"]
+
+    # Dependency the refers to non-existing file were removed.
+    assert list(models.Dependency.objects.all()) == [dependency_1]
 
 
 @pytest.mark.django_db
-def test_get_dependents():
+def test_get_dependents(monkeypatch):
     compiler = compilers.BaseCompiler()
 
-    assert models.Dependency.objects.exists() is False
+    assert not models.Dependency.objects.exists()
 
     assert compiler.get_dependents("spam.scss") == []
 
-    models.Dependency.objects.create(
+    dependency_1 = models.Dependency.objects.create(
         source="ham.scss",
         depends_on="spam.scss"
     )
-    models.Dependency.objects.create(
+    dependency_2 = models.Dependency.objects.create(
         source="eggs.scss",
         depends_on="spam.scss"
     )
 
-    assert compiler.get_dependents("spam.scss") == ["eggs.scss", "ham.scss"]
+    def get_full_source_path(source_path):
+        # File "eggs.scss" does not exist
+        if source_path == "eggs.scss":
+            raise ValueError()
+        return source_path
+
+    monkeypatch.setattr(compiler, "get_full_source_path", get_full_source_path)
+
+    assert list(models.Dependency.objects.all()) == [dependency_1, dependency_2]
+
+    assert compiler.get_dependents("spam.scss") == ["ham.scss"]
+
+    # Dependency the refers to non-existing file were removed.
+    assert list(models.Dependency.objects.all()) == [dependency_1]
 
 
 @pytest.mark.django_db
 def test_update_dependencies():
     compiler = compilers.BaseCompiler()
 
-    assert models.Dependency.objects.exists() is False
+    assert not models.Dependency.objects.exists()
 
     compiler.update_dependencies("A", ["B", "C"])
     assert sorted(models.Dependency.objects.values_list("source", "depends_on")) == [("A", "B"), ("A", "C")]
