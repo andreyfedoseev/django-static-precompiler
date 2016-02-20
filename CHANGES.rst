@@ -6,6 +6,7 @@ Dev
 ===
 
 - Fix Stylus compiler to actually enable support for detecting changes in imported files
+- Add `precision` option to SASS / SCSS / LibSass compilers. Set it to 8 or more if you compile Bootstrap.
 
 
 1.2

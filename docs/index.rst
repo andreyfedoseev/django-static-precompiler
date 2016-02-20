@@ -255,6 +255,10 @@ SASS / SCSS
 ``load_paths``
   List of import paths (``--load-path`` command line option). Default: ``None``
 
+``precision``
+  How many digits of precision to use when outputting decimal numbers. Default: ``None``
+  Set this to 8 or more if you compile Bootstrap.
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
@@ -262,7 +266,8 @@ Example::
             "executable": "/usr/bin/sass",
             "sourcemap_enabled": True,
             "compass_enabled": True,
-            "load_paths": ["/path"]
+            "load_paths": ["/path"],
+            "precision": 8,
         }),
     )
 
@@ -288,11 +293,23 @@ Options:
 ``load_paths``
   List of additional paths to find imports. Default: ``None``
 
+``precision``
+  How many digits of precision to use when outputting decimal numbers. Default: ``None``
+  Set this to 8 or more if you compile Bootstrap.
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.libsass.SCSS', {"sourcemap_enabled": True, "load_paths": ["/path"]}),
-        ('static_precompiler.compilers.libsass.SASS', {"sourcemap_enabled": True, "load_paths": ["/path"]}),
+        ('static_precompiler.compilers.libsass.SCSS', {
+            "sourcemap_enabled": True,
+            "load_paths": ["/path"],
+            "precision": 8,
+        }),
+        ('static_precompiler.compilers.libsass.SASS', {
+            "sourcemap_enabled": True,
+            "load_paths": ["/path"],
+            "precision": 8,
+        }),
     )
 
 .. note:: Libsass compiler doesn't support Compass extension, but you can replace it with `compass-mixins <https://github.com/Igosuki/compass-mixins>`_.

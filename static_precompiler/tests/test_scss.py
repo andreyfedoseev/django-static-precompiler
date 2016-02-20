@@ -4,6 +4,7 @@ import os
 
 import pretend
 import pytest
+import re
 
 from static_precompiler import exceptions, utils
 from static_precompiler.compilers import libsass, scss
@@ -245,10 +246,15 @@ def test_get_extra_args():
 
     assert scss.SCSS().get_extra_args() == []
 
-    assert scss.SCSS(compass_enabled=True, load_paths=["foo", "bar"]).get_extra_args() == [
+    assert scss.SCSS(
+        compass_enabled=True,
+        load_paths=["foo", "bar"],
+        precision=10
+    ).get_extra_args() == [
         "-I", "foo",
         "-I", "bar",
         "--compass",
+        "--precision", "10",
     ]
 
     with pytest.raises(ValueError):
@@ -279,3 +285,26 @@ def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
 
     with pytest.raises(ValueError):
         compiler_module.SCSS(load_paths="path")
+
+
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("precision", (None, 10))
+def test_precision(compiler_module, precision, monkeypatch, tmpdir):
+
+    expected_precision = 5 if precision is None else precision
+
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    convert_urls = pretend.call_recorder(lambda *args: None)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
+
+    compiler = compiler_module.SCSS(precision=precision)
+
+    compiler.compile_file("styles/sass/precision.scss")
+
+    full_output_path = compiler.get_full_output_path("styles/sass/precision.scss")
+    assert os.path.exists(full_output_path)
+
+    with open(full_output_path) as compiled:
+        compiled_css = compiled.read()
+        line_height = re.search(r"line-height: (.+?);", compiled_css).groups()[0]
+        assert len(line_height.split(".")[-1]) == expected_precision

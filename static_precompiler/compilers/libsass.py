@@ -19,8 +19,9 @@ class SCSS(scss.SCSS):
     indented = False
     is_compass_enabled = False
 
-    def __init__(self, sourcemap_enabled=False, load_paths=None):
+    def __init__(self, sourcemap_enabled=False, load_paths=None, precision=None):
         self.is_sourcemap_enabled = sourcemap_enabled
+        self.precision = precision
         if load_paths is None:
             self.load_paths = []
         elif not isinstance(load_paths, (list, tuple)):
@@ -48,7 +49,12 @@ class SCSS(scss.SCSS):
                     include_paths=self.load_paths
                 )
             else:
-                compiled = sass.compile(filename=full_source_path, include_paths=self.load_paths)
+                compile_kwargs = {}
+                if self.load_paths:
+                    compile_kwargs["include_paths"] = self.load_paths
+                if self.precision:
+                    compile_kwargs["precision"] = self.precision
+                compiled = sass.compile(filename=full_source_path, **compile_kwargs)
         except sass.CompileError as e:
             raise exceptions.StaticCompilationError(encoding.force_str(e))
 

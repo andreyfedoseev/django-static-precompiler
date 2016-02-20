@@ -1,0 +1,6 @@
+$font-size: 14px;
+$line-height: 20px;
+
+p {
+  line-height: $line-height / $font-size;
+}

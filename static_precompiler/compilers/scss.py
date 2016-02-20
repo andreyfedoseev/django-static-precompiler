@@ -23,10 +23,12 @@ class SCSS(base.BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
 
     def __init__(self, executable=settings.SCSS_EXECUTABLE, sourcemap_enabled=False,
-                 compass_enabled=settings.SCSS_USE_COMPASS, load_paths=None):
+                 compass_enabled=settings.SCSS_USE_COMPASS, load_paths=None,
+                 precision=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         self.is_compass_enabled = compass_enabled
+        self.precision = precision
         if load_paths is None:
             self.load_paths = []
         elif not isinstance(load_paths, (list, tuple)):
@@ -43,6 +45,9 @@ class SCSS(base.BaseCompiler):
 
         if self.is_compass_enabled:
             args.append("--compass")
+
+        if self.precision:
+            args += ["--precision", str(self.precision)]
 
         return args
 
