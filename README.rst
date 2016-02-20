@@ -31,10 +31,31 @@ Documentation
 Documentation is available at `http://django-static-precompiler.readthedocs.org <http://django-static-precompiler.readthedocs.org/en/stable/>`_.
 
 
-Installation
-============
+Install
+=======
 
-To install::
+::
 
     pip install django-static-precompiler
 
+Use in templates
+================
+
+::
+
+  {% load compile_static %}
+  {% load static %}
+
+  <script src="{% static "path/to/script.coffee"|compile %}"></script>
+  <link rel="stylesheet" href="{% static "path/to/styles1.less"|compile %}" />
+  <link rel="stylesheet" href="{% static "path/to/styles2.scss"|compile %}" />
+
+
+Use in Python
+=============
+
+::
+
+    >>> from static_precompiler.utils import compile_static
+    >>> compile_static("styles.scss")
+    "COMPILED/styles.css"

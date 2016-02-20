@@ -40,8 +40,8 @@ Note that all relative URLs in your stylesheets are converted to absolute URLs u
 ``compile`` is a template filter that allows to compile any source file supported by compilers configured with
 ``STATIC_PRECOMPILER_COMPILERS`` settings.
 
-Example Usage
--------------
+Example
+-------
 
 ::
 
@@ -71,8 +71,8 @@ Compiler must be specified in ``STATIC_PRECOMPILER_COMPILERS`` setting. Names fo
 * ``scss``
 * ``stylus``
 
-Example Usage
--------------
+Example
+-------
 
 ::
 
