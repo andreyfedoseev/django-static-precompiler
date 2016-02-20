@@ -259,6 +259,10 @@ SASS / SCSS
   How many digits of precision to use when outputting decimal numbers. Default: ``None``
   Set this to 8 or more if you compile Bootstrap.
 
+``output_style``
+  Output style. Default: ``None``
+  Can be nested, compact, compressed, or expanded.
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
@@ -268,6 +272,7 @@ Example::
             "compass_enabled": True,
             "load_paths": ["/path"],
             "precision": 8,
+            "output_style": "compressed"
         }),
     )
 
@@ -297,6 +302,10 @@ Options:
   How many digits of precision to use when outputting decimal numbers. Default: ``None``
   Set this to 8 or more if you compile Bootstrap.
 
+``output_style``
+  Output style. Default: ``None``
+  Can be nested, compact, compressed, or expanded.
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
@@ -309,6 +318,7 @@ Example::
             "sourcemap_enabled": True,
             "load_paths": ["/path"],
             "precision": 8,
+            "output_style": "compressed"
         }),
     )
 

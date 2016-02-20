@@ -24,11 +24,12 @@ class SCSS(base.BaseCompiler):
 
     def __init__(self, executable=settings.SCSS_EXECUTABLE, sourcemap_enabled=False,
                  compass_enabled=settings.SCSS_USE_COMPASS, load_paths=None,
-                 precision=None):
+                 precision=None, output_style=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         self.is_compass_enabled = compass_enabled
         self.precision = precision
+        self.output_style = output_style
         if load_paths is None:
             self.load_paths = []
         elif not isinstance(load_paths, (list, tuple)):
@@ -48,6 +49,9 @@ class SCSS(base.BaseCompiler):
 
         if self.precision:
             args += ["--precision", str(self.precision)]
+
+        if self.output_style:
+            args += ["-t", self.output_style]
 
         return args
 

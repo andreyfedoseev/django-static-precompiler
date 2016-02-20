@@ -249,12 +249,14 @@ def test_get_extra_args():
     assert scss.SCSS(
         compass_enabled=True,
         load_paths=["foo", "bar"],
-        precision=10
+        precision=10,
+        output_style="compact"
     ).get_extra_args() == [
         "-I", "foo",
         "-I", "bar",
         "--compass",
         "--precision", "10",
+        "-t", "compact",
     ]
 
     with pytest.raises(ValueError):
@@ -264,8 +266,7 @@ def test_get_extra_args():
 @pytest.mark.parametrize("compiler_module", (libsass, scss))
 def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    convert_urls = pretend.call_recorder(lambda *args: None)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
 
     compiler = compiler_module.SCSS()
     with pytest.raises(exceptions.StaticCompilationError):
@@ -294,8 +295,7 @@ def test_precision(compiler_module, precision, monkeypatch, tmpdir):
     expected_precision = 5 if precision is None else precision
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    convert_urls = pretend.call_recorder(lambda *args: None)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
 
     compiler = compiler_module.SCSS(precision=precision)
 
@@ -308,3 +308,20 @@ def test_precision(compiler_module, precision, monkeypatch, tmpdir):
         compiled_css = compiled.read()
         line_height = re.search(r"line-height: (.+?);", compiled_css).groups()[0]
         assert len(line_height.split(".")[-1]) == expected_precision
+
+
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_output_style(compiler_module, monkeypatch, tmpdir):
+
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+
+    compiler = compiler_module.SCSS(output_style="compressed")
+
+    compiler.compile_file("styles/sass/test.scss")
+
+    full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
+    assert os.path.exists(full_output_path)
+
+    with open(full_output_path) as compiled:
+        assert compiled.read() == "p{font-size:15px}p a{color:red}\n"
