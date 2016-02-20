@@ -16,6 +16,7 @@ class Stylus(base.BaseCompiler):
     name = "stylus"
     input_extension = "styl"
     output_extension = "css"
+    supports_dependencies = True
 
     IMPORT_RE = re.compile(r"@(?:import|require)\s+(.+?)\s*$", re.MULTILINE)
 

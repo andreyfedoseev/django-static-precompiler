@@ -2,6 +2,12 @@
 Changes
 =======
 
+Dev
+===
+
+- Fix Stylus compiler to actually enable support for detecting changes in imported files
+
+
 1.2
 ===
 
