@@ -161,7 +161,7 @@ class BaseCompiler(object):
         with open(self.get_full_source_path(source_path)) as source:
             return source.read()
 
-    def compile(self, source_path, from_management=False):
+    def compile(self, source_path, from_management=False, verbosity=0):
         """ Compile the given source path and return relative path to the compiled file.
             Raise ValueError is the source file type is not supported.
             May raise a StaticCompilationError if something goes wrong with compilation.
@@ -169,8 +169,8 @@ class BaseCompiler(object):
         :type source_path: str
         :param from_management: whether the method was invoked from management command
         :type from_management: bool
-
-        :returns: str
+        :type verbosity: int
+        :rtype: str
 
         """
         if not self.is_supported(source_path):
@@ -187,7 +187,12 @@ class BaseCompiler(object):
             if self.supports_dependencies:
                 self.update_dependencies(source_path, self.find_dependencies(source_path))
 
-            logging.info("Compiled: '{0}'".format(source_path))
+            message = "Compiled '{0}' to '{1}'".format(source_path, compiled_path)
+
+            if from_management and verbosity >= 1:
+                print(message)
+            else:
+                logging.info(message)
 
         return compiled_path
 
@@ -298,13 +303,13 @@ class BaseCompiler(object):
                     depends_on=dependency,
                 )
 
-    def handle_changed_file(self, source_path):
+    def handle_changed_file(self, source_path, verbosity=0):
         """ Handle the modification of the source file.
 
         :param source_path: relative path to a source file
         :type source_path: str
-
+        :type verbosity: int
         """
-        self.compile(source_path, from_management=True)
+        self.compile(source_path, from_management=True, verbosity=verbosity)
         for dependent in self.get_dependents(source_path):
-            self.compile(dependent, from_management=True)
+            self.compile(dependent, from_management=True, verbosity=verbosity)

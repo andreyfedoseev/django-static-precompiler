@@ -8,7 +8,7 @@ Dev
 - Fix Stylus compiler to actually enable support for detecting changes in imported files
 - Add ``precision`` option to SASS / SCSS / LibSass compilers. Set it to 8 or more if you compile Bootstrap.
 - Add ``output_style`` option to SASS / SCSS / LibSass compilers.
-
+- Enable verbose output for ``compilestatic`` management command
 
 1.2
 ===

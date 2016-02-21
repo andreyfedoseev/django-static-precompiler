@@ -10,7 +10,9 @@ from static_precompiler import exceptions, settings, utils
 
 
 def get_scanned_dirs():
-    dirs = set([settings.STATIC_ROOT])
+    dirs = set()
+    if settings.STATIC_ROOT:
+        dirs.add(settings.STATIC_ROOT)
     for finder in django.contrib.staticfiles.finders.get_finders():
         if hasattr(finder, "storages"):
             for storage in finder.storages.values():
@@ -60,7 +62,7 @@ class Command(django.core.management.base.NoArgsCommand):
                         for compiler in compilers:
                             if compiler.is_supported(path):
                                 try:
-                                    compiler.handle_changed_file(path)
+                                    compiler.handle_changed_file(path, verbosity=options["verbosity"])
                                 except (exceptions.StaticCompilationError, ValueError) as e:
                                     print(e)
                                 break
