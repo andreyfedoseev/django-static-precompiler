@@ -2,7 +2,7 @@
 Changes
 =======
 
-Dev
+1.3
 ===
 
 - Fix Stylus compiler to actually enable support for detecting changes in imported files
