@@ -180,6 +180,9 @@ Babel
 ``plugins``
   Babel `plugins <http://babeljs.io/docs/plugins/>`_ command line option. Default: ``None`` (uses Babel's default option).
 
+``presets``
+  Babel ``presets`` command line option (sets of plugins). Default: ``None`` (uses Babel's default option).
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (

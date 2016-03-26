@@ -6,37 +6,26 @@ from static_precompiler import exceptions, utils
 from . import base
 
 __all__ = (
-    "Babel",
+    "Browserify",
 )
 
 
-class Babel(base.BaseCompiler):
+class Browserify(base.BaseCompiler):
 
-    name = "babel"
-    input_extension = "es6"
+    name = "browserify"
+    input_extension = "jsx"
     output_extension = "js"
 
-    def __init__(self, executable="babel", sourcemap_enabled=False, modules=None, plugins=None, presets=None):
+    def __init__(self, executable="browserify", transform=None):
         self.executable = executable
-        self.is_sourcemap_enabled = sourcemap_enabled
-        if modules:
-            warnings.warn("'modules' option is removed in Babel 6.0. Use `plugins` instead.", DeprecationWarning)
-        self.modules = modules
-        self.plugins = plugins
-        self.presets = presets
-        super(Babel, self).__init__()
+        self.transform = transform
+        super(Browserify, self).__init__()
 
     def get_extra_args(self):
         args = []
 
-        if self.modules is not None:
-            args += ["--modules", self.modules]
-
-        if self.plugins is not None:
-            args += ["--plugins", self.plugins]
-
-        if self.presets is not None:
-            args += ["--presets", self.presets]
+        if self.transform:
+            args += ["-t"] + self.transform.split(' ')
 
         return args
 
@@ -45,17 +34,14 @@ class Babel(base.BaseCompiler):
             self.executable,
         ] + self.get_extra_args()
 
-        if self.is_sourcemap_enabled:
-            args.append("-s")
-
         full_output_path = self.get_full_output_path(source_path)
 
         full_output_dirname = os.path.dirname(full_output_path)
         if not os.path.exists(full_output_dirname):
             os.makedirs(full_output_dirname)
 
-        args.extend(["-o", full_output_path])
         args.append(self.get_full_source_path(source_path))
+        args.extend(["-o", full_output_path])
 
         out, errors = utils.run_command(args)
         if errors:
@@ -69,6 +55,7 @@ class Babel(base.BaseCompiler):
     def compile_source(self, source):
         args = [
             self.executable,
+            "-",
         ] + self.get_extra_args()
 
         out, errors = utils.run_command(args, source)
