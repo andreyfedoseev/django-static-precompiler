@@ -180,13 +180,17 @@ Babel
 ``plugins``
   Babel `plugins <http://babeljs.io/docs/plugins/>`_ command line option. Default: ``None`` (uses Babel's default option).
 
+``presets``
+  Babel `presets <http://babeljs.io/docs/plugins/#presets>`_ command line option. Default: ``None`` (uses Babel's default option).
+
 Example::
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.Babel', {
             "executable": "/usr/bin/babel",
             "sourcemap_enabled": True,
-            "plugins": "transform-react-jsx"
+            "plugins": "transform-react-jsx",
+            "presets": "es2015,react",
         }),
     )
 
