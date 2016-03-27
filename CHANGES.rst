@@ -5,7 +5,7 @@ Changes
 Dev
 ===
 
- - 
+- Add support for ``--presets`` option in Babel compiler. See babel-cli `options <https://babeljs.io/docs/usage/options/>` for more information.
 
 1.3
 ===
