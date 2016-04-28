@@ -18,7 +18,7 @@ It works with both inline code and external files.
     :alt: Code Climate
 
 .. image:: https://readthedocs.org/projects/django-static-precompiler/badge/
-    :target: http://django-static-precompiler.readthedocs.org/
+    :target: http://django-static-precompiler.readthedocs.io/
     :alt: Documentation
 
 .. image:: https://badges.gitter.im/Join Chat.svg
@@ -28,7 +28,7 @@ It works with both inline code and external files.
 Documentation
 =============
 
-Documentation is available at `http://django-static-precompiler.readthedocs.org <http://django-static-precompiler.readthedocs.org/en/stable/>`_.
+Documentation is available at `http://django-static-precompiler.readthedocs.io <http://django-static-precompiler.readthedocs.io/en/stable/>`_.
 
 
 Install
