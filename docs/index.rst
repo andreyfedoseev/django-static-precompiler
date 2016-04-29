@@ -348,7 +348,7 @@ Example::
             "executable": "/usr/bin/lessc",
             "sourcemap_enabled": True,
             "global_vars": {"link-color": "red"}
-        ),
+        }),
     )
 
 
