@@ -123,6 +123,46 @@ def test_parse_import_string(compiler_module):
     assert compiler.parse_import_string(import_string) == ["foo"]
 
 
+def test_strip_comments():
+
+    source = """
+// Single-line comment
+a {
+  color: red;
+  font-family: "Foo // Bar";
+  background-image: url(/* not a comment */);
+  // Another comment
+}
+/* This
+ is *
+* a
+ multiline
+comment */
+
+p {
+  /* This is also a comment */
+  color: blue;
+  background-image: url(//not-a-comment.com); // comment
+}
+    """
+    compiler = scss.SCSS()
+    assert compiler.strip_comments(source) == """
+
+a {
+  color: red;
+  font-family: "Foo // Bar";
+  background-image: url(/* not a comment */);
+
+}
+
+p {
+
+  color: blue;
+  background-image: url(//not-a-comment.com);
+}
+    """
+
+
 def test_find_imports():
     source = """
 @import "foo.css", ;
@@ -130,9 +170,12 @@ def test_find_imports():
 @import "foo.scss";
 @import "foo";
 @import "foo.css";
+/*
+    @import "multi-line-comment";
+*/
 @import "foo" screen;
 @import "http://foo.com/bar";
-@import url(foo);
+@import url(foo);  // `.class-name { @import "single-line-comment"; }`).
 @import "rounded-corners",
         "text-shadow";
 @import "compass";

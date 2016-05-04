@@ -179,6 +179,9 @@ class SCSS(base.BaseCompiler):
 
         return sorted(items)
 
+    def strip_comments(self, source):
+        return source
+
     def find_imports(self, source):
         """ Find the imported files in the source code.
 
@@ -187,6 +190,7 @@ class SCSS(base.BaseCompiler):
         :returns: list of str
 
         """
+        source = self.strip_comments(source)
         imports = set()
         for import_string in self.IMPORT_RE.findall(source):
             for import_item in self.parse_import_string(import_string):
