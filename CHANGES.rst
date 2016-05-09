@@ -2,7 +2,7 @@
 Changes
 =======
 
-Dev
+1.4
 ===
 
 - Fix the ``run_command`` utility function to rely on process return code rather than stderr to determine if compilation
