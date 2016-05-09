@@ -57,8 +57,8 @@ class Babel(base.BaseCompiler):
         args.extend(["-o", full_output_path])
         args.append(self.get_full_source_path(source_path))
 
-        out, errors = utils.run_command(args)
-        if errors:
+        return_code, out, errors = utils.run_command(args)
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         if self.is_sourcemap_enabled:
@@ -71,8 +71,8 @@ class Babel(base.BaseCompiler):
             self.executable,
         ] + self.get_extra_args()
 
-        out, errors = utils.run_command(args, source)
-        if errors:
+        return_code, out, errors = utils.run_command(args, source)
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         return out

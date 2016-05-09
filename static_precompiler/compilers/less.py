@@ -58,9 +58,9 @@ class LESS(base.BaseCompiler):
             self.get_full_source_path(source_path),
             full_output_path,
         ])
-        out, errors = utils.run_command(args, cwd=cwd)
+        return_code, out, errors = utils.run_command(args, cwd=cwd)
 
-        if errors:
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         utils.convert_urls(full_output_path, source_path)
@@ -76,9 +76,9 @@ class LESS(base.BaseCompiler):
             "-"
         ]
 
-        out, errors = utils.run_command(args, source)
+        return_code, out, errors = utils.run_command(args, source)
 
-        if errors:
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         return out

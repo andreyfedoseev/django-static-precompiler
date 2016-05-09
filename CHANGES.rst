@@ -2,6 +2,14 @@
 Changes
 =======
 
+Dev
+===
+
+- Fix the ``run_command`` utility function to rely on process return code rather than stderr to determine if compilation
+  has finished successfully. WARNING! Changes in ``run_command`` are backward incompatible. If you use this function in
+  your custom compiler you should update your code.
+
+
 1.3.1
 =====
 

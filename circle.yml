@@ -7,7 +7,7 @@ dependencies:
     - npm install -g babel-cli@6.2.0
     - npm install -g stylus@0.50.0
     - npm install -g handlebars@4.0.2
-    - gem install sass -v 3.4.9
+    - gem install sass -v 3.4.22
     - gem install compass -v 1.0.1
     - pip install tox
     - pip install codecov

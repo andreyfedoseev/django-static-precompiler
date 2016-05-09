@@ -98,8 +98,9 @@ def run_command(args, input=None, cwd=None):
         input = encoding.smart_bytes(input)
 
     output, error = p.communicate(input)
+    return_code = p.poll()
 
-    return encoding.smart_str(output), encoding.smart_str(error)
+    return return_code, encoding.smart_str(output), encoding.smart_str(error)
 
 
 class URLConverter(object):

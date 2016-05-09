@@ -81,9 +81,9 @@ class SCSS(base.BaseCompiler):
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
-        out, errors = utils.run_command(args, None, cwd=cwd)
+        return_code, out, errors = utils.run_command(args, None, cwd=cwd)
 
-        if errors:
+        if return_code:
             if os.path.exists(full_output_path):
                 os.remove(full_output_path)
             raise exceptions.StaticCompilationError(errors)
@@ -104,8 +104,8 @@ class SCSS(base.BaseCompiler):
         if self.executable.endswith("sass"):
             args.append("--scss")
 
-        out, errors = utils.run_command(args, source)
-        if errors:
+        return_code, out, errors = utils.run_command(args, source)
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         return out
@@ -274,8 +274,8 @@ class SASS(SCSS):
         if self.executable.endswith("scss"):
             args.append("--sass")
 
-        out, errors = utils.run_command(args, source)
-        if errors:
+        return_code, out, errors = utils.run_command(args, source)
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         return out
