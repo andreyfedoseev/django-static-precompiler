@@ -34,14 +34,14 @@ Documentation is available at `http://django-static-precompiler.readthedocs.io <
 Install
 =======
 
-::
+.. code-block:: sh
 
     pip install django-static-precompiler
 
 Use in templates
 ================
 
-::
+.. code-block:: django
 
   {% load compile_static %}
   {% load static %}
@@ -54,7 +54,7 @@ Use in templates
 Use in Python
 =============
 
-::
+.. code-block:: python
 
     >>> from static_precompiler.utils import compile_static
     >>> compile_static("styles.scss")
