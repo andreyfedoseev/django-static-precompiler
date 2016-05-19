@@ -135,15 +135,15 @@ General settings
   Name of the cache to be used. If not specified then the default django cache is used. Default: ``None``.
 
 ``STATIC_PRECOMPILER_PREPEND_STATIC_URL``
-  Add ``STATIC_URL`` to the output of template tags and filters. Default: ``False``
+  Add ``STATIC_URL`` to the output of template tags and filters. Default: ``False``.
 
 ``STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE``
   Disable automatic compilation from template tags or ``compile_static`` utility function. Files are compiled
-  only with ``compilestatic`` command (see below). Default:: ``False``
+  only with ``compilestatic`` command (see below). Default: ``False``.
 
 ``STATIC_PRECOMPILER_LIST_FILES``
   Whether or not ``static_precompiler.finders.StaticPrecompilerFinder`` will list compiled files when ``collectstatic``
-  command is executed. Set to ``True`` if you want compiled files to be found by ``collectstatic``. Default:: ``False``.
+  command is executed. Set to ``True`` if you want compiled files to be found by ``collectstatic``. Default: ``False``.
 
 
 Compiler specific settings
@@ -156,7 +156,7 @@ CoffeeScript
   Path to CoffeeScript compiler executable. Default: ``"coffee"``.
 
 ``sourcemap_enabled``
-  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
 Example::
 
@@ -175,7 +175,7 @@ Babel
   Path to Babel compiler executable. Default: ``"babel"``.
 
 ``sourcemap_enabled``
-  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
 ``plugins``
   Babel `plugins <http://babeljs.io/docs/plugins/>`_ command line option. Default: ``None`` (uses Babel's default option).
@@ -202,7 +202,7 @@ LiveScript
   Path to LiveScript compiler executable. Default: ``"lsc"``.
 
 ``sourcemap_enabled``
-  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
 Example::
 
@@ -221,7 +221,7 @@ Handlebars
   Path to Handlebars compiler executable. Default: ``"handlebars"``.
 
 ``sourcemap_enabled``
-  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
 ``known_helpers``
   List of known helpers (``-k`` compiler option). Default: ``None``.
@@ -250,21 +250,21 @@ SASS / SCSS
   Path to SASS compiler executable. Default: "sass".
 
 ``sourcemap_enabled``
-  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
 ``compass_enabled``
   Boolean. Whether to use compass or not. Compass must be installed in your system.
   Run ``sass --compass`` and if no error is shown it means that compass is installed.
 
 ``load_paths``
-  List of import paths (``--load-path`` command line option). Default: ``None``
+  List of import paths (``--load-path`` command line option). Default: ``None``.
 
 ``precision``
-  How many digits of precision to use when outputting decimal numbers. Default: ``None``
+  How many digits of precision to use when outputting decimal numbers. Default: ``None``.
   Set this to 8 or more if you compile Bootstrap.
 
 ``output_style``
-  Output style. Default: ``None``
+  Output style. Default: ``None``.
   Can be nested, compact, compressed, or expanded.
 
 Example::
@@ -297,17 +297,17 @@ To use SASS / SCSS compiler based on ``libsass`` install ``django-static-precomp
 Options:
 
 ``sourcemap_enabled``
-  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
 ``load_paths``
-  List of additional paths to find imports. Default: ``None``
+  List of additional paths to find imports. Default: ``None``.
 
 ``precision``
-  How many digits of precision to use when outputting decimal numbers. Default: ``None``
+  How many digits of precision to use when outputting decimal numbers. Default: ``None``.
   Set this to 8 or more if you compile Bootstrap.
 
 ``output_style``
-  Output style. Default: ``None``
+  Output style. Default: ``None``.
   Can be nested, compact, compressed, or expanded.
 
 Example::
@@ -336,10 +336,10 @@ LESS
   Path to LESS compiler executable. Default: ``"lessc"``.
 
 ``sourcemap_enabled``
-  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
 ``global_vars``
-  Dictionary of global variables (``--global-var`` command line option). Default: ``None``
+  Dictionary of global variables (``--global-var`` command line option). Default: ``None``.
 
 Example::
 
@@ -359,7 +359,7 @@ Stylus
   Path to Stylus compiler executable. Default: ``"stylus"``.
 
 ``sourcemap_enabled``
-  Boolean. Set to ``True`` to enable source maps. Default: ``False``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
 Example::
 
