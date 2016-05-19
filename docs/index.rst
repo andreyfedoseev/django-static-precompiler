@@ -8,7 +8,9 @@ It works with both inline code and external files.
 Installation
 ============
 
-``django-static-precompiler`` is avaiable through `pip <http://pypi.python.org/pypi/pip/>`_::
+``django-static-precompiler`` is avaiable through `pip <http://pypi.python.org/pypi/pip/>`_:
+
+.. code-block:: sh
 
     $ pip install django-static-precompiler
 
@@ -20,14 +22,16 @@ Installation
 
 3. Make sure that you have necessary compilers installed.
 4. Optionally, you can specify the full path to compilers (see below).
-5. In case you use Django’s staticfiles contrib app you have to add static-precompiler’s file finder to the ``STATICFILES_FINDERS`` setting, for example::
+5. In case you use Django’s staticfiles contrib app you have to add static-precompiler’s file finder to the ``STATICFILES_FINDERS`` setting, for example:
 
-    STATICFILES_FINDERS = (
-        'django.contrib.staticfiles.finders.FileSystemFinder',
-        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-        # other finders..
-        'static_precompiler.finders.StaticPrecompilerFinder',
-    )
+   .. code-block:: python
+
+       STATICFILES_FINDERS = (
+           'django.contrib.staticfiles.finders.FileSystemFinder',
+           'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+           # other finders..
+           'static_precompiler.finders.StaticPrecompilerFinder',
+       )
 
 Note that by default compiled files are saved into ``COMPILED`` folder under your ``STATIC_ROOT`` (or ``MEDIA_ROOT`` if you have no ``STATIC_ROOT`` in your settings).
 You can change this folder with ``STATIC_PRECOMPILER_ROOT`` and ``STATIC_PRECOMPILER_OUTPUT_DIR`` settings.
@@ -43,7 +47,7 @@ Note that all relative URLs in your stylesheets are converted to absolute URLs u
 Example
 -------
 
-::
+.. code-block:: django
 
   {% load compile_static %}
   {% load static %}
@@ -52,7 +56,9 @@ Example
   <link rel="stylesheet" href="{% static "path/to/styles1.less"|compile %}" />
   <link rel="stylesheet" href="{% static "path/to/styles2.scss"|compile %}" />
 
-renders to::
+renders to:
+
+.. code-block:: django
 
   <script src="/static/COMPILED/path/to/script.js"></script>
   <link rel="stylesheet" href="/static/COMPILED/path/to/styles1.css" />
@@ -74,7 +80,7 @@ Compiler must be specified in ``STATIC_PRECOMPILER_COMPILERS`` setting. Names fo
 Example
 -------
 
-::
+.. code-block:: django
 
   {% load compile_static %}
 
@@ -84,7 +90,9 @@ Example
     {% endinlinecompile %}
   </script>
 
-renders to::
+renders to:
+
+.. code-block:: django
 
   <script type="text/javascript">
     (function() {
@@ -96,7 +104,9 @@ General settings
 ================
 
 ``STATIC_PRECOMPILER_COMPILERS``
-  List of enabled compilers. You can modify it to enable your custom compilers. Default::
+  List of enabled compilers. You can modify it to enable your custom compilers. Default:
+
+  .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         'static_precompiler.compilers.CoffeeScript',
@@ -108,7 +118,9 @@ General settings
         'static_precompiler.compilers.Stylus',
     )
 
-  You can specify compiler options using the following format::
+  You can specify compiler options using the following format:
+
+  .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffeescript"}),
@@ -158,7 +170,9 @@ CoffeeScript
 ``sourcemap_enabled``
   Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
-Example::
+Example:
+
+.. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.CoffeeScript', {
@@ -183,7 +197,9 @@ Babel
 ``presets``
   Babel `presets <http://babeljs.io/docs/plugins/#presets>`_ command line option. Default: ``None`` (uses Babel's default option).
 
-Example::
+Example:
+
+.. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.Babel', {
@@ -204,7 +220,9 @@ LiveScript
 ``sourcemap_enabled``
   Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
-Example::
+Example:
+
+.. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.LiveScript', {
@@ -232,7 +250,9 @@ Handlebars
 ``simple``
   Output template function only (``-s`` compiler option). Default: ``False``.
 
-Example::
+Example:
+
+.. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.Handlebars', {
@@ -267,7 +287,9 @@ SASS / SCSS
   Output style. Default: ``None``.
   Can be nested, compact, compressed, or expanded.
 
-Example::
+Example:
+
+.. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.SCSS', {
@@ -310,7 +332,9 @@ Options:
   Output style. Default: ``None``.
   Can be nested, compact, compressed, or expanded.
 
-Example::
+Example:
+
+.. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.libsass.SCSS', {
@@ -341,7 +365,9 @@ LESS
 ``global_vars``
   Dictionary of global variables (``--global-var`` command line option). Default: ``None``.
 
-Example::
+Example:
+
+.. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.LESS', {
@@ -361,7 +387,9 @@ Stylus
 ``sourcemap_enabled``
   Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
-Example::
+Example:
+
+.. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.Stylus', {"executable": "/usr/bin/stylus", "sourcemap_enabled": True),
@@ -371,7 +399,9 @@ Example::
 Usage with forms media
 ======================
 
-If you want to use ``static_precompiler`` in form media definitions, you can use the following approach::
+If you want to use ``static_precompiler`` in form media definitions, you can use the following approach:
+
+.. code-block:: python
 
   from django import forms
   from static_precompiler.utils import compile_static
