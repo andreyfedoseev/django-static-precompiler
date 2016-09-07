@@ -1,4 +1,3 @@
-import optparse
 import os
 import sys
 
@@ -28,16 +27,21 @@ class Command(django.core.management.base.BaseCommand):
     requires_model_validation = False
 
     def add_arguments(self,parser):
-        parser.add_argument("--watch",
-                             action="store_true",
-                             dest="watch",
-                             default=False,
-                             help="Watch for changes and recompile if necessary."),
-        parser.add_argument("--no-initial-scan",
-                             action="store_false",
-                             dest="initial_scan",
-                             default=True,
-                             help="Skip the initial scan of watched directories in --watch mode."),
+        parser.add_argument(
+            "--watch",
+            action="store_true",
+            dest="watch",
+            default=False,
+            help="Watch for changes and recompile if necessary."
+        )
+        parser.add_argument(
+            "--no-initial-scan",
+            action="store_false",
+            dest="initial_scan",
+            default=True,
+            help="Skip the initial scan of watched directories in --watch mode."
+        )
+
 
     def handle(self, **options):
 
