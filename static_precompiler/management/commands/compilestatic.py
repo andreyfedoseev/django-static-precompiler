@@ -38,7 +38,6 @@ class Command(django.core.management.base.BaseCommand):
                              dest="initial_scan",
                              default=True,
                              help="Skip the initial scan of watched directories in --watch mode."),
-    )
 
     def handle(self, **options):
 
