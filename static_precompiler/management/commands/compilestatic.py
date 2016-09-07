@@ -19,14 +19,13 @@ def get_scanned_dirs():
                     dirs.add(storage.location)
     return sorted(dirs)
 
-
 class Command(django.core.management.base.BaseCommand):
 
     help = "Compile static files."
 
     requires_model_validation = False
 
-    def add_arguments(self,parser):
+    def add_arguments(self, parser):
         parser.add_argument(
             "--watch",
             action="store_true",
@@ -41,7 +40,6 @@ class Command(django.core.management.base.BaseCommand):
             default=True,
             help="Skip the initial scan of watched directories in --watch mode."
         )
-
 
     def handle(self, **options):
 
