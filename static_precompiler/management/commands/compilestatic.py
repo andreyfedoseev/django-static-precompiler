@@ -19,6 +19,7 @@ def get_scanned_dirs():
                     dirs.add(storage.location)
     return sorted(dirs)
 
+
 class Command(django.core.management.base.BaseCommand):
 
     help = "Compile static files."
