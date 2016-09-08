@@ -1,7 +1,7 @@
-import optparse
 import os
 import sys
 
+import django
 import django.contrib.staticfiles.finders
 import django.core.files.storage
 import django.core.management.base
@@ -21,26 +21,29 @@ def get_scanned_dirs():
     return sorted(dirs)
 
 
-class Command(django.core.management.base.NoArgsCommand):
+class Command(django.core.management.base.BaseCommand):
 
     help = "Compile static files."
 
     requires_model_validation = False
 
-    option_list = django.core.management.base.NoArgsCommand.option_list + (
-        optparse.make_option("--watch",
-                             action="store_true",
-                             dest="watch",
-                             default=False,
-                             help="Watch for changes and recompile if necessary."),
-        optparse.make_option("--no-initial-scan",
-                             action="store_false",
-                             dest="initial_scan",
-                             default=True,
-                             help="Skip the initial scan of watched directories in --watch mode."),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--watch",
+            action="store_true",
+            dest="watch",
+            default=False,
+            help="Watch for changes and recompile if necessary."
+        )
+        parser.add_argument(
+            "--no-initial-scan",
+            action="store_false",
+            dest="initial_scan",
+            default=True,
+            help="Skip the initial scan of watched directories in --watch mode."
+        )
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
 
         if not options["watch"] and not options["initial_scan"]:
             sys.exit("--no-initial-scan option should be used with --watch.")
@@ -70,3 +73,18 @@ class Command(django.core.management.base.NoArgsCommand):
         if options["watch"]:
             from static_precompiler.watch import watch_dirs
             watch_dirs(scanned_dirs, verbosity)
+
+if django.VERSION < (1, 8):
+    import optparse
+    Command.option_list = django.core.management.base.NoArgsCommand.option_list + (
+        optparse.make_option("--watch",
+                             action="store_true",
+                             dest="watch",
+                             default=False,
+                             help="Watch for changes and recompile if necessary."),
+        optparse.make_option("--no-initial-scan",
+                             action="store_false",
+                             dest="initial_scan",
+                             default=True,
+                             help="Skip the initial scan of watched directories in --watch mode.")
+    )
