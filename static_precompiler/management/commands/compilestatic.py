@@ -74,17 +74,17 @@ class Command(django.core.management.base.BaseCommand):
             from static_precompiler.watch import watch_dirs
             watch_dirs(scanned_dirs, verbosity)
 
-if django.VERSION < (1,8):
+if django.VERSION < (1, 8):
     import optparse
     Command.option_list = django.core.management.base.NoArgsCommand.option_list + (
-    optparse.make_option("--watch",
-                        action="store_true",
-                        dest="watch",
-                        default=False,
-                        help="Watch for changes and recompile if necessary."),
-    optparse.make_option("--no-initial-scan",
-                        action="store_false",
-                        dest="initial_scan",
-                        default=True,
-                        help="Skip the initial scan of watched directories in --watch mode.")
+        optparse.make_option("--watch",
+                             action="store_true",
+                             dest="watch",
+                             default=False,
+                             help="Watch for changes and recompile if necessary."),
+        optparse.make_option("--no-initial-scan",
+                             action="store_false",
+                             dest="initial_scan",
+                             default=True,
+                             help="Skip the initial scan of watched directories in --watch mode.")
     )
