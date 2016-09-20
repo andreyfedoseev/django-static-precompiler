@@ -64,13 +64,13 @@ class SCSS(scss.SCSS):
         compiled = encoding.force_str(compiled)
         sourcemap = encoding.force_str(sourcemap)
 
-        with open(full_output_path, "w+") as output_file:
+        with open(full_output_path, "w+", encoding='utf-8') as output_file:
             output_file.write(compiled)
 
         utils.convert_urls(full_output_path, source_path)
 
         if self.is_sourcemap_enabled:
-            with open(sourcemap_path, "w+") as output_file:
+            with open(sourcemap_path, "w+", encoding='utf-8') as output_file:
                 output_file.write(sourcemap)
 
             utils.fix_sourcemap(sourcemap_path, source_path, full_output_path)

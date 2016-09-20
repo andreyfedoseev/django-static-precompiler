@@ -17,7 +17,7 @@ class EventHandler(events.FileSystemEventHandler):
         if e.is_directory or e.event_type not in ("created", "modified"):
             return
         path = e.src_path[len(self.scanned_dir):]
-        if path.startswith("/"):
+        if path.startswith(os.sep):
             path = path[1:]
         for compiler in self.compilers:
             if compiler.is_supported(path):

@@ -33,7 +33,7 @@ def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
     compiled_files = []
     for root, dirs, files in os.walk(output_path):
         for filename in files:
-            compiled_files.append(os.path.join(root[len(output_path):].lstrip("/"), filename))
+            compiled_files.append(os.path.join(root[len(output_path):].lstrip(os.sep), filename))
 
     compiled_files.sort()
 

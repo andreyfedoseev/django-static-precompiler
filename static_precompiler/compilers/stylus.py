@@ -1,5 +1,4 @@
 import os
-import posixpath
 import re
 
 from static_precompiler import exceptions, utils
@@ -56,7 +55,7 @@ class Stylus(base.BaseCompiler):
 
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
-        cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
+        cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split(os.sep)))))
         return_code, out, errors = utils.run_command(args, cwd=cwd)
 
         if return_code:
@@ -102,7 +101,7 @@ class Stylus(base.BaseCompiler):
         :returns: str
 
         """
-        path = posixpath.normpath(posixpath.join(source_dir, import_path))
+        path = os.path.normpath(os.path.join(source_dir, import_path))
 
         try:
             self.get_full_source_path(path)
@@ -114,7 +113,7 @@ class Stylus(base.BaseCompiler):
 
     def find_dependencies(self, source_path):
         source = self.get_source(source_path)
-        source_dir = posixpath.dirname(source_path)
+        source_dir = os.path.dirname(source_path)
         dependencies = set()
         imported_files = set()
         for import_path in self.find_imports(source):
@@ -123,7 +122,7 @@ class Stylus(base.BaseCompiler):
                 imported_files.add(self.locate_imported_file(source_dir, import_path))
             elif import_path.endswith("/*"):
                 # @import "foo/*"
-                imported_dir = posixpath.join(source_dir, import_path[:-2])
+                imported_dir = os.path.join(source_dir, import_path[:-2])
                 try:
                     imported_dir_full_path = self.get_full_source_path(imported_dir)
                 except ValueError:
@@ -140,7 +139,7 @@ class Stylus(base.BaseCompiler):
             else:
                 try:
                     # @import "foo" -> @import "foo/index.styl"
-                    imported_dir = posixpath.join(source_dir, import_path)
+                    imported_dir = os.path.join(source_dir, import_path)
                     imported_dir_full_path = self.get_full_source_path(imported_dir)
                     if os.path.isdir(imported_dir_full_path):
                         imported_files.add(self.locate_imported_file(imported_dir, "index.styl"))

@@ -60,7 +60,7 @@ class Command(django.core.management.base.BaseCommand):
                 for dirname, dirnames, filenames in os.walk(scanned_dir):
                     for filename in filenames:
                         path = os.path.join(dirname, filename)[len(scanned_dir):]
-                        if path.startswith("/"):
+                        if path.startswith(os.sep):
                             path = path[1:]
                         for compiler in compilers:
                             if compiler.is_supported(path):
