@@ -7,6 +7,9 @@ from django.utils import encoding, functional, six
 
 from static_precompiler import models, settings, utils
 
+if six.PY2:
+    from io import open
+
 logger = logging.getLogger("static_precompiler")
 
 
