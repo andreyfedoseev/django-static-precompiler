@@ -10,8 +10,10 @@ dependencies:
     - gem install sass -v 3.4.22
     - gem install compass -v 1.0.1
     - pip install tox
+    - pip install tox-pyenv
     - pip install codecov
     - pip install flake8
+    - pyenv local 2.7.11 3.5.1
   override:
     - pip install -e .[libsass]
 
