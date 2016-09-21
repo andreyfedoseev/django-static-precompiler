@@ -1,5 +1,4 @@
 import os
-import posixpath
 import re
 
 from static_precompiler import exceptions, settings, utils
@@ -39,7 +38,7 @@ class LESS(base.BaseCompiler):
 
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
-        cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
+        cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split(os.sep)))))
 
         args = [
             self.executable
@@ -123,7 +122,7 @@ class LESS(base.BaseCompiler):
         """
         if not import_path.endswith("." + self.input_extension):
             import_path += "." + self.input_extension
-        path = posixpath.normpath(posixpath.join(source_dir, import_path))
+        path = os.path.normpath(os.path.join(source_dir, import_path))
 
         try:
             self.get_full_source_path(path)
@@ -131,11 +130,11 @@ class LESS(base.BaseCompiler):
         except ValueError:
             pass
 
-        filename = posixpath.basename(import_path)
+        filename = os.path.basename(import_path)
         if filename[0] != "_":
-            path = posixpath.normpath(posixpath.join(
+            path = os.path.normpath(os.path.join(
                 source_dir,
-                posixpath.dirname(import_path),
+                os.path.dirname(import_path),
                 "_" + filename,
             ))
 

@@ -4,6 +4,12 @@ import os
 import re
 import sys
 
+from django.utils import six
+
+if six.PY2:
+    # noinspection PyUnresolvedReferences
+    from io import open
+
 
 if os.environ.get('USER', '') == 'vagrant':
     # Workaround for http://bugs.python.org/issue8876
