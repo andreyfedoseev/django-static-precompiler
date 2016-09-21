@@ -5,6 +5,7 @@ import sass
 from static_precompiler import exceptions, utils
 from django.utils import encoding
 
+from static_precompiler.utils import safe_open
 from . import scss
 
 __all__ = (
@@ -64,13 +65,13 @@ class SCSS(scss.SCSS):
         compiled = encoding.force_str(compiled)
         sourcemap = encoding.force_str(sourcemap)
 
-        with open(full_output_path, "w+") as output_file:
+        with safe_open(full_output_path, "w+") as output_file:
             output_file.write(compiled)
 
         utils.convert_urls(full_output_path, source_path)
 
         if self.is_sourcemap_enabled:
-            with open(sourcemap_path, "w+") as output_file:
+            with safe_open(sourcemap_path, "w+") as output_file:
                 output_file.write(sourcemap)
 
             utils.fix_sourcemap(sourcemap_path, source_path, full_output_path)

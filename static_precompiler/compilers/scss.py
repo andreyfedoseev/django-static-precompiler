@@ -80,7 +80,7 @@ class SCSS(base.BaseCompiler):
 
         # `cwd` is a directory containing `source_path`.
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
-        cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
+        cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split(os.sep)))))
         return_code, out, errors = utils.run_command(args, None, cwd=cwd)
 
         if return_code:
@@ -222,7 +222,7 @@ class SCSS(base.BaseCompiler):
             import_path_probe = import_path
             if not import_path_probe.endswith("." + extension):
                 import_path_probe += "." + extension
-            path = posixpath.normpath(posixpath.join(source_dir, import_path_probe))
+            path = os.path.normpath(os.path.join(source_dir, *import_path_probe.split(posixpath.sep)))
 
             try:
                 self.get_full_source_path(path)
@@ -232,9 +232,9 @@ class SCSS(base.BaseCompiler):
 
             filename = posixpath.basename(import_path_probe)
             if filename[0] != "_":
-                path = posixpath.normpath(posixpath.join(
+                path = os.path.normpath(os.path.join(
                     source_dir,
-                    posixpath.dirname(import_path_probe),
+                    *posixpath.dirname(import_path_probe).split(posixpath.sep),
                     "_" + filename,
                 ))
 
@@ -248,7 +248,7 @@ class SCSS(base.BaseCompiler):
 
     def find_dependencies(self, source_path):
         source = self.get_source(source_path)
-        source_dir = posixpath.dirname(source_path)
+        source_dir = os.path.dirname(source_path)
         dependencies = set()
         for import_path in self.find_imports(source):
             import_path = self.locate_imported_file(source_dir, import_path)

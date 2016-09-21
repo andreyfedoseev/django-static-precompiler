@@ -7,6 +7,7 @@ from django.contrib.staticfiles import finders
 from django.utils import encoding, functional, six
 
 from static_precompiler import models, settings, utils
+from static_precompiler.utils import safe_open
 
 logger = logging.getLogger("static_precompiler")
 
@@ -45,7 +46,7 @@ class BaseCompiler(object):
         :raises: ValueError
 
         """
-        norm_source_path = utils.normalize_path(source_path.lstrip("/"))
+        norm_source_path = utils.normalize_path(source_path.lstrip(os.sep))
 
         if settings.STATIC_ROOT:
             full_path = os.path.join(settings.STATIC_ROOT, norm_source_path)
@@ -84,7 +85,7 @@ class BaseCompiler(object):
         source_dir = os.path.dirname(source_path)
         source_filename = os.path.basename(source_path)
         output_filename = self.get_output_filename(source_filename)
-        return posixpath.join(settings.OUTPUT_DIR, source_dir, output_filename)
+        return os.path.join(settings.OUTPUT_DIR, source_dir, output_filename)
 
     def get_full_output_path(self, source_path):
         """ Get full path to compiled file based for the given source file.
@@ -95,7 +96,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        return os.path.join(settings.ROOT, utils.normalize_path(self.get_output_path(source_path.lstrip("/"))))
+        return os.path.join(settings.ROOT, utils.normalize_path(self.get_output_path(source_path.lstrip(os.sep))))
 
     def get_source_mtime(self, source_path):
         """ Get the modification time of the source file.
@@ -158,7 +159,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        with open(self.get_full_source_path(source_path)) as source:
+        with safe_open(self.get_full_source_path(source_path)) as source:
             return source.read()
 
     def compile(self, source_path, from_management=False, verbosity=0):

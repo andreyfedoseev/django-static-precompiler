@@ -6,6 +6,7 @@ import pretend
 import pytest
 
 from static_precompiler import compilers, exceptions, utils
+from static_precompiler.utils import safe_open
 
 
 def test_compile_file(monkeypatch, tmpdir):
@@ -22,7 +23,7 @@ def test_compile_file(monkeypatch, tmpdir):
 
     assert os.path.exists(full_output_path)
 
-    with open(full_output_path) as compiled:
+    with safe_open(full_output_path) as compiled:
         assert compiled.read() == """p {
   font-size: 15px;
 }
@@ -50,7 +51,7 @@ def test_sourcemap(monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("styles/less/test.less")
     assert os.path.exists(full_output_path + ".map")
 
-    sourcemap = json.loads(open(full_output_path + ".map").read())
+    sourcemap = json.loads(safe_open(full_output_path + ".map").read())
     assert sourcemap["sourceRoot"] == "../../../styles/less"
     assert sourcemap["sources"] == ["test.less", "imported.less"]
     assert sourcemap["file"] == "test.css"
@@ -171,7 +172,7 @@ def test_global_vars(monkeypatch, tmpdir):
 
     assert os.path.exists(full_output_path)
 
-    with open(full_output_path) as compiled:
+    with safe_open(full_output_path) as compiled:
         assert compiled.read() == """p {
   color: #008000;
 }

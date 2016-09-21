@@ -151,7 +151,7 @@ class LESS(base.BaseCompiler):
 
     def find_dependencies(self, source_path):
         source = self.get_source(source_path)
-        source_dir = posixpath.dirname(source_path)
+        source_dir = os.path.dirname(source_path)
         dependencies = set()
         for import_path in self.find_imports(source):
             import_path = self.locate_imported_file(source_dir, import_path)

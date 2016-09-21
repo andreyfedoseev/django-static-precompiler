@@ -10,6 +10,7 @@ import warnings
 
 import django.core.cache
 import django.core.exceptions
+import sys
 from django.utils import encoding, six
 
 from static_precompiler import exceptions, settings
@@ -28,12 +29,10 @@ else:
     from urllib.parse import urljoin
 
 
-def normalize_path(posix_path):
-    """ Convert posix style path to OS-dependent path.
-    """
+def normalize_path(os_path):
     if settings.POSIX_COMPATIBLE:
-        return posix_path
-    return os.path.join(*posix_path.split("/"))
+        return os_path
+    return os.path.join(*os_path.split(os.sep))
 
 
 def fix_line_breaks(text):
@@ -109,16 +108,16 @@ class URLConverter(object):
 
     @staticmethod
     def convert_url(url, source_dir):
-        assert source_dir[-1] == "/"
+        assert source_dir[-1] == os.sep
         url = url.strip(' \'"')
         if url.startswith(('http://', 'https://', '/', 'data:')):
             return url
-        return urljoin(settings.STATIC_URL, urljoin(source_dir, url))
+        return urljoin(settings.STATIC_URL, urljoin(posixpath.join(*source_dir.split(os.sep)), url))
 
     def convert(self, content, path):
         source_dir = os.path.dirname(path)
-        if not source_dir.endswith("/"):
-            source_dir += "/"
+        if not source_dir.endswith(os.sep):
+            source_dir += os.sep
         return self.URL_PATTERN.sub(
             lambda matchobj: "url('{0}')".format(
                 self.convert_url(matchobj.group(1), source_dir)
@@ -131,9 +130,9 @@ url_converter = URLConverter()
 
 
 def convert_urls(compiled_full_path, source_path):
-    with open(compiled_full_path, "r+") as compiled_file:
+    with safe_open(compiled_full_path, "r+") as compiled_file:
         content = compiled_file.read()
-    with open(compiled_full_path, "w") as compiled_file:
+    with safe_open(compiled_full_path, "w") as compiled_file:
         compiled_file.write(url_converter.convert(content, source_path))
 
 
@@ -218,14 +217,20 @@ def compile_static_lazy(path):
 
 def fix_sourcemap(sourcemap_full_path, source_path, compiled_full_path):
 
-    with open(sourcemap_full_path) as sourcemap_file:
+    with safe_open(sourcemap_full_path) as sourcemap_file:
         sourcemap = json.loads(sourcemap_file.read())
 
     # Stylus, unlike SASS, can't add correct relative paths in source map when the compiled file
     # is not in the same dir as the source file. We fix it here.
-    sourcemap["sourceRoot"] = "../" * len(source_path.split("/")) + posixpath.dirname(source_path)
+    sourcemap["sourceRoot"] = (posixpath.pardir + posixpath.sep) * len(source_path.split(posixpath.sep)) + posixpath.dirname(source_path)
     sourcemap["sources"] = [os.path.basename(source) for source in sourcemap["sources"]]
     sourcemap["file"] = posixpath.basename(os.path.basename(compiled_full_path))
 
-    with open(sourcemap_full_path, "w") as sourcemap_file:
+    with safe_open(sourcemap_full_path, "w") as sourcemap_file:
         sourcemap_file.write(json.dumps(sourcemap))
+
+
+def safe_open(*args, **kwargs):
+    if sys.version >= '3' and "encoding" not in kwargs:
+        kwargs["encoding"] = "utf-8"
+    return open(*args, **kwargs)

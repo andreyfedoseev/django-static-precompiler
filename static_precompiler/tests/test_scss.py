@@ -8,6 +8,7 @@ import re
 
 from static_precompiler import exceptions, utils
 from static_precompiler.compilers import libsass, scss
+from static_precompiler.utils import safe_open
 
 
 @pytest.mark.parametrize("compiler_module", (libsass, scss))
@@ -25,7 +26,7 @@ def test_compile_file(compiler_module, monkeypatch, tmpdir):
 
     assert os.path.exists(full_output_path)
 
-    with open(full_output_path) as compiled:
+    with safe_open(full_output_path) as compiled:
         assert compiled.read() == """p {
   font-size: 15px; }
   p a {
@@ -52,7 +53,7 @@ def test_sourcemap(compiler_module, monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
     assert os.path.exists(full_output_path + ".map")
 
-    sourcemap = json.loads(open(full_output_path + ".map").read())
+    sourcemap = json.loads(safe_open(full_output_path + ".map").read())
     assert sourcemap["sourceRoot"] == "../../../styles/sass"
     assert sourcemap["sources"] == ["test.scss"]
     assert sourcemap["file"] == "test.css"
@@ -211,7 +212,7 @@ def test_compass(monkeypatch, tmpdir):
 
     full_output_path = compiler.get_full_output_path("test-compass.scss")
     assert os.path.exists(full_output_path)
-    with open(full_output_path) as compiled:
+    with safe_open(full_output_path) as compiled:
         assert compiled.read() == """p {
   background: url('/static/images/test.png'); }
 """
@@ -230,7 +231,7 @@ def test_compass_import(monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("styles/sass/test-compass-import.scss")
     assert os.path.exists(full_output_path)
 
-    with open(full_output_path) as compiled:
+    with safe_open(full_output_path) as compiled:
         assert compiled.read() == """.round-corners {
   -moz-border-radius: 4px / 4px;
   -webkit-border-radius: 4px 4px;
@@ -279,7 +280,7 @@ def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
     full_output_path = compiler.get_full_output_path("styles/sass/load-paths.scss")
     assert os.path.exists(full_output_path)
 
-    with open(full_output_path) as compiled:
+    with safe_open(full_output_path) as compiled:
         assert compiled.read() == """p {
   font-weight: bold; }
 """
@@ -304,7 +305,7 @@ def test_precision(compiler_module, precision, monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("styles/sass/precision.scss")
     assert os.path.exists(full_output_path)
 
-    with open(full_output_path) as compiled:
+    with safe_open(full_output_path) as compiled:
         compiled_css = compiled.read()
         line_height = re.search(r"line-height: (.+?);", compiled_css).groups()[0]
         assert len(line_height.split(".")[-1]) == expected_precision
@@ -323,5 +324,5 @@ def test_output_style(compiler_module, monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
     assert os.path.exists(full_output_path)
 
-    with open(full_output_path) as compiled:
+    with safe_open(full_output_path) as compiled:
         assert compiled.read() == "p{font-size:15px}p a{color:red}\n"

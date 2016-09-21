@@ -5,6 +5,7 @@ import os
 import pytest
 
 from static_precompiler import compilers, exceptions
+from static_precompiler.utils import safe_open
 
 
 def clean_javascript(js):
@@ -21,7 +22,7 @@ def test_compile_file(monkeypatch, tmpdir):
 
     assert clean_javascript(compiler.compile_file("scripts/test.coffee")) == "COMPILED/scripts/test.js"
     assert os.path.exists(compiler.get_full_output_path("scripts/test.coffee"))
-    with open(compiler.get_full_output_path("scripts/test.coffee")) as compiled:
+    with safe_open(compiler.get_full_output_path("scripts/test.coffee")) as compiled:
         assert clean_javascript(compiled.read()) == """(function() {\n  console.log("Hello, World!");\n}).call(this);"""
 
 
@@ -39,7 +40,7 @@ def test_sourcemap(monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("scripts/test.coffee")
     assert os.path.exists(os.path.splitext(full_output_path)[0] + ".map")
 
-    sourcemap = json.loads(open(os.path.splitext(full_output_path)[0] + ".map").read())
+    sourcemap = json.loads(safe_open(os.path.splitext(full_output_path)[0] + ".map").read())
     assert sourcemap["sourceRoot"] == "../../scripts"
     assert sourcemap["sources"] == ["test.coffee"]
     assert sourcemap["file"] == "test.js"
