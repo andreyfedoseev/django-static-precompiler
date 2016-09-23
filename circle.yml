@@ -1,6 +1,6 @@
 dependencies:
   pre:
-    - sudo apt-get install python2.7-dev python3.4-dev python3.5-dev
+    - sudo apt-get install python2.7-dev python3.4-dev
     - npm install -g coffee-script@1.7.1
     - npm install -g livescript@1.4.0
     - npm install -g less@1.7.4
