@@ -9,6 +9,7 @@ dist
 virtualenv
 virtualenv-win
 .coverage
+coverage.xml
 test_project/db.sqlite3
 /.vagrant/
 /.vagrant.bak/
