@@ -1,6 +1,5 @@
 import os
 import time
-import os
 
 from watchdog import events, observers
 

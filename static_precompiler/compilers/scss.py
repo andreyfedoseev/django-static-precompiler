@@ -232,12 +232,9 @@ class SCSS(base.BaseCompiler):
 
             filename = posixpath.basename(import_path_probe)
             if filename[0] != "_":
-                path = os.path.normpath(os.path.join(
-                    source_dir,
-                    *posixpath.dirname(import_path_probe).split(posixpath.sep),
-                    "_" + filename,
-                ))
-
+                path = os.path.normpath(
+                    os.path.join(source_dir, *posixpath.dirname(import_path_probe).split(posixpath.sep),
+                                 "_" + filename))
                 try:
                     self.get_full_source_path(path)
                     return path
