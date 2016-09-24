@@ -12,6 +12,7 @@ dependencies:
     - pip install tox
     - pip install codecov
     - pip install flake8
+    - pip install django=2.7
   override:
     - pip install -e .[libsass]
 
