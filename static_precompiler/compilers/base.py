@@ -1,6 +1,5 @@
 import logging
 import os
-import posixpath
 
 import django.core.exceptions
 from django.contrib.staticfiles import finders

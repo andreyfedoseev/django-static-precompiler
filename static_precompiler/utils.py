@@ -222,8 +222,8 @@ def fix_sourcemap(sourcemap_full_path, source_path, compiled_full_path):
 
     # Stylus, unlike SASS, can't add correct relative paths in source map when the compiled file
     # is not in the same dir as the source file. We fix it here.
-    sourcemap["sourceRoot"] = (posixpath.pardir + posixpath.sep) * len(source_path.split(posixpath.sep)) \
-                              + posixpath.dirname(source_path)
+    sourcemap["sourceRoot"] = (posixpath.pardir + posixpath.sep) * len(
+        source_path.split(posixpath.sep)) + posixpath.dirname(source_path)
     sourcemap["sources"] = [os.path.basename(source) for source in sourcemap["sources"]]
     sourcemap["file"] = posixpath.basename(os.path.basename(compiled_full_path))
 
