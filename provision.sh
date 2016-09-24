@@ -4,8 +4,8 @@
 # packages #
 ############
 
-sudo aptitude update
-sudo aptitude install -y virtualenvwrapper python-dev ruby-dev node npm sqlite3
+sudo apt-get update
+sudo apt-get install -y virtualenvwrapper python-dev ruby-dev npm sqlite3
 
 sudo gem install sass -v 3.4.22
 sudo gem install compass -v 1.0.1
@@ -47,4 +47,9 @@ echo -e "[global]\ndownload_cache = ~/.cache/pip" > ~/.pip/pip.conf
 pip install django==1.7.4
 pip install watchdog
 pip install pytest-cov
+pip install pytest-django
+pip install pretend
+pip install libsass
+pip install flake8
+pip install tox
 pip install -e .
