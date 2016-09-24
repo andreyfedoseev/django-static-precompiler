@@ -13,6 +13,7 @@ dependencies:
     - pip install codecov
     - pip install flake8
     - pyenv local 2.7.11 3.5.1
+    - pip install django=1.7
   override:
     - pip install -e .[libsass]
 
