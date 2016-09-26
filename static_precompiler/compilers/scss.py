@@ -222,27 +222,32 @@ class SCSS(base.BaseCompiler):
             import_path_probe = import_path
             if not import_path_probe.endswith("." + extension):
                 import_path_probe += "." + extension
-            path = posixpath.normpath(posixpath.join(source_dir, import_path_probe))
 
-            try:
-                self.get_full_source_path(path)
-                return path
-            except ValueError:
-                pass
-
-            filename = posixpath.basename(import_path_probe)
-            if filename[0] != "_":
-                path = posixpath.normpath(posixpath.join(
-                    source_dir,
-                    posixpath.dirname(import_path_probe),
-                    "_" + filename,
-                ))
+            path_list = [
+                posixpath.normpath(posixpath.join(source_dir, import_path_probe)), 
+                posixpath.normpath(import_path_probe)
+            ]
+            for path_probe in path_list:
+                path = path_probe
 
                 try:
                     self.get_full_source_path(path)
                     return path
                 except ValueError:
                     pass
+
+                filename = posixpath.basename(import_path_probe)
+                if filename[0] != "_":
+                    path = posixpath.normpath(posixpath.join(
+                        posixpath.dirname(path_probe),
+                        "_" + filename,
+                    ))
+
+                    try:
+                        self.get_full_source_path(path)
+                        return path
+                    except ValueError:
+                        pass
 
         raise exceptions.StaticCompilationError("Can't locate the imported file: {0}".format(import_path))
 
