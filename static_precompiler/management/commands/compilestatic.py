@@ -65,7 +65,7 @@ class Command(django.core.management.base.BaseCommand):
                         for compiler in compilers:
                             if compiler.is_supported(path):
                                 try:
-                                    compiler.handle_changed_file(path, verbosity=options["verbosity"])
+                                    compiler.handle_changed_file(path, verbosity=verbosity)
                                 except (exceptions.StaticCompilationError, ValueError) as e:
                                     print(e)
                                 break
