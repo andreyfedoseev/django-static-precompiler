@@ -2,6 +2,13 @@
 Changes
 =======
 
+Dev
+===
+
+ - Add support for Django 1.10 and Python 3.5
+ - Improve support for ``load_paths`` setting in SCSS/SASS compilers.
+
+
 1.4
 ===
 
