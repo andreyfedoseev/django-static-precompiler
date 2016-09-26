@@ -207,6 +207,18 @@ class SCSS(base.BaseCompiler):
                 imports.add(import_item)
         return sorted(imports)
 
+    def get_full_source_path(self, source_path):
+        try:
+            return super(SCSS, self).get_full_source_path(source_path)
+        except ValueError:
+            # Try to locate the source file in directories specified in `load_paths`
+            norm_source_path = utils.normalize_path(source_path.lstrip("/"))
+            for dirname in self.load_paths:
+                full_path = os.path.join(dirname, norm_source_path)
+                if os.path.exists(full_path):
+                    return full_path
+            raise
+
     def locate_imported_file(self, source_dir, import_path):
         """ Locate the imported file in the source directory.
             Return the path to the imported file relative to STATIC_ROOT
@@ -218,31 +230,35 @@ class SCSS(base.BaseCompiler):
         :returns: str
 
         """
-        for extension in self.import_extensions:
-            import_path_probe = import_path
-            if not import_path_probe.endswith("." + extension):
-                import_path_probe += "." + extension
-            path = posixpath.normpath(posixpath.join(source_dir, import_path_probe))
+        import_filename = posixpath.basename(import_path)
+        import_dirname = posixpath.dirname(import_path)
+        import_filename_root, import_filename_extension = posixpath.splitext(import_filename)
 
+        if import_filename_extension:
+            filenames_to_try = [import_filename]
+        else:
+            # No extension is specified for the imported file, try all supported extensions
+            filenames_to_try = [import_filename_root + "." + extension for extension in self.import_extensions]
+
+        if not import_filename.startswith("_"):
+            # Try the files with "_" prefix
+            filenames_to_try += ["_" + filename for filename in filenames_to_try]
+
+        # Try to locate the file in the directory relative to `source_dir`
+        for filename in filenames_to_try:
+            source_path = posixpath.normpath(posixpath.join(source_dir, import_dirname, filename))
             try:
-                self.get_full_source_path(path)
-                return path
+                self.get_full_source_path(source_path)
+                return source_path
             except ValueError:
                 pass
 
-            filename = posixpath.basename(import_path_probe)
-            if filename[0] != "_":
-                path = posixpath.normpath(posixpath.join(
-                    source_dir,
-                    posixpath.dirname(import_path_probe),
-                    "_" + filename,
-                ))
-
-                try:
-                    self.get_full_source_path(path)
-                    return path
-                except ValueError:
-                    pass
+        # Try to locate the file in the directories listed in `load_paths`
+        for dirname in self.load_paths:
+            for filename in filenames_to_try:
+                source_path = posixpath.join(import_dirname, filename)
+                if os.path.exists(os.path.join(dirname, utils.normalize_path(source_path))):
+                    return source_path
 
         raise exceptions.StaticCompilationError("Can't locate the imported file: {0}".format(import_path))
 

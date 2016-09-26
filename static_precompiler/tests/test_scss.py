@@ -11,6 +11,20 @@ from static_precompiler.compilers import libsass, scss
 
 
 @pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_get_full_source_path(compiler_module):
+
+    compiler = compiler_module.SCSS()
+    with pytest.raises(ValueError):
+        compiler.get_full_source_path("_extra.scss")
+
+    extra_path = os.path.join(os.path.dirname(__file__), "static", "styles", "sass", "extra-path")
+
+    compiler = compiler_module.SCSS(load_paths=(extra_path, ))
+
+    assert compiler.get_full_source_path("_extra.scss") == os.path.join(extra_path, "_extra.scss")
+
+
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
 def test_compile_file(compiler_module, monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     convert_urls = pretend.call_recorder(lambda *args: None)
@@ -156,7 +170,6 @@ def test_find_imports():
 
 @pytest.mark.parametrize("compiler_module", (libsass, scss))
 def test_locate_imported_file(compiler_module, monkeypatch):
-    compiler = compiler_module.SCSS()
 
     root = os.path.dirname(__file__)
 
@@ -164,7 +177,16 @@ def test_locate_imported_file(compiler_module, monkeypatch):
     for f in ("A/B.scss", "A/_C.scss", "A/S.sass", "D.scss"):
         existing_files.add(os.path.join(root, "static", utils.normalize_path(f)))
 
+    additional_path = os.path.join(root, "static", "additional-path")
+    existing_files.add(
+        os.path.join(additional_path, "foo.scss")
+    )
+
     monkeypatch.setattr("os.path.exists", lambda x: x in existing_files)
+
+    compiler = compiler_module.SCSS(load_paths=(
+        additional_path,
+    ))
 
     assert compiler.locate_imported_file("A", "B.scss") == "A/B.scss"
     assert compiler.locate_imported_file("A", "C") == "A/_C.scss"
@@ -173,6 +195,8 @@ def test_locate_imported_file(compiler_module, monkeypatch):
     assert compiler.locate_imported_file("", "D.scss") == "D.scss"
     assert compiler.locate_imported_file("A", "S.sass") == "A/S.sass"
     assert compiler.locate_imported_file("A", "S") == "A/S.sass"
+    assert compiler.locate_imported_file("A", "foo") == "foo.scss"
+    assert compiler.locate_imported_file("bar", "foo") == "foo.scss"
 
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.locate_imported_file("", "Z.scss")
