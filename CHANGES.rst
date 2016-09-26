@@ -2,7 +2,7 @@
 Changes
 =======
 
-Dev
+1.5
 ===
 
  - Add support for Django 1.10 and Python 3.5
