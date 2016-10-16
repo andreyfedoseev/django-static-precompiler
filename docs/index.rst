@@ -153,7 +153,7 @@ General settings
   Disable automatic compilation from template tags or ``compile_static`` utility function. Files are compiled
   only with ``compilestatic`` command (see below). Default: ``False``.
 
-``STATIC_PRECOMPILER_LIST_FILES``
+``STATIC_PRECOMPILER_FINDER_LIST_FILES``
   Whether or not ``static_precompiler.finders.StaticPrecompilerFinder`` will list compiled files when ``collectstatic``
   command is executed. Set to ``True`` if you want compiled files to be found by ``collectstatic``. Default: ``False``.
 
