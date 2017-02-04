@@ -74,6 +74,7 @@ class Command(django.core.management.base.BaseCommand):
             from static_precompiler.watch import watch_dirs
             watch_dirs(scanned_dirs, verbosity)
 
+
 if django.VERSION < (1, 8):
     import optparse
     Command.option_list = django.core.management.base.NoArgsCommand.option_list + (
