@@ -1,0 +1,20 @@
+version: '2'
+services:
+  python:
+    build: .
+    entrypoint: []
+    command: python
+    volumes:
+      - .:/app
+  test:
+    build: .
+    entrypoint: []
+    command: py.test
+    volumes:
+      - .:/app
+  tox:
+    build: .
+    entrypoint: []
+    command: tox
+    volumes:
+      - .:/app
