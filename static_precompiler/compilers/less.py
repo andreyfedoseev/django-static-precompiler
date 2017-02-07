@@ -51,7 +51,7 @@ class LESS(base.BaseCompiler):
         if self.global_vars:
             for variable_name, variable_value in self.global_vars.items():
                 args.extend([
-                    "--global-var={}={}".format(variable_name, variable_value),
+                    "--global-var={0}={1}".format(variable_name, variable_value),
                 ])
 
         args.extend([
