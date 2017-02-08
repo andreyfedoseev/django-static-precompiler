@@ -66,7 +66,7 @@ class SCSS(base.BaseCompiler):
         full_output_path = self.get_full_output_path(source_path)
         args = [
             self.executable,
-            "--sourcemap={}".format("auto" if self.is_sourcemap_enabled else "none"),
+            "--sourcemap={0}".format("auto" if self.is_sourcemap_enabled else "none"),
         ] + self.get_extra_args()
 
         args.extend([
