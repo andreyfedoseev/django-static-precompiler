@@ -47,7 +47,7 @@ Note that all relative URLs in your stylesheets are converted to absolute URLs u
 Example
 -------
 
-.. code-block:: django
+.. code-block:: html+django
 
   {% load compile_static %}
   {% load static %}
@@ -58,7 +58,7 @@ Example
 
 renders to:
 
-.. code-block:: django
+.. code-block:: html
 
   <script src="/static/COMPILED/path/to/script.js"></script>
   <link rel="stylesheet" href="/static/COMPILED/path/to/styles1.css" />
@@ -80,7 +80,7 @@ Compiler must be specified in ``STATIC_PRECOMPILER_COMPILERS`` setting. Names fo
 Example
 -------
 
-.. code-block:: django
+.. code-block:: html+django
 
   {% load compile_static %}
 
@@ -92,7 +92,7 @@ Example
 
 renders to:
 
-.. code-block:: django
+.. code-block:: html
 
   <script type="text/javascript">
     (function() {
