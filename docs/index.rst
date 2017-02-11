@@ -177,7 +177,7 @@ Example:
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.CoffeeScript', {
             "executable": "/usr/bin/coffee",
-            "sourcemap_enabled": True
+            "sourcemap_enabled": True,
         }),
     )
 
@@ -227,7 +227,7 @@ Example:
     STATIC_PRECOMPILER_COMPILERS = (
         ('static_precompiler.compilers.LiveScript', {
             "executable": "/usr/bin/lsc",
-            "sourcemap_enabled": True
+            "sourcemap_enabled": True,
         }),
     )
 
@@ -258,7 +258,7 @@ Example:
         ('static_precompiler.compilers.Handlebars', {
             "executable": "/usr/bin/handlebars",
             "sourcemap_enabled": True,
-            "simple": True
+            "simple": True,
         }),
     )
 
@@ -298,7 +298,7 @@ Example:
             "compass_enabled": True,
             "load_paths": ["/path"],
             "precision": 8,
-            "output_style": "compressed"
+            "output_style": "compressed",
         }),
     )
 
@@ -346,7 +346,7 @@ Example:
             "sourcemap_enabled": True,
             "load_paths": ["/path"],
             "precision": 8,
-            "output_style": "compressed"
+            "output_style": "compressed",
         }),
     )
 
@@ -373,7 +373,7 @@ Example:
         ('static_precompiler.compilers.LESS', {
             "executable": "/usr/bin/lessc",
             "sourcemap_enabled": True,
-            "global_vars": {"link-color": "red"}
+            "global_vars": {"link-color": "red"},
         }),
     )
 
