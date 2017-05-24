@@ -7,6 +7,7 @@ Dev
 
  - Add support for Django 1.11
  - Drop support for Django 1.6
+ - Refactor ``compilestatic`` commmand to ensure that each file is compiled no more than once.
 
 1.5
 ===
