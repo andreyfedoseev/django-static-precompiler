@@ -10,8 +10,9 @@ RUN npm install -g stylus@0.50.0
 RUN npm install -g handlebars@4.0.2
 RUN gem install sass -v 3.4.22
 RUN gem install compass -v 1.0.1
-RUN pip install pytest pretend pytest-django pytest-cov flake8 tox django
 RUN mkdir /app
 WORKDIR /app
+ADD requirements-*.txt /app/
+RUN pip install -r requirements-dev.txt
 ADD . /app/
 RUN pip install -e .[libsass]

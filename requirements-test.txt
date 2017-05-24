@@ -1,0 +1,8 @@
+pytest
+pytest-django==3.1.2
+pretend
+watchdog
+libsass
+coverage
+pytest-cov==2.5.1
+tox
