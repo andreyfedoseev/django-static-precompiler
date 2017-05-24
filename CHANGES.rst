@@ -2,7 +2,7 @@
 Changes
 =======
 
-Dev
+1.6
 ===
 
  - Add support for Django 1.11
