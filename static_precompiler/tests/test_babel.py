@@ -68,10 +68,9 @@ def test_compile_source():
 
 def test_get_extra_args():
 
-    compiler = compilers.Babel(modules="foo", plugins="bar", presets="baz")
+    compiler = compilers.Babel(plugins="bar", presets="baz")
 
     assert compiler.get_extra_args() == [
-        "--modules", "foo",
         "--plugins", "bar",
         "--presets", "baz",
     ]
