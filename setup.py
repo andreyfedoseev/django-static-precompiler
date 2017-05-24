@@ -71,6 +71,9 @@ setup(
     ],
     keywords=["sass", "scss", "less", "stylus", "css", "coffeescript", "javascript", "babel", "livescript",
               "handlebars"],
+    install_requires=[
+        "Django>=1.7",
+    ],
     tests_require=[
         "pytest",
         "pytest-django",

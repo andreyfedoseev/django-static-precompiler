@@ -25,7 +25,7 @@ class Command(django.core.management.base.BaseCommand):
 
     help = "Compile static files."
 
-    requires_model_validation = False
+    requires_system_checks = False
 
     def add_arguments(self, parser):
         parser.add_argument(

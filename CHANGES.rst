@@ -2,6 +2,12 @@
 Changes
 =======
 
+Dev
+===
+
+ - Add support for Django 1.11
+ - Drop support for Django 1.6
+
 1.5
 ===
 
