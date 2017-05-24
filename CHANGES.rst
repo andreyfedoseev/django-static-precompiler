@@ -10,6 +10,7 @@ Dev
  - Refactor ``compilestatic`` commmand to ensure that each file is compiled no more than once.
  - Add ``include_path`` option to LESS compiler
  - Take account of ``load_paths`` option when doing inline compilation with ``libsass``
+ - Bugfix: take account of additional compiler options when doing inline compilation with SASS
 
 1.5
 ===

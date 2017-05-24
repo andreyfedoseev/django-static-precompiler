@@ -286,7 +286,7 @@ class SASS(SCSS):
         args = [
             self.executable,
             "-s",
-        ]
+        ] + self.get_extra_args()
         if self.executable.endswith("scss"):
             args.append("--sass")
 
