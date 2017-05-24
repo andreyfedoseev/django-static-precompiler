@@ -50,7 +50,8 @@ def test_sourcemap(monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("styles/less/test.less")
     assert os.path.exists(full_output_path + ".map")
 
-    sourcemap = json.loads(open(full_output_path + ".map").read())
+    with open(full_output_path + ".map") as sourcemap_file:
+        sourcemap = json.load(sourcemap_file)
     assert sourcemap["sourceRoot"] == "../../../styles/less"
     assert sourcemap["sources"] == ["test.less", "imported.less"]
     assert sourcemap["file"] == "test.css"

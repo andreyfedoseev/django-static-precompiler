@@ -39,7 +39,8 @@ def test_sourcemap(monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("scripts/test.coffee")
     assert os.path.exists(os.path.splitext(full_output_path)[0] + ".map")
 
-    sourcemap = json.loads(open(os.path.splitext(full_output_path)[0] + ".map").read())
+    with open(os.path.splitext(full_output_path)[0] + ".map") as sourcemap_file:
+        sourcemap = json.load(sourcemap_file)
     assert sourcemap["sourceRoot"] == "../../scripts"
     assert sourcemap["sources"] == ["test.coffee"]
     assert sourcemap["file"] == "test.js"
