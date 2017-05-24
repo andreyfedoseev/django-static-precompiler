@@ -21,6 +21,16 @@ def get_scanned_dirs():
     return sorted(dirs)
 
 
+def list_files(scanned_dirs):
+    for scanned_dir in scanned_dirs:
+        for dirname, dirnames, filenames in os.walk(scanned_dir):
+            for filename in filenames:
+                path = os.path.join(dirname, filename)[len(scanned_dir):]
+                if path.startswith("/"):
+                    path = path[1:]
+                yield path
+
+
 class Command(django.core.management.base.BaseCommand):
 
     help = "Compile static files."
@@ -49,26 +59,25 @@ class Command(django.core.management.base.BaseCommand):
             sys.exit("--no-initial-scan option should be used with --watch.")
 
         scanned_dirs = get_scanned_dirs()
-
         verbosity = int(options["verbosity"])
-
         compilers = utils.get_compilers().values()
 
         if not options["watch"] or options["initial_scan"]:
             # Scan the watched directories and compile everything
-            for scanned_dir in scanned_dirs:
-                for dirname, dirnames, filenames in os.walk(scanned_dir):
-                    for filename in filenames:
-                        path = os.path.join(dirname, filename)[len(scanned_dir):]
-                        if path.startswith("/"):
-                            path = path[1:]
-                        for compiler in compilers:
-                            if compiler.is_supported(path):
-                                try:
-                                    compiler.handle_changed_file(path, verbosity=verbosity)
-                                except (exceptions.StaticCompilationError, ValueError) as e:
-                                    print(e)
-                                break
+            for path in sorted(set(list_files(scanned_dirs))):
+                for compiler in compilers:
+                    if compiler.is_supported(path):
+                        break
+                else:
+                    compiler = None
+
+                if not compiler:
+                    continue
+
+                try:
+                    compiler.handle_changed_file(path, verbosity=verbosity)
+                except (exceptions.StaticCompilationError, ValueError) as e:
+                    print(e)
 
         if options["watch"]:
             from static_precompiler.watch import watch_dirs
