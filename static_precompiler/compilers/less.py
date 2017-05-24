@@ -25,6 +25,8 @@ class LESS(base.BaseCompiler):
                  include_path=None, global_vars=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
+        if isinstance(include_path, (list, tuple)):
+            include_path = ';'.join(include_path)
         self.include_path = include_path
         self.global_vars = global_vars
         super(LESS, self).__init__()
@@ -51,8 +53,6 @@ class LESS(base.BaseCompiler):
                 "--source-map"
             ])
         if self.include_path:
-            if isinstance(self.include_path, (list, tuple)):
-                self.include_path = ';'.join(self.include_path)
             args.extend([
                 "--include-path={}".format(self.include_path)
             ])
@@ -84,8 +84,6 @@ class LESS(base.BaseCompiler):
             "-"
         ]
         if self.include_path:
-            if isinstance(self.include_path, (list, tuple)):
-                self.include_path = ';'.join(self.include_path)
             args.extend([
                 "--include-path={}".format(self.include_path)
             ])
