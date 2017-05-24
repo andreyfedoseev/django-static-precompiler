@@ -76,7 +76,7 @@ class SCSS(scss.SCSS):
 
     def compile_source(self, source):
         try:
-            compiled = sass.compile(string=source, indented=self.indented)
+            compiled = sass.compile(string=source, indented=self.indented, include_paths=self.load_paths)
         except sass.CompileError as e:
             raise exceptions.StaticCompilationError(encoding.force_str(e))
 
