@@ -277,7 +277,7 @@ SASS / SCSS
   Run ``sass --compass`` and if no error is shown it means that compass is installed.
 
 ``load_paths``
-  List of import paths (``--load-path`` command line option). Default: ``None``.
+  List of additional directories to look imported files (``--load-path`` command line option). Default: ``None``.
 
 ``precision``
   How many digits of precision to use when outputting decimal numbers. Default: ``None``.
@@ -363,7 +363,7 @@ LESS
   Boolean. Set to ``True`` to enable source maps. Default: ``False``.
 
 ``include_path``
-  Path (or paths) to use as include paths. From the `docs for lessc <http://lesscss.org/usage/>`_: "If the file in an `@import` rule does not exist at that exact location, less will look for it at the location(s) passed to this option."
+  List of additional directories to look for imported files (``--include-path`` command line option). Default: ``None``.
 
 ``global_vars``
   Dictionary of global variables (``--global-var`` command line option). Default: ``None``.
