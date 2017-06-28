@@ -59,3 +59,18 @@ Use in Python
     >>> from static_precompiler.utils import compile_static
     >>> compile_static("styles.scss")
     "COMPILED/styles.css"
+
+
+Django compatibility
+====================
+
+========================= ==== ==== ==== ==== ==== ====
+django-static-precompiler Django
+------------------------- -----------------------------
+version                   1.11 1.10 1.9  1.8  1.7  1.6
+========================= ==== ==== ==== ==== ==== ====
+1.6                       \+   \+   \+   \+   \+
+1.5                            \+   \+   \+   \+   \+
+1.1-1.4                             \+   \+   \+   \+
+1.0                                           \+   \+
+========================= ==== ==== ==== ==== ==== ====
