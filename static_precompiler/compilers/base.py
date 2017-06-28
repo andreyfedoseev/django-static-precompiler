@@ -81,7 +81,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        source_dir = os.path.dirname(source_path)
+        source_dir = os.path.dirname(source_path.lstrip("/"))
         source_filename = os.path.basename(source_path)
         output_filename = self.get_output_filename(source_filename)
         return posixpath.join(settings.OUTPUT_DIR, source_dir, output_filename)
@@ -95,7 +95,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        return os.path.join(settings.ROOT, utils.normalize_path(self.get_output_path(source_path.lstrip("/"))))
+        return os.path.join(settings.ROOT, utils.normalize_path(self.get_output_path(source_path)))
 
     def get_source_mtime(self, source_path):
         """ Get the modification time of the source file.

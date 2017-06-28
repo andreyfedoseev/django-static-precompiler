@@ -58,6 +58,7 @@ def test_get_output_path(monkeypatch):
     monkeypatch.setattr(compiler, "get_output_filename", lambda source_path: source_path.replace(".coffee", ".js"))
 
     assert compiler.get_output_path("scripts/test.coffee") == settings.OUTPUT_DIR + "/scripts/test.js"
+    assert compiler.get_output_path("/scripts/test.coffee") == settings.OUTPUT_DIR + "/scripts/test.js"
 
 
 def test_get_full_output_path(monkeypatch):
