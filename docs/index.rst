@@ -15,11 +15,7 @@ Installation
     $ pip install django-static-precompiler
 
 1. Add "static_precompiler" to INSTALLED_APPS setting.
-2. Initialize DB:
-
-   * On Django < 1.7 run ``syncdb`` or ``migrate static_precompiler`` if you use South (1.0 is required).
-   * On Django >= 1.7 run ``migrate static_precompiler``.
-
+2. Run ``migrate static_precompiler``.
 3. Make sure that you have necessary compilers installed.
 4. Optionally, you can specify the full path to compilers (see below).
 5. In case you use Django’s staticfiles contrib app you have to add static-precompiler’s file finder to the ``STATICFILES_FINDERS`` setting, for example:
@@ -447,6 +443,3 @@ Troubleshooting
 
 If you get ``[Errno 2] No such file or directory`` make sure that you have the required compiler installed. For all
 compilers you can specify the path to executable file using the ``executable`` option, see examples above.
-
-If you run ``migrate`` and get ``ImportError: cannot import name migrations`` then most likely you use Django < 1.7 and
-South < 1.0. You should either upgrade to Django 1.7+ or use South 1.0.
