@@ -187,8 +187,8 @@ class SCSS(base.BaseCompiler):
         :returns: str
 
         """
-        source = re.sub(re.compile("/\*.*?\*/", re.DOTALL), "" , source)
-        source = re.sub(re.compile("//.*?\n"), "" , source)
+        source = re.sub(re.compile("/\*.*?\*/", re.DOTALL), "", source)
+        source = re.sub(re.compile("//.*?\n"), "", source)
         return source
 
     def find_imports(self, source):
