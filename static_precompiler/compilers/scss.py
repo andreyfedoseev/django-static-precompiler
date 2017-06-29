@@ -180,6 +180,15 @@ class SCSS(base.BaseCompiler):
         return sorted(items)
 
     def strip_comments(self, source):
+        """ Strip all comments from source code
+
+        :param source: source code
+        :type source: str
+        :returns: str
+
+        """
+        source = re.sub(re.compile("/\*.*?\*/", re.DOTALL), "" , source)
+        source = re.sub(re.compile("//.*?\n"), "" , source)
         return source
 
     def find_imports(self, source):
