@@ -2,6 +2,30 @@
 Changes
 =======
 
+1.6
+===
+
+ - Add support for Django 1.11
+ - Drop support for Django 1.6
+ - Add ``include_path`` option to LESS compiler
+ - Take account of ``load_paths`` option when doing inline compilation with ``libsass``
+ - Bugfix: take account of additional compiler options when doing inline compilation with SASS
+
+1.5
+===
+
+ - Add support for Django 1.10 and Python 3.5
+ - Improve support for ``load_paths`` setting in SCSS/SASS compilers.
+
+
+1.4
+===
+
+- Fix the ``run_command`` utility function to rely on process return code rather than stderr to determine if compilation
+  has finished successfully. WARNING! Changes in ``run_command`` are backward incompatible. If you use this function in
+  your custom compiler you should update your code.
+
+
 1.3.1
 =====
 

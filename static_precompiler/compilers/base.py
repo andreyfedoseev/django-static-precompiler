@@ -70,7 +70,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        return "{}.{}".format(os.path.splitext(source_filename)[0], self.output_extension)
+        return "{0}.{1}".format(os.path.splitext(source_filename)[0], self.output_extension)
 
     def get_output_path(self, source_path):
         """ Get relative path to compiled file based for the given source file.
@@ -158,8 +158,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        with open(self.get_full_source_path(source_path)) as source:
-            return source.read()
+        return utils.read_file(self.get_full_source_path(source_path))
 
     def compile(self, source_path, from_management=False, verbosity=0):
         """ Compile the given source path and return relative path to the compiled file.

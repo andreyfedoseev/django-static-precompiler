@@ -1,4 +1,9 @@
-import inspect
+try:
+    # Django>=1.8
+    from django.utils import inspect
+except ImportError:
+    # Django<1.8
+    import inspect
 
 try:
     # Django>=1.9

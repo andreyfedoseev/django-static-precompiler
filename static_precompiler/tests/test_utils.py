@@ -1,8 +1,23 @@
+# coding: utf-8
+from __future__ import unicode_literals
 import django.core.exceptions
 import pytest
 from pretend import stub
 
 from static_precompiler import compilers, exceptions, utils
+import os
+import six
+
+
+def test_write_read_file(tmpdir, settings):
+    settings.FILE_CHARSET = "utf-8"
+    path = os.path.join(tmpdir.dirname, "foo.txt")
+    utils.write_file("Привет, Мир!", path)
+
+    assert os.path.exists(path)
+    read_content = utils.read_file(path)
+    assert isinstance(read_content, six.text_type)
+    assert read_content == "Привет, Мир!"
 
 
 def test_build_compilers(monkeypatch):

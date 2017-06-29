@@ -10,6 +10,7 @@ import warnings
 
 import django.core.cache
 import django.core.exceptions
+import django.conf
 from django.utils import encoding, six
 
 from static_precompiler import exceptions, settings
@@ -21,10 +22,10 @@ except ImportError:
 
 
 if six.PY2:
-    # noinspection PyUnresolvedReferences
+    # noinspection PyUnresolvedReferences,PyCompatibility
     from urlparse import urljoin
 else:
-    # noinspection PyUnresolvedReferences
+    # noinspection PyUnresolvedReferences,PyCompatibility
     from urllib.parse import urljoin
 
 
@@ -34,6 +35,30 @@ def normalize_path(posix_path):
     if settings.POSIX_COMPATIBLE:
         return posix_path
     return os.path.join(*posix_path.split("/"))
+
+
+def read_file(path):
+    """ Return the contents of a file as unicode. """
+    if six.PY2:
+        with open(path) as file_object:
+            return file_object.read().decode(django.conf.settings.FILE_CHARSET)
+    else:
+        with open(path, encoding=django.conf.settings.FILE_CHARSET) as file_object:
+            return file_object.read()
+
+
+def write_file(content, path):
+    """ Write unicode content to a file. """
+
+    # Convert to unicode
+    content = encoding.force_text(content)
+
+    if six.PY2:
+        with open(path, "w+") as file_object:
+            file_object.write(content.encode(django.conf.settings.FILE_CHARSET))
+    else:
+        with open(path, "w+", encoding=django.conf.settings.FILE_CHARSET) as file_object:
+            file_object.write(content)
 
 
 def fix_line_breaks(text):
@@ -98,8 +123,9 @@ def run_command(args, input=None, cwd=None):
         input = encoding.smart_bytes(input)
 
     output, error = p.communicate(input)
+    return_code = p.poll()
 
-    return encoding.smart_str(output), encoding.smart_str(error)
+    return return_code, encoding.smart_str(output), encoding.smart_str(error)
 
 
 class URLConverter(object):
@@ -130,10 +156,9 @@ url_converter = URLConverter()
 
 
 def convert_urls(compiled_full_path, source_path):
-    with open(compiled_full_path, "r+") as compiled_file:
-        content = compiled_file.read()
-    with open(compiled_full_path, "w") as compiled_file:
-        compiled_file.write(url_converter.convert(content, source_path))
+    content = read_file(compiled_full_path)
+    converted_content = url_converter.convert(content, source_path)
+    write_file(converted_content, compiled_full_path)
 
 
 def build_compilers():
@@ -217,8 +242,7 @@ def compile_static_lazy(path):
 
 def fix_sourcemap(sourcemap_full_path, source_path, compiled_full_path):
 
-    with open(sourcemap_full_path) as sourcemap_file:
-        sourcemap = json.loads(sourcemap_file.read())
+    sourcemap = json.loads(read_file(sourcemap_full_path))
 
     # Stylus, unlike SASS, can't add correct relative paths in source map when the compiled file
     # is not in the same dir as the source file. We fix it here.
@@ -226,5 +250,4 @@ def fix_sourcemap(sourcemap_full_path, source_path, compiled_full_path):
     sourcemap["sources"] = [os.path.basename(source) for source in sourcemap["sources"]]
     sourcemap["file"] = posixpath.basename(os.path.basename(compiled_full_path))
 
-    with open(sourcemap_full_path, "w") as sourcemap_file:
-        sourcemap_file.write(json.dumps(sourcemap))
+    write_file(json.dumps(sourcemap), sourcemap_full_path)

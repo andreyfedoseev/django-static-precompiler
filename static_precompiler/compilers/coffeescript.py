@@ -32,9 +32,9 @@ class CoffeeScript(base.BaseCompiler):
             "-o", os.path.dirname(full_output_path),
             self.get_full_source_path(source_path),
         ])
-        out, errors = utils.run_command(args)
+        return_code, out, errors = utils.run_command(args)
 
-        if errors:
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         if self.is_sourcemap_enabled:
@@ -49,8 +49,8 @@ class CoffeeScript(base.BaseCompiler):
             "-s",
             "-p",
         ]
-        out, errors = utils.run_command(args, source)
-        if errors:
+        return_code, out, errors = utils.run_command(args, source)
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         return out

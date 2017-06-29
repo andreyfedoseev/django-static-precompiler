@@ -9,8 +9,8 @@ It works with both inline code and external files.
     :target: https://circleci.com/gh/andreyfedoseev/django-static-precompiler
     :alt: Build Status
 
-.. image:: http://codecov.io/github/andreyfedoseev/django-static-precompiler/coverage.svg?branch=master
-    :target: http://codecov.io/github/andreyfedoseev/django-static-precompiler?branch=master
+.. image:: https://codecov.io/github/andreyfedoseev/django-static-precompiler/coverage.svg?branch=master
+    :target: https://codecov.io/github/andreyfedoseev/django-static-precompiler?branch=master
     :alt: Code Coverage
 
 .. image:: https://codeclimate.com/github/andreyfedoseev/django-static-precompiler/badges/gpa.svg
@@ -18,7 +18,7 @@ It works with both inline code and external files.
     :alt: Code Climate
 
 .. image:: https://readthedocs.org/projects/django-static-precompiler/badge/
-    :target: http://django-static-precompiler.readthedocs.io/
+    :target: https://django-static-precompiler.readthedocs.io/
     :alt: Documentation
 
 .. image:: https://badges.gitter.im/Join Chat.svg
@@ -34,14 +34,14 @@ Documentation is available at `http://django-static-precompiler.readthedocs.io <
 Install
 =======
 
-::
+.. code-block:: sh
 
     pip install django-static-precompiler
 
 Use in templates
 ================
 
-::
+.. code-block:: django
 
   {% load compile_static %}
   {% load static %}
@@ -54,7 +54,7 @@ Use in templates
 Use in Python
 =============
 
-::
+.. code-block:: python
 
     >>> from static_precompiler.utils import compile_static
     >>> compile_static("styles.scss")

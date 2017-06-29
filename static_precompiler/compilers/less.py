@@ -21,9 +21,13 @@ class LESS(base.BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
-    def __init__(self, executable=settings.LESS_EXECUTABLE, sourcemap_enabled=False, global_vars=None):
+    def __init__(self, executable=settings.LESS_EXECUTABLE, sourcemap_enabled=False,
+                 include_path=None, global_vars=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
+        if isinstance(include_path, (list, tuple)):
+            include_path = ';'.join(include_path)
+        self.include_path = include_path
         self.global_vars = global_vars
         super(LESS, self).__init__()
 
@@ -48,19 +52,23 @@ class LESS(base.BaseCompiler):
             args.extend([
                 "--source-map"
             ])
+        if self.include_path:
+            args.extend([
+                "--include-path={}".format(self.include_path)
+            ])
         if self.global_vars:
             for variable_name, variable_value in self.global_vars.items():
                 args.extend([
-                    "--global-var={}={}".format(variable_name, variable_value),
+                    "--global-var={0}={1}".format(variable_name, variable_value),
                 ])
 
         args.extend([
             self.get_full_source_path(source_path),
             full_output_path,
         ])
-        out, errors = utils.run_command(args, cwd=cwd)
+        return_code, out, errors = utils.run_command(args, cwd=cwd)
 
-        if errors:
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         utils.convert_urls(full_output_path, source_path)
@@ -75,10 +83,14 @@ class LESS(base.BaseCompiler):
             self.executable,
             "-"
         ]
+        if self.include_path:
+            args.extend([
+                "--include-path={}".format(self.include_path)
+            ])
 
-        out, errors = utils.run_command(args, source)
+        return_code, out, errors = utils.run_command(args, source)
 
-        if errors:
+        if return_code:
             raise exceptions.StaticCompilationError(errors)
 
         return out

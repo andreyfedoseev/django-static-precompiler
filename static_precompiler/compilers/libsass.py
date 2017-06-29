@@ -64,22 +64,19 @@ class SCSS(scss.SCSS):
         compiled = encoding.force_str(compiled)
         sourcemap = encoding.force_str(sourcemap)
 
-        with open(full_output_path, "w+") as output_file:
-            output_file.write(compiled)
+        utils.write_file(compiled, full_output_path)
 
         utils.convert_urls(full_output_path, source_path)
 
         if self.is_sourcemap_enabled:
-            with open(sourcemap_path, "w+") as output_file:
-                output_file.write(sourcemap)
-
+            utils.write_file(sourcemap, sourcemap_path)
             utils.fix_sourcemap(sourcemap_path, source_path, full_output_path)
 
         return self.get_output_path(source_path)
 
     def compile_source(self, source):
         try:
-            compiled = sass.compile(string=source, indented=self.indented)
+            compiled = sass.compile(string=source, indented=self.indented, include_paths=self.load_paths)
         except sass.CompileError as e:
             raise exceptions.StaticCompilationError(encoding.force_str(e))
 

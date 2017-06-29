@@ -50,7 +50,8 @@ def test_sourcemap(monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("styles/less/test.less")
     assert os.path.exists(full_output_path + ".map")
 
-    sourcemap = json.loads(open(full_output_path + ".map").read())
+    with open(full_output_path + ".map") as sourcemap_file:
+        sourcemap = json.load(sourcemap_file)
     assert sourcemap["sourceRoot"] == "../../../styles/less"
     assert sourcemap["sources"] == ["test.less", "imported.less"]
     assert sourcemap["file"] == "test.css"
@@ -177,5 +178,27 @@ def test_global_vars(monkeypatch, tmpdir):
 }
 p a {
   color: #800000;
+}
+"""
+
+
+def test_include_path(monkeypatch, tmpdir, settings):
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+
+    compiler = compilers.LESS()
+    with pytest.raises(exceptions.StaticCompilationError):
+        compiler.compile_file("styles/less/include-path.less")
+
+    compiler = compilers.LESS(include_path=[os.path.join(settings.STATIC_ROOT, "styles", "less", "extra-path")])
+
+    compiler.compile_file("styles/less/include-path.less")
+
+    full_output_path = compiler.get_full_output_path("styles/less/include-path.less")
+    assert os.path.exists(full_output_path)
+
+    with open(full_output_path) as compiled:
+        assert compiled.read() == """p {
+  font-weight: bold;
 }
 """

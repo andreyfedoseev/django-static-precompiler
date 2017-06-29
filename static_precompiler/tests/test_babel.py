@@ -41,7 +41,8 @@ def test_sourcemap(monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("scripts/test.es6")
     assert os.path.exists(full_output_path + ".map")
 
-    sourcemap = json.loads(open(full_output_path + ".map").read())
+    with open(full_output_path + ".map") as sourcemap_file:
+        sourcemap = json.load(sourcemap_file)
     assert sourcemap["sourceRoot"] == "../../scripts"
     assert sourcemap["sources"] == ["test.es6"]
     assert sourcemap["file"] == "test.js"
@@ -67,10 +68,9 @@ def test_compile_source():
 
 def test_get_extra_args():
 
-    compiler = compilers.Babel(modules="foo", plugins="bar", presets="baz")
+    compiler = compilers.Babel(plugins="bar", presets="baz")
 
     assert compiler.get_extra_args() == [
-        "--modules", "foo",
         "--plugins", "bar",
         "--presets", "baz",
     ]

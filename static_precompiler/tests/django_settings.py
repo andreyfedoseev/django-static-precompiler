@@ -10,6 +10,13 @@ DATABASES = {
     }
 }
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+    },
+]
+
 STATIC_ROOT = MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'static')
 STATIC_URL = MEDIA_URL = "/static/"
 
