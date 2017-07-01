@@ -123,8 +123,8 @@ def test_parse_import_string(compiler_module):
     assert compiler.parse_import_string(import_string) == ["foo"]
 
 
-@pytest.mark.xfail
-def test_strip_comments():
+@pytest.mark.parametrize("compiler_module", (libsass, scss))
+def test_strip_comments(compiler_module):
 
     source = """
 // Single-line comment
