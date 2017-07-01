@@ -191,7 +191,7 @@ class SCSS(base.BaseCompiler):
         :returns: str
 
         """
-        pattern = r"(\".*?\"|\'.*?\'|\(.*?\))|(/\*.*?\*/|//[^\r\n]*$)"
+        pattern = r"(\".*?\"|\'.*?\'|\(.*?\))|(\s*/\*.*?\*/|\s*//[^\r\n]*$)"
         # first group captures quoted sources (double or single)
         # second group captures comments (//single-line or /* multi-line */)
         regex = re.compile(pattern, re.MULTILINE | re.DOTALL)
@@ -202,7 +202,7 @@ class SCSS(base.BaseCompiler):
             if match.group(2) is not None:
                 return ""  # so we will return empty to remove the comment
             else:  # otherwise, we will return the 1st group
-                return match.group(1)  # captured quoted-source
+                return match.group(1)  # captured quoted-source or function call
         return regex.sub(_replacer, source)
 
     def find_imports(self, source):
