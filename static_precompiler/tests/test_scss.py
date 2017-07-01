@@ -148,16 +148,13 @@ p {
     """
     compiler = scss.SCSS()
     assert compiler.strip_comments(source) == """
-
 a {
   color: red;
   font-family: "Foo // Bar";
   background-image: url(/* not a comment */);
-
 }
 
 p {
-
   color: blue;
   background-image: url(//not-a-comment.com);
 }
