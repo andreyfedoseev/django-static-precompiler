@@ -180,16 +180,30 @@ class SCSS(base.BaseCompiler):
         return sorted(items)
 
     def strip_comments(self, source):
-        """ Strip all comments from source code
+        """ Strip comments from source, it does not remove comments inside
+        strings or comments inside functions calls.
+
+        Contribution taken from and added function call pattern
+        https://stackoverflow.com/questions/2319019/using-regex-to-remove-comments-from-source-files
 
         :param source: source code
         :type source: str
         :returns: str
 
         """
-        source = re.sub(re.compile("/\*.*?\*/", re.DOTALL), "", source)
-        source = re.sub(re.compile("//.*?\n"), "", source)
-        return source
+        pattern = r"(\".*?\"|\'.*?\'|\(.*?\))|(/\*.*?\*/|//[^\r\n]*$)"
+        # first group captures quoted sources (double or single)
+        # second group captures comments (//single-line or /* multi-line */)
+        regex = re.compile(pattern, re.MULTILINE | re.DOTALL)
+
+        def _replacer(match):
+            # if the 2nd group (capturing comments) is not None,
+            # it means we have captured a non-quoted (real) comment source.
+            if match.group(2) is not None:
+                return ""  # so we will return empty to remove the comment
+            else:  # otherwise, we will return the 1st group
+                return match.group(1)  # captured quoted-source
+        return regex.sub(_replacer, source)
 
     def find_imports(self, source):
         """ Find the imported files in the source code.
