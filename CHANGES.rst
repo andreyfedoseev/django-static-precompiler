@@ -2,6 +2,11 @@
 Changes
 =======
 
+Dev
+===
+
+ - Prevent detection of imports in comments (SCSS)
+
 1.6
 ===
 
