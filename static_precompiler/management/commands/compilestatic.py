@@ -25,9 +25,7 @@ def list_files(scanned_dirs):
     for scanned_dir in scanned_dirs:
         for dirname, dirnames, filenames in os.walk(scanned_dir):
             for filename in filenames:
-                path = os.path.join(dirname, filename)[len(scanned_dir):]
-                if path.startswith("/"):
-                    path = path[1:]
+                path = os.path.join(dirname, filename)[len(scanned_dir):].lstrip(os.sep)
                 yield path
 
 
