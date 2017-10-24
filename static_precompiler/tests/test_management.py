@@ -18,6 +18,25 @@ def test_get_scanned_dirs():
 
 
 @pytest.mark.django_db
+def test_list_files(capsys, monkeypatch, tmpdir):
+    monkeypatch.setattr("static_precompiler.settings.EXCLUDED_FILES", '*/another_test*')
+
+    dirs = compilestatic.get_scanned_dirs()
+    compiled_files = compilestatic.list_files(dirs)
+
+    for f in compiled_files:
+        assert 'another_test' not in f
+
+    monkeypatch.setattr("static_precompiler.settings.EXCLUDED_FILES", [])
+    monkeypatch.setattr("static_precompiler.settings.INCLUDED_FILES", ['*/another_test*'])
+
+    compiled_files = compilestatic.list_files(dirs)
+
+    for f in compiled_files:
+        assert 'another_test' in f
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize("verbosity", (0, 1, ))
 def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
 

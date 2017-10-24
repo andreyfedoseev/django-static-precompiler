@@ -1,4 +1,5 @@
 import os
+import fnmatch
 import sys
 
 import django
@@ -28,6 +29,14 @@ def list_files(scanned_dirs):
                 path = os.path.join(dirname, filename)[len(scanned_dir):]
                 if path.startswith("/"):
                     path = path[1:]
+
+                if settings.INCLUDED_FILES and \
+                        all([not fnmatch.fnmatch(path, pattern) for pattern in settings.INCLUDED_FILES]):
+                    continue
+
+                if any([fnmatch.fnmatch(path, pattern) for pattern in settings.EXCLUDED_FILES]):
+                    continue
+
                 yield path
 
 
@@ -65,6 +74,7 @@ class Command(django.core.management.base.BaseCommand):
         if not options["watch"] or options["initial_scan"]:
             # Scan the watched directories and compile everything
             for path in sorted(set(list_files(scanned_dirs))):
+
                 for compiler in compilers:
                     if compiler.is_supported(path):
                         break
