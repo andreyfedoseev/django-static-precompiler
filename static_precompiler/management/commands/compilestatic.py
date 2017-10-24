@@ -30,7 +30,8 @@ def list_files(scanned_dirs):
                 if path.startswith("/"):
                     path = path[1:]
 
-                if settings.INCLUDED_FILES and all([not fnmatch.fnmatch(path, pattern) for pattern in settings.INCLUDED_FILES]):
+                if settings.INCLUDED_FILES and \
+                        all([not fnmatch.fnmatch(path, pattern) for pattern in settings.INCLUDED_FILES]):
                     continue
 
                 if any([fnmatch.fnmatch(path, pattern) for pattern in settings.EXCLUDED_FILES]):
