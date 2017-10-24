@@ -31,3 +31,5 @@ INSTALLED_APPS = (
     "static_precompiler",
 )
 MTIME_DELAY = 2
+
+STATIC_PRECOMPILER_USE_CACHE = False

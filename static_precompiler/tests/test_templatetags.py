@@ -28,3 +28,12 @@ def test_inlinecompile_tag(monkeypatch):
 
     assert get_compiler_by_name.calls == [pretend.call("sass")]
     assert compiler.compile_source.calls == [pretend.call("source")]
+
+
+def test_inlinecompile_tag_compiler_as_variable(monkeypatch):
+    compiler = pretend.stub(compile_source=pretend.call_recorder(lambda *args: 'compiled'))
+    template = django.template.Template(
+        "{% load compile_static %}{% inlinecompile compiler %}source{% endinlinecompile %}"
+    )
+    assert template.render(django.template.Context({'compiler': compiler})) == 'compiled'
+    assert compiler.compile_source.calls == [pretend.call('source')]
