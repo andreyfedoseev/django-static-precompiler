@@ -18,6 +18,38 @@ def test_get_scanned_dirs():
 
 
 @pytest.mark.django_db
+def test_list_files(capsys, monkeypatch, tmpdir):
+    monkeypatch.setattr("static_precompiler.settings.EXCLUDED_FILES", '*/another_test*')
+
+    management.call_command("compilestatic", verbosity=verbosity)
+
+    output_path = os.path.join(tmpdir.strpath, static_precompiler.settings.OUTPUT_DIR)
+
+    compiled_files = []
+    for root, dirs, files in os.walk(output_path):
+        for filename in files:
+            compiled_files.append(os.path.join(root[len(output_path):].lstrip("/"), filename))
+
+    for f in compiled_files:
+        assert 'another_test' not in f
+
+    monkeypatch.setattr("static_precompiler.settings.EXCLUDED_FILES", [])
+    monkeypatch.setattr("static_precompiler.settings.INCLUDED_FILES", ['*/another_test*'])
+
+    management.call_command("compilestatic", verbosity=verbosity)
+
+    output_path = os.path.join(tmpdir.strpath, static_precompiler.settings.OUTPUT_DIR)
+
+    compiled_files = []
+    for root, dirs, files in os.walk(output_path):
+        for filename in files:
+            compiled_files.append(os.path.join(root[len(output_path):].lstrip("/"), filename))
+
+    for f in compiled_files:
+        assert 'another_test' in f
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize("verbosity", (0, 1, ))
 def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
 
