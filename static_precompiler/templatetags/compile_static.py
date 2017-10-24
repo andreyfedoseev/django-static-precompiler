@@ -6,8 +6,6 @@ from django.utils import six
 
 from static_precompiler import settings, utils
 
-from . import base
-
 register = django.template.Library()
 
 
@@ -35,24 +33,50 @@ def compile_tag(source_path, compiler=None):
     return compiled
 
 
-@base.container_tag(register)
-def inlinecompile(nodelist, context, compiler):
-    source = nodelist.render(context)
+class InlineCompileNode(django.template.Node):
+    def __init__(self, nodelist, compiler):
+        self.nodelist = nodelist
+        self.compiler = compiler
 
-    if isinstance(compiler, six.string_types):
-        compiler = utils.get_compiler_by_name(compiler)
+    def render(self, context):
+        source = self.nodelist.render(context)
 
-    if settings.USE_CACHE:
-        cache_key = utils.get_cache_key("{0}.{1}".format(
-            compiler.__class__.__name__,
-            utils.get_hexdigest(source)
-        ))
-        cache = utils.get_cache()
-        cached = cache.get(cache_key, None)
-        if cached is not None:
-            return cached
-        output = compiler.compile_source(source)
-        cache.set(cache_key, output, settings.CACHE_TIMEOUT)
-        return output
+        if self.compiler[0] == self.compiler[-1] and self.compiler[0] in ('"', "'"):
+            compiler = self.compiler[1:-1]
+        else:
+            compiler = django.template.Variable(self.compiler).resolve(context)
 
-    return compiler.compile_source(source)
+        if isinstance(compiler, six.string_types):
+            compiler = utils.get_compiler_by_name(compiler)
+
+        if settings.USE_CACHE:
+            cache_key = utils.get_cache_key("{0}.{1}".format(
+                compiler.__class__.__name__,
+                utils.get_hexdigest(source)
+            ))
+            cache = utils.get_cache()
+            cached = cache.get(cache_key, None)
+            if cached is not None:
+                return cached
+            output = compiler.compile_source(source)
+            cache.set(cache_key, output, settings.CACHE_TIMEOUT)
+            return output
+
+        return compiler.compile_source(source)
+
+
+@register.tag
+def inlinecompile(parser, token):
+    bits = token.split_contents()
+    tag_name = bits[0]
+    try:
+        compiler, = bits[1:]
+    except ValueError:
+        raise django.template.TemplateSyntaxError(
+            '%r tag requires exactly one argument.' % tag_name
+        )
+    if compiler.startswith('compiler='):
+        compiler = compiler[len('compiler='):]
+    nodelist = parser.parse(('end' + tag_name,))
+    parser.delete_first_token()
+    return InlineCompileNode(nodelist, compiler)
