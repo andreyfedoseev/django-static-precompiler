@@ -29,17 +29,13 @@ def list_files(scanned_dirs):
                 path = os.path.join(dirname, filename)[len(scanned_dir):]
                 if path.startswith("/"):
                     path = path[1:]
-                if settings.INCLUDED_FILES and len(settings.INCLUDED_FILES) > 0:
-                    included = False
-                    for pattern in settings.INCLUDED_FILES:
-                        if fnmatch.fnmatch(path, pattern):
-                            included = True
-                    if not included:
-                        continue
 
-                for pattern in settings.EXCLUDED_FILES:
-                    if fnmatch.fnmatch(path, pattern):
-                        continue
+                if settings.INCLUDED_FILES and all([not fnmatch.fnmatch(path, pattern) for pattern in settings.INCLUDED_FILES]):
+                    continue
+
+                if any([fnmatch.fnmatch(path, pattern) for pattern in settings.EXCLUDED_FILES]):
+                    continue
+
                 yield path
 
 
