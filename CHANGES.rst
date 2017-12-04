@@ -2,10 +2,11 @@
 Changes
 =======
 
-Dev
+1.7
 ===
 
  - Prevent detection of imports in comments (SCSS)
+ - Add support for Django 2.0
 
 1.6
 ===
