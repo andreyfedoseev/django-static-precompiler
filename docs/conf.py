@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# django-static-precompilers documentation build configuration file, created by
+# django-static-precompiler documentation build configuration file, created by
 # sphinx-quickstart on Sat Nov 21 19:04:09 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'django-static-precompilers'
+project = u'django-static-precompiler'
 copyright = u'2015, Andrey Fedoseev'
 author = u'Andrey Fedoseev'
 
@@ -200,7 +200,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'django-static-precompilersdoc'
+htmlhelp_basename = 'django-static-precompilerdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -222,7 +222,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'django-static-precompilers.tex', u'django-static-precompilers Documentation',
+  (master_doc, 'django-static-precompiler.tex', u'django-static-precompiler Documentation',
    u'Andrey Fedoseev', 'manual'),
 ]
 
@@ -252,7 +252,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'django-static-precompilers', u'django-static-precompilers Documentation',
+    (master_doc, 'django-static-precompiler', u'django-static-precompiler Documentation',
      [author], 1)
 ]
 
@@ -266,8 +266,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'django-static-precompilers', u'django-static-precompilers Documentation',
-   author, 'django-static-precompilers', 'One line description of project.',
+  (master_doc, 'django-static-precompiler', u'django-static-precompiler Documentation',
+   author, 'django-static-precompiler', 'One line description of project.',
    'Miscellaneous'),
 ]
 
