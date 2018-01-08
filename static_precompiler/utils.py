@@ -130,7 +130,7 @@ def run_command(args, input=None, cwd=None):
 
 class URLConverter(object):
 
-    URL_PATTERN = re.compile(r"url\(([^\)]+)\);")
+    URL_PATTERN = re.compile(r"url\(([^\)]+)\)(?=;)")
 
     @staticmethod
     def convert_url(url, source_dir):
@@ -138,7 +138,7 @@ class URLConverter(object):
 
         if url.startswith(('http://', 'https://', '/', 'data:')):
             return url
-        return '{0}'.format(urljoin(settings.STATIC_URL, urljoin(source_dir, url)))
+        return urljoin(settings.STATIC_URL, urljoin(source_dir, url))
 
     def convert(self, content, path):
         source_dir = os.path.dirname(path)
