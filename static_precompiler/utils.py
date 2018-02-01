@@ -135,18 +135,18 @@ class URLConverter(object):
     @staticmethod
     def convert_url(url, source_dir):
         assert source_dir[-1] == "/"
-
+        
         url = url.strip()
         if not url:
             return url
+        
         original_quote = url[0] if url[0] in ('"', "'") else "'"
-        url_format = "{original_quote}{{url}}{original_quote}".format(original_quote=original_quote)
-
         url = url.strip("\"'")
-        if url.startswith(('http://', 'https://', '/', 'data:')):
-            return url_format.format(url=url)
-
-        return url_format.format(url=urljoin(settings.STATIC_URL, urljoin(source_dir, url)))
+        
+        if not url.startswith(('http://', 'https://', '/', 'data:')):
+            url = urljoin(settings.STATIC_URL, urljoin(source_dir, url))
+            
+        return "{original_quote}{url}{original_quote}".format(original_quote=original_quote, url=url)
 
     def convert(self, content, path):
         source_dir = os.path.dirname(path)
