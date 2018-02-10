@@ -3,21 +3,12 @@ jobs:
   build:
     working_directory: ~/django-static-precompiler
     docker:
-      - image: ubuntu:16.04
+      - image: andreyfedoseev/django-static-precompiler
     steps:
-      - run: apt-get update && apt-get install -y python2.7-dev python3.5-dev python3-pip sqlite3 ruby-dev npm
-      - run: ln -s /usr/bin/nodejs /usr/local/bin/node
-      - run: npm install -g coffee-script@1.7.1
-      - run: npm install -g livescript@1.4.0
-      - run: npm install -g less@1.7.4
-      - run: npm install -g babel-cli@6.2.0
-      - run: npm install -g stylus@0.50.0
-      - run: npm install -g handlebars@4.0.2
-      - run: gem install sass -v 3.4.22
-      - run: gem install compass -v 1.0.1
+      - run: apt-get update && apt-get install -y python2.7-dev python3.5-dev python-pip sqlite3
       - checkout
-      - run: pip3 install -r requirements-ci.txt
-      - run: pip3 install -e .[libsass]
+      - run: pip install -r requirements-ci.txt
+      - run: pip install -e .[libsass]
       - run: flake8
       - run: rm -f coverage.xml
       - run: tox
