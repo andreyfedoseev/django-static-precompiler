@@ -130,22 +130,31 @@ def run_command(args, input=None, cwd=None):
 
 class URLConverter(object):
 
-    URL_PATTERN = re.compile(r"url\(([^\)]+)\)")
+    URL_PATTERN = re.compile(r"url\(([^\)]+)\)(?=;)")
 
     @staticmethod
     def convert_url(url, source_dir):
         assert source_dir[-1] == "/"
-        url = url.strip(' \'"')
-        if url.startswith(('http://', 'https://', '/', 'data:')):
+
+        url = url.strip()
+        if not url:
             return url
-        return urljoin(settings.STATIC_URL, urljoin(source_dir, url))
+
+        original_quote = url[0] if url[0] in ('"', "'") else "'"
+        url = url.strip("\"'")
+
+        if not url.startswith(('http://', 'https://', '/', 'data:')):
+            url = urljoin(settings.STATIC_URL, urljoin(source_dir, url))
+
+        return "{original_quote}{url}{original_quote}".format(original_quote=original_quote, url=url)
 
     def convert(self, content, path):
         source_dir = os.path.dirname(path)
         if not source_dir.endswith("/"):
             source_dir += "/"
+
         return self.URL_PATTERN.sub(
-            lambda matchobj: "url('{0}')".format(
+            lambda matchobj: "url({0})".format(
                 self.convert_url(matchobj.group(1), source_dir)
             ),
             content
