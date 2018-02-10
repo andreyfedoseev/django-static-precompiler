@@ -5,9 +5,16 @@ import re
 import sys
 
 
-if os.environ.get('USER', '') == 'vagrant':
-    # Workaround for http://bugs.python.org/issue8876
-    del os.link
+if sys.version_info.major == 2:
+    install_requires = [
+        "Django>=1.7,<2.0",
+    ]
+elif sys.version_info.major == 3:
+    install_requires = [
+        "Django>=1.9",
+    ]
+else:
+    raise AssertionError()
 
 
 class PyTest(TestCommand):
@@ -71,9 +78,7 @@ setup(
     ],
     keywords=["sass", "scss", "less", "stylus", "css", "coffeescript", "javascript", "babel", "livescript",
               "handlebars"],
-    install_requires=[
-        "Django>=1.7",
-    ],
+    install_requires=install_requires,
     tests_require=[
         "pytest",
         "pytest-django",
