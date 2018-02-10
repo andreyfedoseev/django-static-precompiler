@@ -2,8 +2,8 @@
 Changes
 =======
 
-Dev
-===
+1.7.1
+=====
 
  - Bugfix: properly handle the URLs containing parenthesis or quotes
 
