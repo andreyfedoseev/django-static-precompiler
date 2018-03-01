@@ -20,3 +20,4 @@ test_project/db.sqlite3
 /docs/_static/
 /docs/_templates/
 coverage.xml
+.venv
