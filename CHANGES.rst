@@ -2,6 +2,11 @@
 Changes
 =======
 
+Dev
+===
+
+ - Remove deprecated settings: ``COFFEESCRIPT_EXECUTABLE``, ``SCSS_EXECUTABLE``, ``SCSS_USE_COMPASS``, ``LESS_EXECUTABLE``
+
 1.7.1
 =====
 

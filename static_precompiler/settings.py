@@ -1,5 +1,4 @@
 import os
-import warnings
 
 import django.core.exceptions
 from django.conf import settings
@@ -46,17 +45,6 @@ CACHE_TIMEOUT = getattr(
 
 # Name of the cache
 CACHE_NAME = getattr(settings, "STATIC_PRECOMPILER_CACHE_NAME", None)
-
-
-for deprecated_setting in (
-    "COFFEESCRIPT_EXECUTABLE",
-    "SCSS_EXECUTABLE",
-    "SCSS_USE_COMPASS",
-    "LESS_EXECUTABLE",
-):
-    if hasattr(settings, deprecated_setting):
-        warnings.warn(DeprecationWarning("{0} setting is deprecated. Use STATIC_PRECOMPILER_COMPILERS to set compiler "
-                                         "options.".format(deprecated_setting)))
 
 
 COFFEESCRIPT_EXECUTABLE = getattr(settings, "COFFEESCRIPT_EXECUTABLE", "coffee")
