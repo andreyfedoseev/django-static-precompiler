@@ -1,6 +1,6 @@
-=======
-Changes
-=======
+*********
+Changelog
+*********
 
 Dev
 ===
@@ -191,3 +191,4 @@ Dev
 ===
 
 - Initial release
+
