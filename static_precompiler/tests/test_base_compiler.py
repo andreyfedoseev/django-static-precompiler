@@ -74,7 +74,7 @@ def test_get_source_mtime(monkeypatch):
     compiler = compilers.BaseCompiler()
 
     monkeypatch.setattr(compiler, "get_full_source_path", lambda source_path: "dummy.coffee")
-    monkeypatch.setattr("static_precompiler.utils.get_mtime", lambda filename: 1)
+    monkeypatch.setattr("static_precompiler.mtime.get_mtime", lambda filename: 1)
 
     assert compiler.get_source_mtime("dummy.coffee") == 1
 
@@ -90,7 +90,7 @@ def test_get_output_mtime(monkeypatch):
 
     monkeypatch.setattr("os.path.exists", lambda path: True)
 
-    monkeypatch.setattr("static_precompiler.utils.get_mtime", lambda filename: 1)
+    monkeypatch.setattr("static_precompiler.mtime.get_mtime", lambda filename: 1)
     assert compiler.get_output_mtime("dummy.coffee") == 1
 
 

@@ -4,7 +4,7 @@ import django.template
 import django.templatetags.static
 from django.utils import six
 
-from static_precompiler import settings, utils
+from .. import caching, registry, settings, utils
 
 register = django.template.Library()
 
@@ -47,14 +47,14 @@ class InlineCompileNode(django.template.Node):
             compiler = django.template.Variable(self.compiler).resolve(context)
 
         if isinstance(compiler, six.string_types):
-            compiler = utils.get_compiler_by_name(compiler)
+            compiler = registry.get_compiler_by_name(compiler)
 
         if settings.USE_CACHE:
-            cache_key = utils.get_cache_key("{0}.{1}".format(
+            cache_key = caching.get_cache_key("{0}.{1}".format(
                 compiler.__class__.__name__,
-                utils.get_hexdigest(source)
+                caching.get_hexdigest(source)
             ))
-            cache = utils.get_cache()
+            cache = caching.get_cache()
             cached = cache.get(cache_key, None)
             if cached is not None:
                 return cached

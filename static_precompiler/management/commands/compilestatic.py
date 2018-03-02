@@ -6,7 +6,7 @@ import django.contrib.staticfiles.finders
 import django.core.files.storage
 import django.core.management.base
 
-from static_precompiler import exceptions, settings, utils
+from ... import exceptions, registry, settings
 
 
 def get_scanned_dirs():
@@ -60,7 +60,7 @@ class Command(django.core.management.base.BaseCommand):
 
         scanned_dirs = get_scanned_dirs()
         verbosity = int(options["verbosity"])
-        compilers = utils.get_compilers().values()
+        compilers = registry.get_compilers().values()
 
         if not options["watch"] or options["initial_scan"]:
             # Scan the watched directories and compile everything

@@ -1,8 +1,7 @@
 import os
 
-from static_precompiler import exceptions, settings, utils
-
 from . import base
+from .. import exceptions, settings, utils
 
 __all__ = (
     "CoffeeScript",

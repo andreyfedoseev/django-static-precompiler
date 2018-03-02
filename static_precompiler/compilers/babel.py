@@ -1,9 +1,8 @@
 import os
 import warnings
 
-from static_precompiler import exceptions, utils
-
 from . import base
+from .. import exceptions, utils
 
 __all__ = (
     "Babel",

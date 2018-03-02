@@ -6,7 +6,7 @@ import django.core.exceptions
 from django.contrib.staticfiles import finders
 from django.utils import encoding, functional, six
 
-from static_precompiler import models, settings, utils
+from .. import models, mtime, settings, utils
 
 logger = logging.getLogger("static_precompiler")
 
@@ -105,7 +105,7 @@ class BaseCompiler(object):
         :returns: int
 
         """
-        return utils.get_mtime(self.get_full_source_path(source_path))
+        return mtime.get_mtime(self.get_full_source_path(source_path))
 
     def get_output_mtime(self, source_path):
         """ Get the modification time of the compiled file.
@@ -119,7 +119,7 @@ class BaseCompiler(object):
         full_output_path = self.get_full_output_path(source_path)
         if not os.path.exists(full_output_path):
             return None
-        return utils.get_mtime(full_output_path)
+        return mtime.get_mtime(full_output_path)
 
     def should_compile(self, source_path, from_management=False):
         """ Return True iff provided source file should be compiled.

@@ -19,7 +19,7 @@ def test_inlinecompile_tag(monkeypatch):
     compiler = pretend.stub(compile_source=pretend.call_recorder(lambda *args: "compiled"))
     get_compiler_by_name = pretend.call_recorder(lambda *args: compiler)
 
-    monkeypatch.setattr("static_precompiler.utils.get_compiler_by_name", get_compiler_by_name)
+    monkeypatch.setattr("static_precompiler.registry.get_compiler_by_name", get_compiler_by_name)
 
     template = django.template.Template(
         "{% load compile_static %}{% inlinecompile compiler='sass' %}source{% endinlinecompile %}"

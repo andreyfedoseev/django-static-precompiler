@@ -1,11 +1,11 @@
 import os
 import re
-import sass
 
-from static_precompiler import exceptions, utils
+import sass
 from django.utils import encoding
 
 from . import scss
+from .. import exceptions, url_converter, utils
 
 __all__ = (
     "SCSS",
@@ -66,7 +66,7 @@ class SCSS(scss.SCSS):
 
         utils.write_file(compiled, full_output_path)
 
-        utils.convert_urls(full_output_path, source_path)
+        url_converter.convert_urls(full_output_path, source_path)
 
         if self.is_sourcemap_enabled:
             utils.write_file(sourcemap, sourcemap_path)

@@ -1,7 +1,7 @@
 from django.contrib.staticfiles import finders
 from django.core.files import storage
 
-from static_precompiler import settings
+from . import settings
 
 
 class StaticPrecompilerFileStorage(storage.FileSystemStorage):

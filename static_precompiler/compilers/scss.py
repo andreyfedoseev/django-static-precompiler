@@ -2,9 +2,8 @@ import os
 import posixpath
 import re
 
-from static_precompiler import exceptions, settings, utils
-
 from . import base
+from .. import exceptions, settings, url_converter, utils
 
 __all__ = (
     "SCSS",
@@ -88,7 +87,7 @@ class SCSS(base.BaseCompiler):
                 os.remove(full_output_path)
             raise exceptions.StaticCompilationError(errors)
 
-        utils.convert_urls(full_output_path, source_path)
+        url_converter.convert_urls(full_output_path, source_path)
 
         if self.is_sourcemap_enabled:
             utils.fix_sourcemap(full_output_path + ".map", source_path, full_output_path)

@@ -1,10 +1,10 @@
 # coding: utf-8
 import json
 import os
+import re
 
 import pretend
 import pytest
-import re
 
 from static_precompiler import exceptions, utils
 from static_precompiler.compilers import libsass, scss
@@ -28,7 +28,7 @@ def test_get_full_source_path(compiler_module):
 def test_compile_file(compiler_module, monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     convert_urls = pretend.call_recorder(lambda *args: None)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
+    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", convert_urls)
 
     compiler = compiler_module.SCSS()
 
@@ -54,7 +54,7 @@ def test_compile_file(compiler_module, monkeypatch, tmpdir):
 def test_sourcemap(compiler_module, monkeypatch, tmpdir):
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
     compiler = compiler_module.SCSS(sourcemap_enabled=False)
     compiler.compile_file("styles/sass/test.scss")
@@ -333,7 +333,7 @@ def test_get_extra_args():
 @pytest.mark.parametrize("compiler_module", (libsass, scss))
 def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
     compiler = compiler_module.SCSS()
     with pytest.raises(exceptions.StaticCompilationError):
@@ -362,7 +362,7 @@ def test_precision(compiler_module, precision, monkeypatch, tmpdir):
     expected_precision = 5 if precision is None else precision
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
     compiler = compiler_module.SCSS(precision=precision)
 
@@ -381,7 +381,7 @@ def test_precision(compiler_module, precision, monkeypatch, tmpdir):
 def test_output_style(compiler_module, monkeypatch, tmpdir):
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
     compiler = compiler_module.SCSS(output_style="compressed")
 

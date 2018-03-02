@@ -11,7 +11,7 @@ from static_precompiler import compilers, exceptions, utils
 def test_compile_file(monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     convert_urls = pretend.call_recorder(lambda *args: None)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", convert_urls)
+    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", convert_urls)
 
     compiler = compilers.LESS()
 
@@ -38,7 +38,7 @@ h1 {
 def test_sourcemap(monkeypatch, tmpdir):
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
     compiler = compilers.LESS(sourcemap_enabled=False)
     compiler.compile_file("styles/less/test.less")
@@ -153,7 +153,7 @@ def test_find_dependencies(monkeypatch):
 def test_global_vars(monkeypatch, tmpdir):
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
     compiler = compilers.LESS()
 
@@ -184,7 +184,7 @@ p a {
 
 def test_include_path(monkeypatch, tmpdir, settings):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.utils.convert_urls", lambda *args: None)
+    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
     compiler = compilers.LESS()
     with pytest.raises(exceptions.StaticCompilationError):

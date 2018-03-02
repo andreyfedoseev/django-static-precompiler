@@ -2,7 +2,7 @@ import time
 
 from watchdog import events, observers
 
-from static_precompiler import exceptions, utils
+from . import exceptions, registry
 
 
 class EventHandler(events.FileSystemEventHandler):
@@ -36,7 +36,7 @@ def watch_dirs(scanned_dirs, verbosity):
         print(scanned_dir)
     print("\nPress Control+C to exit.\n")
 
-    compilers = utils.get_compilers().values()
+    compilers = registry.get_compilers().values()
     observer = observers.Observer()
 
     for scanned_dir in scanned_dirs:
