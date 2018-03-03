@@ -66,3 +66,41 @@ def test_ignore_dependencies_option(django_assert_num_queries, monkeypatch, tmpd
 
     with django_assert_num_queries(0):
         management.call_command("compilestatic", ignore_dependencies=True)
+
+
+@pytest.mark.django_db
+def test_delete_stale_files(monkeypatch, tmpdir):
+
+    output_path = os.path.join(tmpdir.strpath, static_precompiler.settings.OUTPUT_DIR)
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    unmanaged_file = os.path.join(tmpdir.strpath, "unmanaged.js")
+    with open(unmanaged_file, "w+") as f:
+        f.write("unmanaged")
+
+    with open(os.path.join(output_path, "stale.js"), "w+") as f:
+        f.write("stale")
+
+    monkeypatch.setattr("static_precompiler.management.commands.compilestatic.get_scanned_dirs", lambda: (
+        os.path.join(os.path.dirname(__file__), "compilestatic"),
+    ))
+    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+
+    management.call_command("compilestatic", delete_stale_files=True)
+
+    compiled_files = []
+    for root, dirs, files in os.walk(output_path):
+        for filename in files:
+            compiled_files.append(os.path.join(root[len(output_path):].lstrip("/"), filename))
+
+    compiled_files.sort()
+
+    assert compiled_files == [
+        "coffee/test.js",
+        "less/test.css",
+        "scss/test.css",
+    ]
+
+    # Files outside of `COMPILED` directory are untouched
+    assert os.path.exists(unmanaged_file)

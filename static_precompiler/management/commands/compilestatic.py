@@ -6,7 +6,7 @@ import django.contrib.staticfiles.finders
 import django.core.files.storage
 import django.core.management.base
 
-from ... import exceptions, registry, settings
+from ... import exceptions, registry, settings, utils
 
 
 def get_scanned_dirs():
@@ -31,13 +31,32 @@ def list_files(scanned_dirs):
                 yield path
 
 
+def delete_stale_files(compiled_files):
+    compiled_files = set(
+        os.path.join(settings.ROOT, utils.normalize_path(compiled_file)) for compiled_file in compiled_files
+    )
+    actual_files = set()
+    for dirname, dirnames, filenames in os.walk(os.path.join(settings.ROOT, settings.OUTPUT_DIR)):
+        for filename in filenames:
+            actual_files.add(os.path.join(dirname, filename))
+    stale_files = actual_files - compiled_files
+    for stale_file in stale_files:
+        os.remove(stale_file)
+
+
 ARGUMENTS = (
     ("--ignore-dependencies", dict(
         action="store_true",
         dest="ignore_dependencies",
         default=False,
         help="Disable dependency tracking, this prevents any database access.",
-     )),
+    )),
+    ("--delete-stale-files", dict(
+        action="store_true",
+        dest="delete_stale_files",
+        default=False,
+        help="Delete compiled files don't have matching source files.",
+    )),
     ("--watch", dict(
         action="store_true",
         dest="watch",
@@ -78,6 +97,7 @@ class Command(django.core.management.base.BaseCommand):
 
         if not options["watch"] or options["initial_scan"]:
             # Scan the watched directories and compile everything
+            compiled_files = set()
             for path in sorted(set(list_files(scanned_dirs))):
                 for compiler in compilers:
                     if compiler.is_supported(path):
@@ -89,9 +109,14 @@ class Command(django.core.management.base.BaseCommand):
                     continue
 
                 try:
-                    compiler.compile(path, from_management=True, verbosity=verbosity)
+                    compiled_files.add(
+                        compiler.compile(path, from_management=True, verbosity=verbosity)
+                    )
                 except (exceptions.StaticCompilationError, ValueError) as e:
                     print(e)
+
+            if options["delete_stale_files"]:
+                delete_stale_files(compiled_files)
 
         if options["watch"]:
             from static_precompiler.watch import watch_dirs

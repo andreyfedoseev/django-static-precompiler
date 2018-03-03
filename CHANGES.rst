@@ -7,6 +7,7 @@ Dev
 
  - Remove deprecated settings: ``COFFEESCRIPT_EXECUTABLE``, ``SCSS_EXECUTABLE``, ``SCSS_USE_COMPASS``, ``LESS_EXECUTABLE``
  - Add ``--ignore-dependencies`` option to ``compilestatic`` command
+ - Add ``--delete-stale-files`` option to ``compilestatic`` command
 
 1.7.1
 =====
