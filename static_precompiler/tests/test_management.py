@@ -59,6 +59,9 @@ def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
 @pytest.mark.django_db
 def test_ignore_dependencies_option(django_assert_num_queries, monkeypatch, tmpdir):
 
+    monkeypatch.setattr("static_precompiler.management.commands.compilestatic.get_scanned_dirs", lambda: (
+        os.path.join(os.path.dirname(__file__), "compilestatic"),
+    ))
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     with django_assert_num_queries(0):
