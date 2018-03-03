@@ -1,13 +1,17 @@
 import time
 
+from typing import *  # noqa
 from watchdog import events, observers
 
 from . import exceptions, registry
+from .compilers import BaseCompiler  # noqa
 
 
 class EventHandler(events.FileSystemEventHandler):
 
+    # noinspection PyShadowingNames
     def __init__(self, scanned_dir, verbosity, compilers):
+        # type: (str, int, List[BaseCompiler]) -> None
         self.scanned_dir = scanned_dir
         self.verbosity = verbosity
         self.compilers = compilers
@@ -24,7 +28,11 @@ class EventHandler(events.FileSystemEventHandler):
                 if self.verbosity > 1:
                     print("Modified: '{0}'".format(path))
                 try:
-                    compiler.handle_changed_file(path)
+                    compiler.compile(path, from_management=True, verbosity=self.verbosity)
+                    if compiler.supports_dependencies:
+                        for dependent in compiler.get_dependents(path):
+                            compiler.compile(path, from_management=True, verbosity=self.verbosity)
+                            self.compile(dependent, from_management=True, verbosity=self.verbosity)
                 except (exceptions.StaticCompilationError, ValueError) as e:
                     print(e)
                 break

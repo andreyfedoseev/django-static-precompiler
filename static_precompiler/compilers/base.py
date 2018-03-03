@@ -301,14 +301,3 @@ class BaseCompiler(object):
                     source=source_path,
                     depends_on=dependency,
                 )
-
-    def handle_changed_file(self, source_path, verbosity=0):
-        """ Handle the modification of the source file.
-
-        :param source_path: relative path to a source file
-        :type source_path: str
-        :type verbosity: int
-        """
-        self.compile(source_path, from_management=True, verbosity=verbosity)
-        for dependent in self.get_dependents(source_path):
-            self.compile(dependent, from_management=True, verbosity=verbosity)

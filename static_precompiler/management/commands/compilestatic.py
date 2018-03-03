@@ -31,6 +31,28 @@ def list_files(scanned_dirs):
                 yield path
 
 
+ARGUMENTS = (
+    ("--ignore-dependencies", dict(
+        action="store_true",
+        dest="ignore_dependencies",
+        default=False,
+        help="Disable dependency tracking, this prevents any database access.",
+     )),
+    ("--watch", dict(
+        action="store_true",
+        dest="watch",
+        default=False,
+        help="Watch for changes and recompile if necessary."
+    )),
+    ("--no-initial-scan", dict(
+        action="store_false",
+        dest="initial_scan",
+        default=True,
+        help="Skip the initial scan of watched directories in --watch mode."
+    )),
+)
+
+
 class Command(django.core.management.base.BaseCommand):
 
     help = "Compile static files."
@@ -38,20 +60,8 @@ class Command(django.core.management.base.BaseCommand):
     requires_system_checks = False
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            "--watch",
-            action="store_true",
-            dest="watch",
-            default=False,
-            help="Watch for changes and recompile if necessary."
-        )
-        parser.add_argument(
-            "--no-initial-scan",
-            action="store_false",
-            dest="initial_scan",
-            default=True,
-            help="Skip the initial scan of watched directories in --watch mode."
-        )
+        for argument, parameters in ARGUMENTS:
+            parser.add_argument(argument, **parameters)
 
     def handle(self, **options):
 
@@ -61,6 +71,10 @@ class Command(django.core.management.base.BaseCommand):
         scanned_dirs = get_scanned_dirs()
         verbosity = int(options["verbosity"])
         compilers = registry.get_compilers().values()
+
+        if options["ignore_dependencies"]:
+            for compiler in compilers:
+                compiler.supports_dependencies = False
 
         if not options["watch"] or options["initial_scan"]:
             # Scan the watched directories and compile everything
@@ -75,7 +89,7 @@ class Command(django.core.management.base.BaseCommand):
                     continue
 
                 try:
-                    compiler.handle_changed_file(path, verbosity=verbosity)
+                    compiler.compile(path, from_management=True, verbosity=verbosity)
                 except (exceptions.StaticCompilationError, ValueError) as e:
                     print(e)
 
@@ -86,15 +100,6 @@ class Command(django.core.management.base.BaseCommand):
 
 if django.VERSION < (1, 8):
     import optparse
-    Command.option_list = django.core.management.base.NoArgsCommand.option_list + (
-        optparse.make_option("--watch",
-                             action="store_true",
-                             dest="watch",
-                             default=False,
-                             help="Watch for changes and recompile if necessary."),
-        optparse.make_option("--no-initial-scan",
-                             action="store_false",
-                             dest="initial_scan",
-                             default=True,
-                             help="Skip the initial scan of watched directories in --watch mode.")
+    Command.option_list = django.core.management.base.NoArgsCommand.option_list + tuple(
+        optparse.make_option(argument, **argument_parameters) for argument, argument_parameters in ARGUMENTS
     )

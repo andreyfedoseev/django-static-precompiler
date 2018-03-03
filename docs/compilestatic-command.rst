@@ -9,6 +9,10 @@ You can use this command in conjunction with ``STATIC_PRECOMPILER_DISABLE_AUTO_C
 ``STATICFILES_STORAGE`` such as S3 or some CDN. In that case you can should run ``compilestatic`` every time when your
 source files change and then run ``collectstatic``.
 
+Sometimes it may be useful to prevent dependency tracking when running ``compilestatic``, for example when you don't
+have access to a database (building a Docker image). Use ``--ignore-dependencies`` option to disable the dependency
+tracking.
+
 You can run ``compilestatic`` in watch mode (``--watch`` option). In watch mode it will monitor the changes in your
 source files and re-compile them on the fly. It can be handy if you use tools such as
 `LiveReload <http://livereload.com/>`_.
