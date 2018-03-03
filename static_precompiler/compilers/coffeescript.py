@@ -1,7 +1,7 @@
 import os
 
 from . import base
-from .. import exceptions, settings, utils
+from .. import exceptions, utils
 
 __all__ = (
     "CoffeeScript",
@@ -14,7 +14,7 @@ class CoffeeScript(base.BaseCompiler):
     input_extension = "coffee"
     output_extension = "js"
 
-    def __init__(self, executable=settings.COFFEESCRIPT_EXECUTABLE, sourcemap_enabled=False):
+    def __init__(self, executable="coffee", sourcemap_enabled=False):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         super(CoffeeScript, self).__init__()

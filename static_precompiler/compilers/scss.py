@@ -3,7 +3,7 @@ import posixpath
 import re
 
 from . import base
-from .. import exceptions, settings, url_converter, utils
+from .. import exceptions, url_converter, utils
 
 __all__ = (
     "SCSS",
@@ -21,8 +21,7 @@ class SCSS(base.BaseCompiler):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
 
-    def __init__(self, executable=settings.SCSS_EXECUTABLE, sourcemap_enabled=False,
-                 compass_enabled=settings.SCSS_USE_COMPASS, load_paths=None,
+    def __init__(self, executable="sass", sourcemap_enabled=False, compass_enabled=False, load_paths=None,
                  precision=None, output_style=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled

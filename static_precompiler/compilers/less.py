@@ -3,7 +3,7 @@ import posixpath
 import re
 
 from . import base
-from .. import exceptions, settings, url_converter, utils
+from .. import exceptions, url_converter, utils
 
 __all__ = (
     "LESS",
@@ -20,8 +20,7 @@ class LESS(base.BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
-    def __init__(self, executable=settings.LESS_EXECUTABLE, sourcemap_enabled=False,
-                 include_path=None, global_vars=None):
+    def __init__(self, executable="lessc", sourcemap_enabled=False, include_path=None, global_vars=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         if isinstance(include_path, (list, tuple)):
