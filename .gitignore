@@ -23,3 +23,4 @@ test_project/db.sqlite3
 coverage.xml
 *.sublime-*
 .venv
+.pytest_cache

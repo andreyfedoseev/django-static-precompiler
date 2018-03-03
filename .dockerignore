@@ -21,3 +21,4 @@ test_project/db.sqlite3
 /docs/_templates/
 coverage.xml
 .venv
+.pytest_cache
