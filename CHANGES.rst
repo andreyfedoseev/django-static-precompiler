@@ -2,7 +2,7 @@
 Changelog
 *********
 
-Dev
+1.8
 ===
 
  - Remove deprecated settings: ``COFFEESCRIPT_EXECUTABLE``, ``SCSS_EXECUTABLE``, ``SCSS_USE_COMPASS``, ``LESS_EXECUTABLE``
