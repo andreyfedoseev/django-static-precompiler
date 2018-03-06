@@ -2,6 +2,11 @@
 Changelog
 *********
 
+1.8.1
+=====
+
+ - Fix ``setup.py`` to add compatibility with Python 3.4 and below.
+
 1.8
 ===
 

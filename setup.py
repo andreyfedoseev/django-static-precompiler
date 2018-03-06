@@ -8,7 +8,6 @@ import sys
 if sys.version_info.major == 2:
     install_requires = [
         "Django>=1.7,<2.0",
-        "typing",
     ]
 elif sys.version_info.major == 3:
     install_requires = [
@@ -16,6 +15,11 @@ elif sys.version_info.major == 3:
     ]
 else:
     raise AssertionError()
+
+if sys.version_info < (3, 5):
+    install_requires += [
+        "typing",
+    ]
 
 
 class PyTest(TestCommand):
