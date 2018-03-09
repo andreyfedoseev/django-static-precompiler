@@ -21,7 +21,7 @@ class LESS(base.BaseCompiler):
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
     def __init__(self, executable="lessc", sourcemap_enabled=False, include_path=None, clean_css=None,
-            global_vars=None):
+                 global_vars=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         if isinstance(include_path, (list, tuple)):
