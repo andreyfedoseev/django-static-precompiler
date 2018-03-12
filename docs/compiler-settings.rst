@@ -206,6 +206,9 @@ LESS
 ``include_path``
   List of additional directories to look for imported files (``--include-path`` command line option). Default: ``None``.
 
+``clean_css``
+  Boolean. Set to ``True`` to use the `clean-css <https://github.com/less/less-plugin-clean-css>`_ plugin to minify the output. Default ``False``.
+
 ``global_vars``
   Dictionary of global variables (``--global-var`` command line option). Default: ``None``.
 
