@@ -20,7 +20,7 @@ class LESS(base.BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
-    def __init__(self, executable="lessc", sourcemap_enabled=False, include_path=None, clean_css=None,
+    def __init__(self, executable="lessc", sourcemap_enabled=False, include_path=None, clean_css=False,
                  global_vars=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
