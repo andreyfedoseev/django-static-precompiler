@@ -20,12 +20,14 @@ class LESS(base.BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
-    def __init__(self, executable="lessc", sourcemap_enabled=False, include_path=None, global_vars=None):
+    def __init__(self, executable="lessc", sourcemap_enabled=False, include_path=None, clean_css=False,
+                 global_vars=None):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         if isinstance(include_path, (list, tuple)):
             include_path = ';'.join(include_path)
         self.include_path = include_path
+        self.clean_css = clean_css
         self.global_vars = global_vars
         super(LESS, self).__init__()
 
@@ -53,6 +55,10 @@ class LESS(base.BaseCompiler):
         if self.include_path:
             args.extend([
                 "--include-path={}".format(self.include_path)
+            ])
+        if self.clean_css:
+            args.extend([
+                "--clean-css",
             ])
         if self.global_vars:
             for variable_name, variable_value in self.global_vars.items():
