@@ -2,6 +2,11 @@
 Changelog
 *********
 
+1.8.2
+=====
+
+ - Add ``clean_css`` option to LESS compiler
+
 1.8.1
 =====
 
