@@ -13,12 +13,11 @@ def test_convert_url():
     assert url_converter.convert_url("../images/dummy.jpg", "styles/") == "'/static/images/dummy.jpg'"
 
 
-def test_convert(monkeypatch):
+def test_convert():
 
-    monkeypatch.setattr(url_converter, "convert_url", lambda *args: "'spam.jpg'")
     assert (
-        url_converter.convert("p {\n  background-url: url(ham.jpg);\n}", "") ==
-        "p {\n  background-url: url('spam.jpg');\n}"
+        url_converter.convert("p {\n  background: url(../images/ham.jpg) no-repeat 0 0;\n}", "styles/") ==
+        "p {\n  background: url('/static/images/ham.jpg') no-repeat 0 0;\n}"
     )
     assert (
         url_converter.convert(
@@ -30,14 +29,10 @@ def test_convert(monkeypatch):
         '\'http://www.w3.org/2000/svg\' viewBox=\'0 0 8 8\'%3E%3Cpath fill=\'rgba(255, 255, 255, 0.97)'
         '\' d=\'M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z\'/%3E%3C/svg%3E");\n}'
     )
-    assert (
-        url_converter.convert("p {\n  background-url: url('ham.jpg');\n}", "") ==
-        "p {\n  background-url: url('spam.jpg');\n}"
-    )
     assert url_converter.convert(""".external_link:first-child:before {
   content: "Zobacz także:";
-  background: url(картинка.png); }
-""", "") == """.external_link:first-child:before {
+  background: url("../images/картинка.png"); }
+""", "styles/") == """.external_link:first-child:before {
   content: "Zobacz także:";
-  background: url('spam.jpg'); }
+  background: url("/static/images/картинка.png"); }
 """

@@ -6,6 +6,7 @@ Changelog
 =====
 
  - Add ``clean_css`` option to LESS compiler
+ - Fix URL converter to properly handle ``url(..)`` not followed directly by ``;``
 
 1.8.1
 =====
