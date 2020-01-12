@@ -3,7 +3,6 @@ import warnings
 
 import django.apps
 import django.core.exceptions
-from django.utils import six
 from typing import *  # noqa
 
 from . import exceptions, settings
@@ -73,7 +72,7 @@ def get_compiler_by_name(name):
 
 def get_compiler_by_path(path):
     # type: (str) -> BaseCompiler
-    for compiler in six.itervalues(get_compilers()):
+    for compiler in get_compilers().values():
         if compiler.is_supported(path):
             return compiler
 

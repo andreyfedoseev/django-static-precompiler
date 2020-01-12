@@ -4,7 +4,7 @@ import posixpath
 
 import django.core.exceptions
 from django.contrib.staticfiles import finders
-from django.utils import encoding, functional, six
+from django.utils import encoding, functional
 
 from .. import models, mtime, settings, utils
 
@@ -207,7 +207,7 @@ class BaseCompiler(object):
         """
         return encoding.force_text(self.compile(source_path))
 
-    compile_lazy = functional.lazy(compile_lazy, six.text_type)
+    compile_lazy = functional.lazy(compile_lazy, str)
 
     def compile_file(self, source_path):
         """ Compile the source file. Return the relative path to compiled file.
