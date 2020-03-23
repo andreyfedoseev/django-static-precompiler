@@ -4,7 +4,7 @@ import warnings
 import django.apps
 import django.core.exceptions
 from django.utils import six
-from typing import *  # noqa
+from typing import Dict
 
 from . import exceptions, settings
 from .compilers import BaseCompiler  # noqa
