@@ -1,4 +1,4 @@
-pytest
+pytest<4
 pytest-django==3.1.2
 pretend
 watchdog
