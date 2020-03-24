@@ -3,5 +3,4 @@ source =
     static_precompiler
 omit =
     static_precompiler/migrations/*
-    static_precompiler/south_migrations/*
     static_precompiler/tests/*
