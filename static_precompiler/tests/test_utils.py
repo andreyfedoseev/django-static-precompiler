@@ -3,7 +3,12 @@ from __future__ import unicode_literals
 
 import os
 
-from django.utils import six
+try:
+    from django.utils import six
+    uses_six = True
+except ImportError:
+    uses_six = False
+
 from pretend import stub
 
 from static_precompiler import utils
@@ -16,7 +21,7 @@ def test_write_read_file(tmpdir, settings):
 
     assert os.path.exists(path)
     read_content = utils.read_file(path)
-    assert isinstance(read_content, six.text_type)
+    assert isinstance(read_content, six.text_type if uses_six else str)
     assert read_content == "Привет, Мир!"
 
 

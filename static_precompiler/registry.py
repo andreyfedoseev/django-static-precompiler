@@ -3,7 +3,12 @@ import warnings
 
 import django.apps
 import django.core.exceptions
-from django.utils import six
+try:
+    from django.utils import six
+    uses_six = True
+except ImportError:
+    uses_six = False
+
 from typing import Dict
 
 from . import exceptions, settings
@@ -73,7 +78,7 @@ def get_compiler_by_name(name):
 
 def get_compiler_by_path(path):
     # type: (str) -> BaseCompiler
-    for compiler in six.itervalues(get_compilers()):
+    for compiler in (six.itervalues(get_compilers()) if uses_six else get_compilers().values()):
         if compiler.is_supported(path):
             return compiler
 

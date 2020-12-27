@@ -1,11 +1,15 @@
 import os
 import re
 
-from django.utils import six
+try:
+    from django.utils import six
+    uses_six = True
+except ImportError:
+    uses_six = False
 
 from . import settings, utils
 
-if six.PY2:
+if uses_six and six.PY2:
     # noinspection PyUnresolvedReferences,PyCompatibility
     from urlparse import urljoin
 else:
