@@ -16,7 +16,7 @@ except ImportError:
 from . import settings
 
 
-def _django_conf_file_charset() -> str:
+def _django_conf_file_charset():
     """
     From Django 3.1 on, FILE_CHARSET must be 'utf-8'.
     """
