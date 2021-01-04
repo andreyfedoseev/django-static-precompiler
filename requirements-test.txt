@@ -1,8 +1,8 @@
-pytest<4
+pytest==3.10.1
 pytest-django==3.1.2
-pretend
-watchdog
-libsass
-coverage
+pretend==1.0.9
+watchdog==0.10.6
+libsass==0.20.1
+coverage==5.3.1
 pytest-cov==2.5.1
-tox
+tox==3.20.1
