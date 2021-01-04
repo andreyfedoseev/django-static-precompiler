@@ -3,11 +3,21 @@ jobs:
   build:
     working_directory: ~/django-static-precompiler
     docker:
-      - image: andreyfedoseev/django-static-precompiler
+      - image: ubuntu:focal
     steps:
-      - run: apt-get -y install software-properties-common && apt-get -y update
-      - run: add-apt-repository ppa:deadsnakes/ppa -y && apt-get -y update
-      - run: apt-get install -y python2.7-dev python3.6-dev python-pip sqlite3
+      # steps from Dockerfile-base
+      - run: apt-get -y update && apt-get install -y autoconf libtool ruby-dev npm
+      - run: ln -s /usr/bin/nodejs /usr/local/bin/node
+      - run: npm install -g coffee-script@1.7.1
+      - run: npm install -g livescript@1.4.0
+      - run: npm install -g less@1.7.4
+      - run: npm install -g babel-cli@6.2.0
+      - run: npm install -g stylus@0.50.0
+      - run: npm install -g handlebars@4.0.2
+      - run: gem install sass -v 3.4.22
+      - run: gem install compass -v 1.0.1
+      # original steps
+      - run: apt-get -y update && apt-get install -y python2.7-dev python3.6-dev python-pip sqlite3
       - checkout
       - run: pip install --upgrade pip
       - run: pip install -r requirements-ci.txt
