@@ -16,6 +16,16 @@ except ImportError:
 from . import settings
 
 
+def _django_conf_file_charset() -> str:
+    """
+    From Django 3.1 on, FILE_CHARSET must be 'utf-8'.
+    """
+    try:
+        return django.conf.settings.FILE_CHARSET
+    except AttributeError:
+        return 'utf-8'
+
+
 def normalize_path(posix_path):
     """ Convert posix style path to OS-dependent path.
     """
@@ -28,9 +38,9 @@ def read_file(path):
     """ Return the contents of a file as unicode. """
     if uses_six and six.PY2:
         with open(path) as file_object:
-            return file_object.read().decode(django.conf.settings.FILE_CHARSET)
+            return file_object.read().decode(_django_conf_file_charset())
     else:
-        with open(path, encoding=django.conf.settings.get('FILE_CHARSET', 'utf-8')) as file_object:
+        with open(path, encoding=_django_conf_file_charset()) as file_object:
             return file_object.read()
 
 
@@ -42,9 +52,9 @@ def write_file(content, path):
 
     if uses_six and six.PY2:
         with open(path, "w+") as file_object:
-            file_object.write(content.encode(django.conf.settings.FILE_CHARSET))
+            file_object.write(content.encode(_django_conf_file_charset()))
     else:
-        with open(path, "w+", encoding=django.conf.settings.get('FILE_CHARSET', 'utf-8')) as file_object:
+        with open(path, "w+", encoding=_django_conf_file_charset()) as file_object:
             file_object.write(content)
 
 
