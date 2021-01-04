@@ -5,7 +5,9 @@ jobs:
     docker:
       - image: andreyfedoseev/django-static-precompiler
     steps:
-      - run: add-apt-repository ppa:deadsnakes/ppa && apt-get update && apt-get install -y python2.7-dev python3.6-dev python-pip sqlite3
+      - run: apt-get install software-properties-common && apt-get update
+      - run: add-apt-repository ppa:deadsnakes/ppa && apt-get update
+      - run: apt-get install -y python2.7-dev python3.6-dev python-pip sqlite3
       - checkout
       - run: pip install --upgrade pip
       - run: pip install -r requirements-ci.txt
