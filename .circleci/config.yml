@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/django-static-precompiler
     docker:
-      - image: ubuntu:focal
+      - image: ubuntu:bionic
     steps:
       # steps from Dockerfile-base -- updated versions
       - run: apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends autoconf libtool ruby-dev npm
