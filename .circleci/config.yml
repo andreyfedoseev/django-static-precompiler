@@ -14,7 +14,7 @@ jobs:
       - run: npm install -g babel-cli@7.0.0-beta.3
       - run: npm install -g stylus@0.54.8
       - run: npm install -g handlebars@4.7.6
-      - run: gem install sass -v 3.7.4
+      - run: gem install sass -v 3.4.22
       - run: gem install compass -v 1.0.1
       # original steps
       - run: apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python2.7-dev python3.6-dev python-pip sqlite3
