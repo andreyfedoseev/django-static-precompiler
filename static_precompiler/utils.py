@@ -30,7 +30,7 @@ def read_file(path):
         with open(path) as file_object:
             return file_object.read().decode(django.conf.settings.FILE_CHARSET)
     else:
-        with open(path, encoding=django.conf.settings.FILE_CHARSET) as file_object:
+        with open(path, encoding=django.conf.settings.get('FILE_CHARSET', 'utf-8')) as file_object:
             return file_object.read()
 
 
@@ -44,7 +44,7 @@ def write_file(content, path):
         with open(path, "w+") as file_object:
             file_object.write(content.encode(django.conf.settings.FILE_CHARSET))
     else:
-        with open(path, "w+", encoding=django.conf.settings.FILE_CHARSET) as file_object:
+        with open(path, "w+", encoding=django.conf.settings.get('FILE_CHARSET', 'utf-8')) as file_object:
             file_object.write(content)
 
 
