@@ -6,7 +6,7 @@ jobs:
       - image: ubuntu:focal
     steps:
       # steps from Dockerfile-base
-      - run: apt-get -y update && apt-get install -y autoconf libtool ruby-dev npm
+      - run: apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends autoconf libtool ruby-dev npm
       - run: ln -s /usr/bin/nodejs /usr/local/bin/node
       - run: npm install -g coffee-script@1.7.1
       - run: npm install -g livescript@1.4.0
@@ -17,7 +17,7 @@ jobs:
       - run: gem install sass -v 3.4.22
       - run: gem install compass -v 1.0.1
       # original steps
-      - run: apt-get -y update && apt-get install -y python2.7-dev python3.6-dev python-pip sqlite3
+      - run: apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python2.7-dev python3.6-dev python-pip sqlite3
       - checkout
       - run: pip install --upgrade pip
       - run: pip install -r requirements-ci.txt
