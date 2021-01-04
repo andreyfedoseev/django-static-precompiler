@@ -21,6 +21,7 @@ jobs:
       - run: apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python2.7-dev python3.6-dev python-pip sqlite3
       - checkout
       - run: pip install --upgrade pip
+      - run: pip install setuptools
       - run: pip install -r requirements-ci.txt
       - run: pip install -e .[libsass]
       - run: flake8
