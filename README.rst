@@ -52,6 +52,10 @@ Use in Python
     >>> compile_static("styles.scss")
     "COMPILED/styles.css"
 
+Python compatibility
+====================
+
+Python 3.5+ is required.
 
 Django compatibility
 ====================
