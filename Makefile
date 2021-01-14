@@ -18,3 +18,9 @@ check-black:
 
 apply-black:
 	docker-compose run --rm app black ./static_precompiler
+
+check-isort:
+	docker-compose run --rm app isort --check ./static_precompiler
+
+apply-isort:
+	docker-compose run --rm app isort ./static_precompiler
