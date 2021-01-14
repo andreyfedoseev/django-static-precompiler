@@ -2,3 +2,4 @@
 flake8
 codecov
 black
+isort
