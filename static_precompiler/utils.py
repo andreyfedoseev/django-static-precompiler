@@ -11,6 +11,10 @@ from django.utils import encoding
 from . import settings
 
 
+def get_file_encoding():
+    return getattr(django.conf.settings, "FILE_CHARSET", "utf-8")
+
+
 def normalize_path(posix_path):
     """ Convert posix style path to OS-dependent path.
     """
@@ -21,7 +25,7 @@ def normalize_path(posix_path):
 
 def read_file(path):
     """ Return the contents of a file as unicode. """
-    with open(path, encoding=django.conf.settings.FILE_CHARSET) as file_object:
+    with open(path, encoding=get_file_encoding()) as file_object:
         return file_object.read()
 
 
@@ -31,7 +35,7 @@ def write_file(content, path):
     # Convert to unicode
     content = encoding.force_text(content)
 
-    with open(path, "w+", encoding=django.conf.settings.FILE_CHARSET) as file_object:
+    with open(path, "w+", encoding=get_file_encoding()) as file_object:
         file_object.write(content)
 
 
