@@ -12,3 +12,9 @@ test:
 
 upload:
 	python setup.py sdist upload
+
+check-black:
+	docker-compose run --rm app black --check ./static_precompiler
+
+apply-black:
+	docker-compose run --rm app black ./static_precompiler
