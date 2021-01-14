@@ -3,14 +3,16 @@ jobs:
   build:
     working_directory: ~/django-static-precompiler
     docker:
-      - image: andreyfedoseev/django-static-precompiler
+      - image: andreyfedoseev/django-static-precompiler:18.04
     steps:
-      - run: apt-get update && apt-get install -y python2.7-dev python3.5-dev python-pip sqlite3
+      - run: apt-get update && apt-get install -y python3-dev python3-pip sqlite3
       - checkout
-      - run: pip install --upgrade pip
-      - run: pip install -r requirements-ci.txt
-      - run: pip install -e .[libsass]
+      - run: pip3 install --upgrade pip
+      - run: pip3 install -r requirements-ci.txt
+      - run: pip3 install -e .[libsass]
       - run: flake8
+      - run: black --check ./static_precompiler
+      - run: isort --check ./static_precompiler
       - run: rm -f coverage.xml
       - run: tox
       - run: codecov
