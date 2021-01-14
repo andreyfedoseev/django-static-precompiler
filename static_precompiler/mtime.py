@@ -1,6 +1,6 @@
 import os
 
-from . import settings, caching
+from . import caching, settings
 
 
 def get_mtime_cachekey(filename):

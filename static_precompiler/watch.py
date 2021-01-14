@@ -1,6 +1,6 @@
 import time
-
 from typing import List
+
 from watchdog import events, observers
 
 from . import exceptions, registry

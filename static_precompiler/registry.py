@@ -1,9 +1,9 @@
 import importlib
 import warnings
+from typing import Dict
 
 import django.apps
 import django.core.exceptions
-from typing import Dict
 
 from . import exceptions, settings
 from .compilers import BaseCompiler  # noqa

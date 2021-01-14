@@ -1,8 +1,8 @@
 import os
 import warnings
 
-from . import base
 from .. import exceptions, utils
+from . import base
 
 __all__ = ("Babel",)
 

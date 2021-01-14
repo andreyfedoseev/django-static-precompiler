@@ -1,7 +1,7 @@
 import os
 
-from . import base
 from .. import exceptions, utils
+from . import base
 
 __all__ = ("LiveScript",)
 

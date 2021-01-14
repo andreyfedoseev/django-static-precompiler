@@ -5,6 +5,7 @@ import os
 import pytest
 
 from static_precompiler import compilers, exceptions
+
 from .test_coffeescript import clean_javascript
 
 
