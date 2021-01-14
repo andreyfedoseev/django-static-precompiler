@@ -2,7 +2,6 @@ import warnings
 
 import django.template
 import django.templatetags.static
-from django.utils import six
 
 from .. import caching, registry, settings, utils
 
@@ -46,7 +45,7 @@ class InlineCompileNode(django.template.Node):
         else:
             compiler = django.template.Variable(self.compiler).resolve(context)
 
-        if isinstance(compiler, six.string_types):
+        if isinstance(compiler, str):
             compiler = registry.get_compiler_by_name(compiler)
 
         if settings.USE_CACHE:

@@ -6,7 +6,7 @@ import subprocess
 import django.conf
 import django.core.cache
 import django.core.exceptions
-from django.utils import encoding, six
+from django.utils import encoding
 
 from . import settings
 
@@ -21,12 +21,8 @@ def normalize_path(posix_path):
 
 def read_file(path):
     """ Return the contents of a file as unicode. """
-    if six.PY2:
-        with open(path) as file_object:
-            return file_object.read().decode(django.conf.settings.FILE_CHARSET)
-    else:
-        with open(path, encoding=django.conf.settings.FILE_CHARSET) as file_object:
-            return file_object.read()
+    with open(path, encoding=django.conf.settings.FILE_CHARSET) as file_object:
+        return file_object.read()
 
 
 def write_file(content, path):
@@ -35,12 +31,8 @@ def write_file(content, path):
     # Convert to unicode
     content = encoding.force_text(content)
 
-    if six.PY2:
-        with open(path, "w+") as file_object:
-            file_object.write(content.encode(django.conf.settings.FILE_CHARSET))
-    else:
-        with open(path, "w+", encoding=django.conf.settings.FILE_CHARSET) as file_object:
-            file_object.write(content)
+    with open(path, "w+", encoding=django.conf.settings.FILE_CHARSET) as file_object:
+        file_object.write(content)
 
 
 def fix_line_breaks(text):

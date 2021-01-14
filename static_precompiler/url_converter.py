@@ -1,16 +1,9 @@
 import os
 import re
-
-from django.utils import six
+from urllib.parse import urljoin
 
 from . import settings, utils
 
-if six.PY2:
-    # noinspection PyUnresolvedReferences,PyCompatibility
-    from urlparse import urljoin
-else:
-    # noinspection PyUnresolvedReferences,PyCompatibility
-    from urllib.parse import urljoin
 
 URL_PATTERN = re.compile(r"url\((.+)\)")
 
