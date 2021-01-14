@@ -4,7 +4,6 @@ from urllib.parse import urljoin
 
 from . import settings, utils
 
-
 URL_PATTERN = re.compile(r"url\((.+)\)")
 
 

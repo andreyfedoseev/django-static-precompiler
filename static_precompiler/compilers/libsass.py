@@ -4,8 +4,8 @@ import re
 import sass
 from django.utils import encoding
 
-from . import scss
 from .. import exceptions, url_converter, utils
+from . import scss
 
 __all__ = (
     "SCSS",
