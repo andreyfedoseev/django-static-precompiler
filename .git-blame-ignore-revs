@@ -1,0 +1,4 @@
+# Use this file to exclude irrelevant revisions from git blame
+# Run `git config blame.ignoreRevsFile .git-blame-ignore-revs`
+# apply black formatting
+fdeb710c4c5173cb78a884b3d8a9c41464bcab91
