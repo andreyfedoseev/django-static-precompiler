@@ -18,7 +18,7 @@ def convert_url(url, source_dir):
     original_quote = url[0] if url[0] in ('"', "'") else "'"
     url = url.strip("\"'")
 
-    if not url.startswith(('http://', 'https://', '/', 'data:')):
+    if not url.startswith(("http://", "https://", "/", "data:")):
         url = urljoin(settings.STATIC_URL, urljoin(source_dir, url))
 
     return "{original_quote}{url}{original_quote}".format(original_quote=original_quote, url=url)
@@ -29,12 +29,7 @@ def convert(content, path):
     if not source_dir.endswith("/"):
         source_dir += "/"
 
-    return URL_PATTERN.sub(
-        lambda matchobj: "url({0})".format(
-            convert_url(matchobj.group(1), source_dir)
-        ),
-        content
-    )
+    return URL_PATTERN.sub(lambda matchobj: "url({0})".format(convert_url(matchobj.group(1), source_dir)), content)
 
 
 def convert_urls(compiled_full_path, source_path):

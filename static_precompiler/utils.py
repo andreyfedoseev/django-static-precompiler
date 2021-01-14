@@ -16,8 +16,7 @@ def get_file_encoding():
 
 
 def normalize_path(posix_path):
-    """ Convert posix style path to OS-dependent path.
-    """
+    """Convert posix style path to OS-dependent path."""
     if settings.POSIX_COMPATIBLE:
         return posix_path
     return os.path.join(*posix_path.split("/"))
@@ -40,8 +39,7 @@ def write_file(content, path):
 
 
 def fix_line_breaks(text):
-    """ Convert Win line breaks to Unix
-    """
+    """Convert Win line breaks to Unix"""
     return text.replace("\r\n", "\n")
 
 
@@ -76,11 +74,13 @@ def run_command(args, input=None, cwd=None):
 def compile_static(path):
     # type: (str) -> str
     from . import registry
+
     return registry.get_compiler_by_path(path).compile(path)
 
 
 def compile_static_lazy(path):
     from . import registry
+
     return registry.get_compiler_by_path(path).compile_lazy(path)
 
 

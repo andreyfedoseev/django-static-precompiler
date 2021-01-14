@@ -25,7 +25,7 @@ def list_files(scanned_dirs):
     for scanned_dir in scanned_dirs:
         for dirname, dirnames, filenames in os.walk(scanned_dir):
             for filename in filenames:
-                path = os.path.join(dirname, filename)[len(scanned_dir):]
+                path = os.path.join(dirname, filename)[len(scanned_dir) :]
                 if path.startswith("/"):
                     path = path[1:]
                 yield path
@@ -45,30 +45,37 @@ def delete_stale_files(compiled_files):
 
 
 ARGUMENTS = (
-    ("--ignore-dependencies", dict(
-        action="store_true",
-        dest="ignore_dependencies",
-        default=False,
-        help="Disable dependency tracking, this prevents any database access.",
-    )),
-    ("--delete-stale-files", dict(
-        action="store_true",
-        dest="delete_stale_files",
-        default=False,
-        help="Delete compiled files don't have matching source files.",
-    )),
-    ("--watch", dict(
-        action="store_true",
-        dest="watch",
-        default=False,
-        help="Watch for changes and recompile if necessary."
-    )),
-    ("--no-initial-scan", dict(
-        action="store_false",
-        dest="initial_scan",
-        default=True,
-        help="Skip the initial scan of watched directories in --watch mode."
-    )),
+    (
+        "--ignore-dependencies",
+        dict(
+            action="store_true",
+            dest="ignore_dependencies",
+            default=False,
+            help="Disable dependency tracking, this prevents any database access.",
+        ),
+    ),
+    (
+        "--delete-stale-files",
+        dict(
+            action="store_true",
+            dest="delete_stale_files",
+            default=False,
+            help="Delete compiled files don't have matching source files.",
+        ),
+    ),
+    (
+        "--watch",
+        dict(action="store_true", dest="watch", default=False, help="Watch for changes and recompile if necessary."),
+    ),
+    (
+        "--no-initial-scan",
+        dict(
+            action="store_false",
+            dest="initial_scan",
+            default=True,
+            help="Skip the initial scan of watched directories in --watch mode.",
+        ),
+    ),
 )
 
 
@@ -109,9 +116,7 @@ class Command(django.core.management.base.BaseCommand):
                     continue
 
                 try:
-                    compiled_files.add(
-                        compiler.compile(path, from_management=True, verbosity=verbosity)
-                    )
+                    compiled_files.add(compiler.compile(path, from_management=True, verbosity=verbosity))
                 except (exceptions.StaticCompilationError, ValueError) as e:
                     print(e)
 
@@ -120,11 +125,13 @@ class Command(django.core.management.base.BaseCommand):
 
         if options["watch"]:
             from static_precompiler.watch import watch_dirs
+
             watch_dirs(scanned_dirs, verbosity)
 
 
 if django.VERSION < (1, 8):
     import optparse
+
     Command.option_list = django.core.management.base.NoArgsCommand.option_list + tuple(
         optparse.make_option(argument, **argument_parameters) for argument, argument_parameters in ARGUMENTS
     )

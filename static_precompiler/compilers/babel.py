@@ -4,9 +4,7 @@ import warnings
 from . import base
 from .. import exceptions, utils
 
-__all__ = (
-    "Babel",
-)
+__all__ = ("Babel",)
 
 
 class Babel(base.BaseCompiler):

@@ -9,9 +9,7 @@ from static_precompiler import compilers, exceptions
 
 def clean_javascript(js):
     """ Remove comments and all blank lines. """
-    return "\n".join(
-        line for line in js.split("\n") if line.strip() and not line.startswith("//")
-    )
+    return "\n".join(line for line in js.split("\n") if line.strip() and not line.startswith("//"))
 
 
 def test_is_supported():
@@ -32,7 +30,9 @@ def test_compile_file(monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("scripts/test.hbs")
     assert os.path.exists(full_output_path)
     with open(full_output_path) as compiled:
-        assert clean_javascript(compiled.read()) == """(function() {
+        assert (
+            clean_javascript(compiled.read())
+            == """(function() {
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
 templates['test'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
@@ -40,7 +40,8 @@ templates['test'] = template({"compiler":[7,">= 4.0.0"],"main":function(containe
     + container.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
     + "</h1>\\n";
 },"useData":true});
-})();"""  # noqa
+})();"""
+        )  # noqa
 
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_file("scripts/broken.handlebars")
@@ -71,8 +72,8 @@ def test_compile_source():
     compiler = compilers.Handlebars()
 
     assert (
-        clean_javascript(compiler.compile_source('<h1>{{title}}</h1>')) ==
-        """{"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+        clean_javascript(compiler.compile_source("<h1>{{title}}</h1>"))
+        == """{"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
   return "<h1>"
     + container.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
@@ -81,12 +82,12 @@ def test_compile_source():
     )
 
     with pytest.raises(exceptions.StaticCompilationError):
-        compiler.compile_source('{{title}')
+        compiler.compile_source("{{title}")
 
     # Test non-ascii
     assert (
-        clean_javascript(compiler.compile_source('<h1>Заголовок {{title}}</h1>')) ==
-        """{"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+        clean_javascript(compiler.compile_source("<h1>Заголовок {{title}}</h1>"))
+        == """{"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
   return "<h1>Заголовок "
     + container.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
@@ -103,12 +104,7 @@ def test_get_extra_args(monkeypatch):
 
     compiler = compilers.Handlebars(known_helpers=["foo", "bar"], namespace="baz", simple=True)
 
-    assert compiler.get_extra_args() == [
-        "-k", "foo",
-        "-k", "bar",
-        "-n", "baz",
-        "-s"
-    ]
+    assert compiler.get_extra_args() == ["-k", "foo", "-k", "bar", "-n", "baz", "-s"]
 
     with pytest.raises(ValueError):
         compilers.Handlebars(known_helpers="foo")

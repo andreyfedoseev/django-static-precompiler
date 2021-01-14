@@ -5,9 +5,7 @@ import re
 from . import base
 from .. import exceptions, url_converter, utils
 
-__all__ = (
-    "LESS",
-)
+__all__ = ("LESS",)
 
 
 class LESS(base.BaseCompiler):
@@ -20,12 +18,13 @@ class LESS(base.BaseCompiler):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
-    def __init__(self, executable="lessc", sourcemap_enabled=False, include_path=None, clean_css=False,
-                 global_vars=None):
+    def __init__(
+        self, executable="lessc", sourcemap_enabled=False, include_path=None, clean_css=False, global_vars=None
+    ):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         if isinstance(include_path, (list, tuple)):
-            include_path = ';'.join(include_path)
+            include_path = ";".join(include_path)
         self.include_path = include_path
         self.clean_css = clean_css
         self.global_vars = global_vars
@@ -45,31 +44,31 @@ class LESS(base.BaseCompiler):
         # Ex: source_path = '1/2/3', full_source_path = '/abc/1/2/3' -> cwd = '/abc'
         cwd = os.path.normpath(os.path.join(full_source_path, *([".."] * len(source_path.split("/")))))
 
-        args = [
-            self.executable
-        ]
+        args = [self.executable]
         if self.is_sourcemap_enabled:
-            args.extend([
-                "--source-map"
-            ])
+            args.extend(["--source-map"])
         if self.include_path:
-            args.extend([
-                "--include-path={}".format(self.include_path)
-            ])
+            args.extend(["--include-path={}".format(self.include_path)])
         if self.clean_css:
-            args.extend([
-                "--clean-css",
-            ])
+            args.extend(
+                [
+                    "--clean-css",
+                ]
+            )
         if self.global_vars:
             for variable_name, variable_value in self.global_vars.items():
-                args.extend([
-                    "--global-var={0}={1}".format(variable_name, variable_value),
-                ])
+                args.extend(
+                    [
+                        "--global-var={0}={1}".format(variable_name, variable_value),
+                    ]
+                )
 
-        args.extend([
-            self.get_full_source_path(source_path),
-            full_output_path,
-        ])
+        args.extend(
+            [
+                self.get_full_source_path(source_path),
+                full_output_path,
+            ]
+        )
         return_code, out, errors = utils.run_command(args, cwd=cwd)
 
         if return_code:
@@ -83,14 +82,9 @@ class LESS(base.BaseCompiler):
         return self.get_output_path(source_path)
 
     def compile_source(self, source):
-        args = [
-            self.executable,
-            "-"
-        ]
+        args = [self.executable, "-"]
         if self.include_path:
-            args.extend([
-                "--include-path={}".format(self.include_path)
-            ])
+            args.extend(["--include-path={}".format(self.include_path)])
 
         return_code, out, errors = utils.run_command(args, input=source)
 
@@ -100,7 +94,7 @@ class LESS(base.BaseCompiler):
         return out
 
     def find_imports(self, source):
-        """ Find the imported files in the source code.
+        """Find the imported files in the source code.
 
         :param source: source code
         :type source: str
@@ -127,7 +121,7 @@ class LESS(base.BaseCompiler):
         return sorted(imports)
 
     def locate_imported_file(self, source_dir, import_path):
-        """ Locate the imported file in the source directory.
+        """Locate the imported file in the source directory.
             Return the relative path to the imported file in posix format.
 
         :param source_dir: source directory
@@ -149,11 +143,13 @@ class LESS(base.BaseCompiler):
 
         filename = posixpath.basename(import_path)
         if filename[0] != "_":
-            path = posixpath.normpath(posixpath.join(
-                source_dir,
-                posixpath.dirname(import_path),
-                "_" + filename,
-            ))
+            path = posixpath.normpath(
+                posixpath.join(
+                    source_dir,
+                    posixpath.dirname(import_path),
+                    "_" + filename,
+                )
+            )
 
         try:
             self.get_full_source_path(path)
@@ -161,9 +157,7 @@ class LESS(base.BaseCompiler):
         except ValueError:
             pass
 
-        raise exceptions.StaticCompilationError(
-            "Can't locate the imported file: {0}".format(import_path)
-        )
+        raise exceptions.StaticCompilationError("Can't locate the imported file: {0}".format(import_path))
 
     def find_dependencies(self, source_path):
         source = self.get_source(source_path)

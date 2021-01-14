@@ -3,9 +3,7 @@ import os
 from . import base
 from .. import exceptions, utils
 
-__all__ = (
-    "LiveScript",
-)
+__all__ = ("LiveScript",)
 
 
 class LiveScript(base.BaseCompiler):
@@ -14,7 +12,7 @@ class LiveScript(base.BaseCompiler):
     input_extension = "ls"
     output_extension = "js"
 
-    def __init__(self, executable='lsc', sourcemap_enabled=False):
+    def __init__(self, executable="lsc", sourcemap_enabled=False):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         super(LiveScript, self).__init__()
@@ -31,10 +29,13 @@ class LiveScript(base.BaseCompiler):
         if self.is_sourcemap_enabled:
             args.append("-m")
             args.append("linked")
-        args.extend([
-            "-o", os.path.dirname(full_output_path),
-            self.get_full_source_path(source_path),
-        ])
+        args.extend(
+            [
+                "-o",
+                os.path.dirname(full_output_path),
+                self.get_full_source_path(source_path),
+            ]
+        )
         return_code, out, errors = utils.run_command(args)
 
         if return_code:

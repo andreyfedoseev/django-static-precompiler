@@ -5,9 +5,7 @@ import re
 from . import base
 from .. import exceptions, url_converter, utils
 
-__all__ = (
-    "Stylus",
-)
+__all__ = ("Stylus",)
 
 
 class Stylus(base.BaseCompiler):
@@ -44,10 +42,13 @@ class Stylus(base.BaseCompiler):
         ]
         if self.is_sourcemap_enabled:
             args.append("-m")
-        args.extend([
-            full_source_path,
-            "-o", os.path.dirname(full_output_path),
-        ])
+        args.extend(
+            [
+                full_source_path,
+                "-o",
+                os.path.dirname(full_output_path),
+            ]
+        )
 
         full_output_dirname = os.path.dirname(full_output_path)
         if not os.path.exists(full_output_dirname):
@@ -69,7 +70,7 @@ class Stylus(base.BaseCompiler):
         return self.get_output_path(source_path)
 
     def find_imports(self, source):
-        """ Find the imported files in the source code.
+        """Find the imported files in the source code.
 
         :param source: source code
         :type source: str
@@ -91,7 +92,7 @@ class Stylus(base.BaseCompiler):
         return sorted(imports)
 
     def locate_imported_file(self, source_dir, import_path):
-        """ Locate the imported file in the source directory.
+        """Locate the imported file in the source directory.
             Return the path to the imported file relative to STATIC_ROOT
 
         :param source_dir: source directory
@@ -106,9 +107,7 @@ class Stylus(base.BaseCompiler):
         try:
             self.get_full_source_path(path)
         except ValueError:
-            raise exceptions.StaticCompilationError(
-                "Can't locate the imported file: {0}".format(import_path)
-            )
+            raise exceptions.StaticCompilationError("Can't locate the imported file: {0}".format(import_path))
         return path
 
     def find_dependencies(self, source_path):
@@ -130,9 +129,7 @@ class Stylus(base.BaseCompiler):
                         "Can't locate the imported directory: {0}".format(import_path)
                     )
                 if not os.path.isdir(imported_dir_full_path):
-                    raise exceptions.StaticCompilationError(
-                        "Imported path is not a directory: {0}".format(import_path)
-                    )
+                    raise exceptions.StaticCompilationError("Imported path is not a directory: {0}".format(import_path))
                 for filename in os.listdir(imported_dir_full_path):
                     if filename.endswith(".styl"):
                         imported_files.add(self.locate_imported_file(imported_dir, filename))

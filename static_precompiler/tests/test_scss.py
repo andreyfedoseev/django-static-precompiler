@@ -19,7 +19,7 @@ def test_get_full_source_path(compiler_module):
 
     extra_path = os.path.join(os.path.dirname(__file__), "static", "styles", "sass", "extra-path")
 
-    compiler = compiler_module.SCSS(load_paths=(extra_path, ))
+    compiler = compiler_module.SCSS(load_paths=(extra_path,))
 
     assert compiler.get_full_source_path("_extra.scss") == os.path.join(extra_path, "_extra.scss")
 
@@ -40,11 +40,14 @@ def test_compile_file(compiler_module, monkeypatch, tmpdir):
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert compiled.read() == """p {
+        assert (
+            compiled.read()
+            == """p {
   font-size: 15px; }
   p a {
     color: red; }
 """
+        )
 
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_file("styles/sass/invalid-syntax.scss")
@@ -78,12 +81,12 @@ def test_compile_source(compiler_module):
 
     compiler = compiler_module.SCSS()
     assert (
-        utils.fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}")) ==
-        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+        utils.fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}"))
+        == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
     )
 
     with pytest.raises(exceptions.StaticCompilationError):
-        compiler.compile_source('invalid syntax')
+        compiler.compile_source("invalid syntax")
 
     # Test non-ascii
     NON_ASCII = """@charset "UTF-8";
@@ -95,8 +98,8 @@ def test_compile_source(compiler_module):
 
     compiler = compiler_module.SASS()
     assert (
-        utils.fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red")) ==
-        "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+        utils.fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red"))
+        == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
     )
 
 
@@ -147,7 +150,9 @@ p {
 }
     """
     compiler = scss.SCSS()
-    assert compiler.strip_comments(source) == """
+    assert (
+        compiler.strip_comments(source)
+        == """
 a {
   color: red;
   font-family: "Foo // Bar";
@@ -159,6 +164,7 @@ p {
   background-image: url(//not-a-comment.com);
 }
     """
+    )
 
 
 @pytest.mark.xfail
@@ -221,15 +227,11 @@ def test_locate_imported_file(compiler_module, monkeypatch):
         existing_files.add(os.path.join(root, "static", utils.normalize_path(f)))
 
     additional_path = os.path.join(root, "static", "additional-path")
-    existing_files.add(
-        os.path.join(additional_path, "foo.scss")
-    )
+    existing_files.add(os.path.join(additional_path, "foo.scss"))
 
     monkeypatch.setattr("os.path.exists", lambda x: x in existing_files)
 
-    compiler = compiler_module.SCSS(load_paths=(
-        additional_path,
-    ))
+    compiler = compiler_module.SCSS(load_paths=(additional_path,))
 
     assert compiler.locate_imported_file("A", "B.scss") == "A/B.scss"
     assert compiler.locate_imported_file("A", "C") == "A/_C.scss"
@@ -279,9 +281,12 @@ def test_compass(monkeypatch, tmpdir):
     full_output_path = compiler.get_full_output_path("test-compass.scss")
     assert os.path.exists(full_output_path)
     with open(full_output_path) as compiled:
-        assert compiled.read() == """p {
+        assert (
+            compiled.read()
+            == """p {
   background: url('/static/images/test.png'); }
 """
+        )
 
 
 def test_compass_import(monkeypatch, tmpdir):
@@ -290,19 +295,21 @@ def test_compass_import(monkeypatch, tmpdir):
     compiler = scss.SCSS(compass_enabled=True)
 
     assert (
-        compiler.compile_file("styles/sass/test-compass-import.scss") ==
-        "COMPILED/styles/sass/test-compass-import.css"
+        compiler.compile_file("styles/sass/test-compass-import.scss") == "COMPILED/styles/sass/test-compass-import.css"
     )
 
     full_output_path = compiler.get_full_output_path("styles/sass/test-compass-import.scss")
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert compiled.read() == """.round-corners {
+        assert (
+            compiled.read()
+            == """.round-corners {
   -moz-border-radius: 4px / 4px;
   -webkit-border-radius: 4px 4px;
   border-radius: 4px / 4px; }
 """
+        )
 
     compiler = scss.SCSS(compass_enabled=False)
     with pytest.raises(exceptions.StaticCompilationError):
@@ -314,16 +321,17 @@ def test_get_extra_args():
     assert scss.SCSS().get_extra_args() == []
 
     assert scss.SCSS(
-        compass_enabled=True,
-        load_paths=["foo", "bar"],
-        precision=10,
-        output_style="compact"
+        compass_enabled=True, load_paths=["foo", "bar"], precision=10, output_style="compact"
     ).get_extra_args() == [
-        "-I", "foo",
-        "-I", "bar",
+        "-I",
+        "foo",
+        "-I",
+        "bar",
         "--compass",
-        "--precision", "10",
-        "-t", "compact",
+        "--precision",
+        "10",
+        "-t",
+        "compact",
     ]
 
     with pytest.raises(ValueError):
@@ -347,9 +355,12 @@ def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert compiled.read() == """p {
+        assert (
+            compiled.read()
+            == """p {
   font-weight: bold; }
 """
+        )
 
     with pytest.raises(ValueError):
         compiler_module.SCSS(load_paths="path")

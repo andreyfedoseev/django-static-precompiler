@@ -21,8 +21,15 @@ class SCSS(base.BaseCompiler):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
 
-    def __init__(self, executable="sass", sourcemap_enabled=False, compass_enabled=False, load_paths=None,
-                 precision=None, output_style=None):
+    def __init__(
+        self,
+        executable="sass",
+        sourcemap_enabled=False,
+        compass_enabled=False,
+        load_paths=None,
+        precision=None,
+        output_style=None,
+    ):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         self.is_compass_enabled = compass_enabled
@@ -67,10 +74,12 @@ class SCSS(base.BaseCompiler):
             "--sourcemap={0}".format("auto" if self.is_sourcemap_enabled else "none"),
         ] + self.get_extra_args()
 
-        args.extend([
-            self.get_full_source_path(source_path),
-            full_output_path,
-        ])
+        args.extend(
+            [
+                self.get_full_source_path(source_path),
+                full_output_path,
+            ]
+        )
 
         full_output_dirname = os.path.dirname(full_output_path)
         if not os.path.exists(full_output_dirname):
@@ -110,7 +119,7 @@ class SCSS(base.BaseCompiler):
 
     # noinspection PyMethodMayBeStatic
     def parse_import_string(self, import_string):
-        """ Extract import items from import string.
+        """Extract import items from import string.
         :param import_string: import string
         :type import_string: str
         :returns: list of str
@@ -178,7 +187,7 @@ class SCSS(base.BaseCompiler):
         return sorted(items)
 
     def strip_comments(self, source):
-        """ Strip comments from source, it does not remove comments inside
+        """Strip comments from source, it does not remove comments inside
         strings or comments inside functions calls.
 
         Contribution taken from and added function call pattern
@@ -201,10 +210,11 @@ class SCSS(base.BaseCompiler):
                 return ""  # so we will return empty to remove the comment
             else:  # otherwise, we will return the 1st group
                 return match.group(1)  # captured quoted-source or function call
+
         return regex.sub(_replacer, source)
 
     def find_imports(self, source):
-        """ Find the imported files in the source code.
+        """Find the imported files in the source code.
 
         :param source: source code
         :type source: str
@@ -220,12 +230,10 @@ class SCSS(base.BaseCompiler):
                     continue
                 if import_item.endswith(".css"):
                     continue
-                if import_item.startswith("http://") or \
-                   import_item.startswith("https://"):
+                if import_item.startswith("http://") or import_item.startswith("https://"):
                     continue
                 if self.is_compass_enabled and (
-                    import_item in ("compass", "compass.scss") or
-                    import_item.startswith("compass/")
+                    import_item in ("compass", "compass.scss") or import_item.startswith("compass/")
                 ):
                     # Ignore compass imports if Compass is enabled.
                     continue
@@ -245,7 +253,7 @@ class SCSS(base.BaseCompiler):
             raise
 
     def locate_imported_file(self, source_dir, import_path):
-        """ Locate the imported file in the source directory.
+        """Locate the imported file in the source directory.
             Return the path to the imported file relative to STATIC_ROOT
 
         :param source_dir: source directory

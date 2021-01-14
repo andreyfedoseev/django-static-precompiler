@@ -20,7 +20,7 @@ class EventHandler(events.FileSystemEventHandler):
     def on_any_event(self, e):
         if e.is_directory or e.event_type not in ("created", "modified"):
             return
-        path = e.src_path[len(self.scanned_dir):]
+        path = e.src_path[len(self.scanned_dir) :]
         if path.startswith("/"):
             path = path[1:]
         for compiler in self.compilers:

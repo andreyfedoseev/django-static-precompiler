@@ -29,18 +29,18 @@ def build_compilers():
             if len(compiler_path) != 2:
                 raise django.core.exceptions.ImproperlyConfigured(
                     'Compiler must be specified in the format ("path.to.CompilerClass", {{compiler options...}}),'
-                    ' got {0}'.format(compiler_path)
+                    " got {0}".format(compiler_path)
                 )
             compiler_path, compiler_options = compiler_path
             if not isinstance(compiler_options, dict):
                 raise django.core.exceptions.ImproperlyConfigured(
-                    'Compiler options must be a dict, got {0}'.format(compiler_options)
+                    "Compiler options must be a dict, got {0}".format(compiler_options)
                 )
 
         try:
-            compiler_module, compiler_classname = compiler_path.rsplit('.', 1)
+            compiler_module, compiler_classname = compiler_path.rsplit(".", 1)
         except ValueError:
-            raise django.core.exceptions.ImproperlyConfigured('{0} isn\'t a compiler module'.format(compiler_path))
+            raise django.core.exceptions.ImproperlyConfigured("{0} isn't a compiler module".format(compiler_path))
         try:
             mod = importlib.import_module(compiler_module)
         except ImportError as e:

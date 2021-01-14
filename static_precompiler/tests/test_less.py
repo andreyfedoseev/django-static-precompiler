@@ -23,7 +23,9 @@ def test_compile_file(monkeypatch, tmpdir):
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert compiled.read() == """p {
+        assert (
+            compiled.read()
+            == """p {
   font-size: 15px;
 }
 p a {
@@ -33,6 +35,7 @@ h1 {
   color: blue;
 }
 """
+        )
 
 
 def test_sourcemap(monkeypatch, tmpdir):
@@ -61,12 +64,12 @@ def test_compile_source():
     compiler = compilers.LESS()
 
     assert (
-        compiler.compile_source("p {font-size: 15px; a {color: red;}}") ==
-        "p {\n  font-size: 15px;\n}\np a {\n  color: red;\n}\n"
+        compiler.compile_source("p {font-size: 15px; a {color: red;}}")
+        == "p {\n  font-size: 15px;\n}\np a {\n  color: red;\n}\n"
     )
 
     with pytest.raises(exceptions.StaticCompilationError):
-        compiler.compile_source('invalid syntax')
+        compiler.compile_source("invalid syntax")
 
     # Test non-ascii
     NON_ASCII = """.external_link:first-child:before {
@@ -94,17 +97,19 @@ def test_find_imports():
 @import 'single-quotes.less';
 @import "no-extension";
 """
-    expected = sorted([
-        "foo.less",
-        "reference.less",
-        "inline.css",
-        "less.less",
-        "once.less",
-        "multiple.less",
-        "screen.less",
-        "single-quotes.less",
-        "no-extension",
-    ])
+    expected = sorted(
+        [
+            "foo.less",
+            "reference.less",
+            "inline.css",
+            "less.less",
+            "once.less",
+            "multiple.less",
+            "screen.less",
+            "single-quotes.less",
+            "no-extension",
+        ]
+    )
     assert compiler.find_imports(source) == expected
 
 
@@ -161,10 +166,12 @@ def test_global_vars(monkeypatch, tmpdir):
         # Global var is not defined
         compiler.compile_file("styles/less/global-vars.less")
 
-    compiler = compilers.LESS(global_vars={
-        "paragraph-color": "#008000",
-        "link-color": "#800000",
-    })
+    compiler = compilers.LESS(
+        global_vars={
+            "paragraph-color": "#008000",
+            "link-color": "#800000",
+        }
+    )
 
     compiler.compile_file("styles/less/global-vars.less")
 
@@ -173,13 +180,16 @@ def test_global_vars(monkeypatch, tmpdir):
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert compiled.read() == """p {
+        assert (
+            compiled.read()
+            == """p {
   color: #008000;
 }
 p a {
   color: #800000;
 }
 """
+        )
 
 
 def test_include_path(monkeypatch, tmpdir, settings):
@@ -198,7 +208,10 @@ def test_include_path(monkeypatch, tmpdir, settings):
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert compiled.read() == """p {
+        assert (
+            compiled.read()
+            == """p {
   font-weight: bold;
 }
 """
+        )
