@@ -9,21 +9,30 @@ from static_precompiler.management.commands import compilestatic
 
 def test_get_scanned_dirs():
 
-    assert compilestatic.get_scanned_dirs() == sorted([
-        os.path.join(os.path.dirname(__file__), "compilestatic"),
-        os.path.join(os.path.dirname(__file__), "staticfiles_dir"),
-        os.path.join(os.path.dirname(__file__), "staticfiles_dir_with_prefix"),
-        static_precompiler.settings.STATIC_ROOT,
-    ])
+    assert compilestatic.get_scanned_dirs() == sorted(
+        [
+            os.path.join(os.path.dirname(__file__), "compilestatic"),
+            os.path.join(os.path.dirname(__file__), "staticfiles_dir"),
+            os.path.join(os.path.dirname(__file__), "staticfiles_dir_with_prefix"),
+            static_precompiler.settings.STATIC_ROOT,
+        ]
+    )
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("verbosity", (0, 1, ))
+@pytest.mark.parametrize(
+    "verbosity",
+    (
+        0,
+        1,
+    ),
+)
 def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
 
-    monkeypatch.setattr("static_precompiler.management.commands.compilestatic.get_scanned_dirs", lambda: (
-        os.path.join(os.path.dirname(__file__), "compilestatic"),
-    ))
+    monkeypatch.setattr(
+        "static_precompiler.management.commands.compilestatic.get_scanned_dirs",
+        lambda: (os.path.join(os.path.dirname(__file__), "compilestatic"),),
+    )
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     management.call_command("compilestatic", verbosity=verbosity)
@@ -33,7 +42,7 @@ def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
     compiled_files = []
     for root, dirs, files in os.walk(output_path):
         for filename in files:
-            compiled_files.append(os.path.join(root[len(output_path):].lstrip("/"), filename))
+            compiled_files.append(os.path.join(root[len(output_path) :].lstrip("/"), filename))
 
     compiled_files.sort()
 
@@ -59,9 +68,10 @@ def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
 @pytest.mark.django_db
 def test_ignore_dependencies_option(django_assert_num_queries, monkeypatch, tmpdir):
 
-    monkeypatch.setattr("static_precompiler.management.commands.compilestatic.get_scanned_dirs", lambda: (
-        os.path.join(os.path.dirname(__file__), "compilestatic"),
-    ))
+    monkeypatch.setattr(
+        "static_precompiler.management.commands.compilestatic.get_scanned_dirs",
+        lambda: (os.path.join(os.path.dirname(__file__), "compilestatic"),),
+    )
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     with django_assert_num_queries(0):
@@ -82,9 +92,10 @@ def test_delete_stale_files(monkeypatch, tmpdir):
     with open(os.path.join(output_path, "stale.js"), "w+") as f:
         f.write("stale")
 
-    monkeypatch.setattr("static_precompiler.management.commands.compilestatic.get_scanned_dirs", lambda: (
-        os.path.join(os.path.dirname(__file__), "compilestatic"),
-    ))
+    monkeypatch.setattr(
+        "static_precompiler.management.commands.compilestatic.get_scanned_dirs",
+        lambda: (os.path.join(os.path.dirname(__file__), "compilestatic"),),
+    )
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     management.call_command("compilestatic", delete_stale_files=True)
@@ -92,7 +103,7 @@ def test_delete_stale_files(monkeypatch, tmpdir):
     compiled_files = []
     for root, dirs, files in os.walk(output_path):
         for filename in files:
-            compiled_files.append(os.path.join(root[len(output_path):].lstrip("/"), filename))
+            compiled_files.append(os.path.join(root[len(output_path) :].lstrip("/"), filename))
 
     compiled_files.sort()
 

@@ -33,22 +33,19 @@ def test_get_full_source_path():
 
     root = os.path.dirname(__file__)
 
-    assert (
-        compiler.get_full_source_path("scripts/test.coffee") ==
-        os.path.join(root, "static", "scripts", "test.coffee")
+    assert compiler.get_full_source_path("scripts/test.coffee") == os.path.join(
+        root, "static", "scripts", "test.coffee"
     )
 
     with pytest.raises(ValueError):
         compiler.get_full_source_path("scripts/does-not-exist.coffee")
 
-    assert (
-        compiler.get_full_source_path("another_test.coffee") ==
-        os.path.normpath(os.path.join(root, "staticfiles_dir", "another_test.coffee"))
+    assert compiler.get_full_source_path("another_test.coffee") == os.path.normpath(
+        os.path.join(root, "staticfiles_dir", "another_test.coffee")
     )
 
-    assert (
-        compiler.get_full_source_path("prefix/another_test.coffee") ==
-        os.path.normpath(os.path.join(root, "staticfiles_dir_with_prefix", "another_test.coffee"))
+    assert compiler.get_full_source_path("prefix/another_test.coffee") == os.path.normpath(
+        os.path.join(root, "staticfiles_dir_with_prefix", "another_test.coffee")
     )
 
 
@@ -221,14 +218,8 @@ def test_get_dependencies(monkeypatch):
 
     assert compiler.get_dependencies("spam.scss") == []
 
-    dependency_1 = models.Dependency.objects.create(
-        source="spam.scss",
-        depends_on="ham.scss"
-    )
-    dependency_2 = models.Dependency.objects.create(
-        source="spam.scss",
-        depends_on="eggs.scss"
-    )
+    dependency_1 = models.Dependency.objects.create(source="spam.scss", depends_on="ham.scss")
+    dependency_2 = models.Dependency.objects.create(source="spam.scss", depends_on="eggs.scss")
 
     def get_full_source_path(source_path):
         # File "eggs.scss" does not exist
@@ -254,14 +245,8 @@ def test_get_dependents(monkeypatch):
 
     assert compiler.get_dependents("spam.scss") == []
 
-    dependency_1 = models.Dependency.objects.create(
-        source="ham.scss",
-        depends_on="spam.scss"
-    )
-    dependency_2 = models.Dependency.objects.create(
-        source="eggs.scss",
-        depends_on="spam.scss"
-    )
+    dependency_1 = models.Dependency.objects.create(source="ham.scss", depends_on="spam.scss")
+    dependency_2 = models.Dependency.objects.create(source="eggs.scss", depends_on="spam.scss")
 
     def get_full_source_path(source_path):
         # File "eggs.scss" does not exist

@@ -21,10 +21,7 @@ def test_write_read_file(tmpdir, settings):
 
 def test_compile_static(monkeypatch):
 
-    compiler_stub = stub(
-        compile=lambda x: "compiled",
-        compile_lazy=lambda x: "compiled lazy"
-    )
+    compiler_stub = stub(compile=lambda x: "compiled", compile_lazy=lambda x: "compiled lazy")
 
     monkeypatch.setattr("static_precompiler.registry.get_compiler_by_path", lambda path: compiler_stub)
 

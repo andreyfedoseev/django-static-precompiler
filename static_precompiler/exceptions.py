@@ -1,5 +1,3 @@
-
-
 class StaticCompilationError(Exception):
     pass
 

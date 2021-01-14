@@ -16,23 +16,31 @@ def test_convert_url():
 def test_convert():
 
     assert (
-        url_converter.convert("p {\n  background: url(../images/ham.jpg) no-repeat 0 0;\n}", "styles/") ==
-        "p {\n  background: url('/static/images/ham.jpg') no-repeat 0 0;\n}"
+        url_converter.convert("p {\n  background: url(../images/ham.jpg) no-repeat 0 0;\n}", "styles/")
+        == "p {\n  background: url('/static/images/ham.jpg') no-repeat 0 0;\n}"
     )
     assert (
         url_converter.convert(
             'p {\n  background-url: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='
-            '\'http://www.w3.org/2000/svg\' viewBox=\'0 0 8 8\'%3E%3Cpath fill='
-            '\'rgba(255, 255, 255, 0.97)\' d=\'M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 '
-            '2.193z\'/%3E%3C/svg%3E");\n}', "") ==
-        'p {\n  background-url: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='
-        '\'http://www.w3.org/2000/svg\' viewBox=\'0 0 8 8\'%3E%3Cpath fill=\'rgba(255, 255, 255, 0.97)'
-        '\' d=\'M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z\'/%3E%3C/svg%3E");\n}'
+            "'http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill="
+            "'rgba(255, 255, 255, 0.97)' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 "
+            "2.193z'/%3E%3C/svg%3E\");\n}",
+            "",
+        )
+        == 'p {\n  background-url: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='
+        "'http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='rgba(255, 255, 255, 0.97)"
+        "' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3E%3C/svg%3E\");\n}"
     )
-    assert url_converter.convert(""".external_link:first-child:before {
+    assert (
+        url_converter.convert(
+            """.external_link:first-child:before {
   content: "Zobacz także:";
   background: url("../images/картинка.png"); }
-""", "styles/") == """.external_link:first-child:before {
+""",
+            "styles/",
+        )
+        == """.external_link:first-child:before {
   content: "Zobacz także:";
   background: url("/static/images/картинка.png"); }
 """
+    )

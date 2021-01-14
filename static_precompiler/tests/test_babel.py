@@ -51,8 +51,8 @@ def test_compile_source():
     compiler = compilers.Babel()
 
     assert (
-        clean_javascript(compiler.compile_source('console.log("Hello, World!");')) ==
-        """console.log("Hello, World!");"""
+        clean_javascript(compiler.compile_source('console.log("Hello, World!");'))
+        == """console.log("Hello, World!");"""
     )
 
     with pytest.raises(exceptions.StaticCompilationError):
@@ -60,8 +60,7 @@ def test_compile_source():
 
     # Test non-ascii
     assert (
-        clean_javascript(compiler.compile_source('console.log("Привет, Мир!");')) ==
-        """console.log("Привет, Мир!");"""
+        clean_javascript(compiler.compile_source('console.log("Привет, Мир!");')) == """console.log("Привет, Мир!");"""
     )
 
 
@@ -70,6 +69,8 @@ def test_get_extra_args():
     compiler = compilers.Babel(plugins="bar", presets="baz")
 
     assert compiler.get_extra_args() == [
-        "--plugins", "bar",
-        "--presets", "baz",
+        "--plugins",
+        "bar",
+        "--presets",
+        "baz",
     ]

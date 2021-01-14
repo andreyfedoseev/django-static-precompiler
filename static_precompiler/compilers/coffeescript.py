@@ -3,9 +3,7 @@ import os
 from . import base
 from .. import exceptions, utils
 
-__all__ = (
-    "CoffeeScript",
-)
+__all__ = ("CoffeeScript",)
 
 
 class CoffeeScript(base.BaseCompiler):
@@ -27,10 +25,13 @@ class CoffeeScript(base.BaseCompiler):
         ]
         if self.is_sourcemap_enabled:
             args.append("-m")
-        args.extend([
-            "-o", os.path.dirname(full_output_path),
-            self.get_full_source_path(source_path),
-        ])
+        args.extend(
+            [
+                "-o",
+                os.path.dirname(full_output_path),
+                self.get_full_source_path(source_path),
+            ]
+        )
         return_code, out, errors = utils.run_command(args)
 
         if return_code:

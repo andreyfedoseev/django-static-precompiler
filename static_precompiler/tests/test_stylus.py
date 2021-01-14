@@ -23,10 +23,13 @@ def test_compile_file(monkeypatch, tmpdir):
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert compiled.read() == """p {
+        assert (
+            compiled.read()
+            == """p {
   color: #f00;
 }
 """
+        )
 
 
 def test_sourcemap(monkeypatch, tmpdir):

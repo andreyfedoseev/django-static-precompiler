@@ -6,23 +6,21 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Dependency',
+            name="Dependency",
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('source', models.CharField(max_length=255, db_index=True)),
-                ('depends_on', models.CharField(max_length=255, db_index=True)),
+                ("id", models.AutoField(verbose_name="ID", serialize=False, auto_created=True, primary_key=True)),
+                ("source", models.CharField(max_length=255, db_index=True)),
+                ("depends_on", models.CharField(max_length=255, db_index=True)),
             ],
-            options={
-            },
+            options={},
             bases=(models.Model,),
         ),
         migrations.AlterUniqueTogether(
-            name='dependency',
-            unique_together=set([('source', 'depends_on')]),
+            name="dependency",
+            unique_together=set([("source", "depends_on")]),
         ),
     ]

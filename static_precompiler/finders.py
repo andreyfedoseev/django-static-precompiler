@@ -10,6 +10,7 @@ class StaticPrecompilerFileStorage(storage.FileSystemStorage):
 
     The default for ``location`` is ``STATIC_PRECOMPILER_ROOT``
     """
+
     def __init__(self, location=None, base_url=None):
         if location is None:
             location = settings.ROOT
@@ -21,6 +22,7 @@ class StaticPrecompilerFinder(finders.BaseStorageFinder):
     A staticfiles finder that looks in STATIC_PRECOMPILER_ROOT for compiled files, to be used during development
     with staticfiles development file server or during deployment.
     """
+
     storage = StaticPrecompilerFileStorage
 
     def list(self, ignore_patterns):
