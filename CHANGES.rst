@@ -2,6 +2,12 @@
 Changelog
 *********
 
+2.0
+===
+
+ - Drop Python 2.x support
+ - Add support for Django 3.0 and 3.1
+
 1.8.2
 =====
 

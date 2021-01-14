@@ -47,7 +47,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'django-static-precompiler'
-copyright = u'2018, Andrey Fedoseev'
+copyright = u'2021, Andrey Fedoseev'
 author = u'Andrey Fedoseev'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -55,7 +55,7 @@ author = u'Andrey Fedoseev'
 # built documents.
 #
 # The short X.Y version.
-version = '1.8.2'
+version = '2.0'
 # The full version, including alpha/beta/rc tags.
 release = version
 
