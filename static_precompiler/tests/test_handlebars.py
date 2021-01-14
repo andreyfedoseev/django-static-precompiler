@@ -40,8 +40,8 @@ templates['test'] = template({"compiler":[7,">= 4.0.0"],"main":function(containe
     + container.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
     + "</h1>\\n";
 },"useData":true});
-})();"""
-        )  # noqa
+})();"""  # noqa: E501
+        )
 
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_file("scripts/broken.handlebars")
