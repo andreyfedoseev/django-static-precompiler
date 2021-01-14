@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import os
 
-from django.utils import six
 from pretend import stub
 
 from static_precompiler import utils
@@ -16,7 +15,7 @@ def test_write_read_file(tmpdir, settings):
 
     assert os.path.exists(path)
     read_content = utils.read_file(path)
-    assert isinstance(read_content, six.text_type)
+    assert isinstance(read_content, str)
     assert read_content == "Привет, Мир!"
 
 

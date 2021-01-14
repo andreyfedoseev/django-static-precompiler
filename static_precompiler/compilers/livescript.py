@@ -52,7 +52,7 @@ class LiveScript(base.BaseCompiler):
             "-s",
             "-p",
         ]
-        return_code, out, errors = utils.run_command(args, source)
+        return_code, out, errors = utils.run_command(args, input=source)
         if return_code:
             raise exceptions.StaticCompilationError(errors)
 

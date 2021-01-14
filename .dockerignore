@@ -12,7 +12,7 @@ virtualenv-win
 test_project/db.sqlite3
 /.vagrant/
 /.vagrant.bak/
-.sass-cache/
+**/.sass-cache/
 /htmlcov/
 /.tox/
 /.cache/
@@ -22,3 +22,4 @@ test_project/db.sqlite3
 coverage.xml
 .venv
 .pytest_cache
+**/__pycache__

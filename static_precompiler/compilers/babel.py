@@ -70,7 +70,7 @@ class Babel(base.BaseCompiler):
             self.executable,
         ] + self.get_extra_args()
 
-        return_code, out, errors = utils.run_command(args, source)
+        return_code, out, errors = utils.run_command(args, input=source)
         if return_code:
             raise exceptions.StaticCompilationError(errors)
 
