@@ -5,23 +5,6 @@ import re
 import sys
 
 
-if sys.version_info.major == 2:
-    install_requires = [
-        "Django>=1.7,<2.0",
-    ]
-elif sys.version_info.major == 3:
-    install_requires = [
-        "Django>=1.9",
-    ]
-else:
-    raise AssertionError()
-
-if sys.version_info < (3, 5):
-    install_requires += [
-        "typing",
-    ]
-
-
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
 
@@ -43,8 +26,6 @@ class PyTest(TestCommand):
 
 def read(fname):
     path = os.path.join(os.path.dirname(__file__), fname)
-    if sys.version < '3':
-        return open(path).read()
     return open(path, encoding="utf-8").read()
 
 
@@ -83,7 +64,10 @@ setup(
     ],
     keywords=["sass", "scss", "less", "stylus", "css", "coffeescript", "javascript", "babel", "livescript",
               "handlebars"],
-    install_requires=install_requires,
+    python_requiress=">=3.5",
+    install_requires=[
+        "Django>=1.9",
+    ],
     tests_require=[
         "pytest",
         "pytest-django",
