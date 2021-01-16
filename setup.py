@@ -64,7 +64,7 @@ setup(
     ],
     keywords=["sass", "scss", "less", "stylus", "css", "coffeescript", "javascript", "babel", "livescript",
               "handlebars"],
-    python_requiress=">=3.5",
+    python_requires=">=3.5",
     install_requires=[
         "Django>=1.9",
     ],
