@@ -45,7 +45,10 @@ class SCSS(scss.SCSS):
         try:
             if self.is_sourcemap_enabled:
                 compiled, sourcemap = sass.compile(
-                    filename=full_source_path, source_map_filename=sourcemap_path, include_paths=self.load_paths
+                    filename=full_source_path,
+                    source_map_filename=sourcemap_path,
+                    output_filename_hint=full_output_path,
+                    include_paths=self.load_paths,
                 )
             else:
                 compile_kwargs = {}
