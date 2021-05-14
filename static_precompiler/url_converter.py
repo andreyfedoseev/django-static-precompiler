@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 
 from . import settings, utils
 
-URL_PATTERN = re.compile(r"url\((.+)\)")
+URL_PATTERN = re.compile(r"url\((.+?)\)")
 
 
 def convert_url(url, source_dir):
