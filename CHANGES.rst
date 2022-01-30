@@ -2,6 +2,14 @@
 Changelog
 *********
 
+2.1
+===
+
+ - Drop Python 3.5 support
+ - Drop Django 1.x support
+ - Add support for Django 4.0
+
+
 2.0
 ===
 
