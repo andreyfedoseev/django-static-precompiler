@@ -23,16 +23,16 @@ def normalize_path(posix_path):
 
 
 def read_file(path):
-    """ Return the contents of a file as unicode. """
+    """Return the contents of a file as unicode."""
     with open(path, encoding=get_file_encoding()) as file_object:
         return file_object.read()
 
 
 def write_file(content, path):
-    """ Write unicode content to a file. """
+    """Write unicode content to a file."""
 
     # Convert to unicode
-    content = encoding.force_text(content)
+    content = encoding.force_str(content)
 
     with open(path, "w+", encoding=get_file_encoding()) as file_object:
         file_object.write(content)

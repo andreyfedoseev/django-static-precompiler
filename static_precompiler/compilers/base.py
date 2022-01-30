@@ -201,7 +201,7 @@ class BaseCompiler(object):
 
         :returns: str
         """
-        return encoding.force_text(self.compile(source_path))
+        return encoding.force_str(self.compile(source_path))
 
     compile_lazy = functional.lazy(compile_lazy, str)
 
