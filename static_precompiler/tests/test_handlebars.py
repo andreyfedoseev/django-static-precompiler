@@ -8,7 +8,7 @@ from static_precompiler import compilers, exceptions
 
 
 def clean_javascript(js):
-    """ Remove comments and all blank lines. """
+    """Remove comments and all blank lines."""
     return "\n".join(line for line in js.split("\n") if line.strip() and not line.startswith("//"))
 
 
