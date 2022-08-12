@@ -83,7 +83,7 @@ class Command(django.core.management.base.BaseCommand):
 
     help = "Compile static files."
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def add_arguments(self, parser):
         for argument, parameters in ARGUMENTS:
