@@ -83,7 +83,7 @@ class Command(django.core.management.base.BaseCommand):
 
     help = "Compile static files."
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def add_arguments(self, parser):
         for argument, parameters in ARGUMENTS:
@@ -129,9 +129,5 @@ class Command(django.core.management.base.BaseCommand):
             watch_dirs(scanned_dirs, verbosity)
 
 
-if django.VERSION < (1, 8):
-    import optparse
-
-    Command.option_list = django.core.management.base.NoArgsCommand.option_list + tuple(
-        optparse.make_option(argument, **argument_parameters) for argument, argument_parameters in ARGUMENTS
-    )
+if django.VERSION < (3, 2):
+    Command.requires_system_checks = False

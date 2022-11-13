@@ -1,8 +1,8 @@
-pytest<4
-pytest-django==3.1.2
+pytest==6.2.5
+pytest-django==4.5.2
 pretend
 watchdog
 libsass
 coverage
-pytest-cov==2.5.1
+pytest-cov==4.0.0
 tox

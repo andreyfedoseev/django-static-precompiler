@@ -2,6 +2,11 @@
 Changelog
 *********
 
+Dev
+===
+
+ - Add support for Django 4.1
+
 2.1
 ===
 
