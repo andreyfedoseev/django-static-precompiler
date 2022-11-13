@@ -48,7 +48,7 @@ setup(
     packages=find_packages(),
     version=version,
     author="Andrey Fedoseev",
-    author_email="andrey.fedoseev@gmail.com",
+    author_email="andrey@andreyfedoseev.com",
     url="https://github.com/andreyfedoseev/django-static-precompiler",
     description="Django template tags to compile all kinds of static files "
     "(SASS, LESS, Stylus, CoffeeScript, Babel, LiveScript, Handlebars).",
