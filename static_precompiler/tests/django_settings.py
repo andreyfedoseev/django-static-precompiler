@@ -1,6 +1,7 @@
 import os
 
 DEBUG = True
+USE_TZ = False
 SECRET_KEY = "static_precompiler"
 
 DATABASES = {
