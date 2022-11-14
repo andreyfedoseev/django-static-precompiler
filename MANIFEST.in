@@ -2,8 +2,8 @@ include AUTHORS
 include README.md
 include CHANGES.md
 include LICENSE
-recursive-include static_precompiler/tests/static *
-recursive-include static_precompiler/tests/staticfiles_dir *
-recursive-include static_precompiler/tests/staticfiles_dir_with_prefix *
-prune static_precompiler/tests/static/.sass-cache
-prune static_precompiler/tests/staticfiles_dir/.sass-cache
+recursive-include tests/static *
+recursive-include tests/staticfiles_dir *
+recursive-include tests/staticfiles_dir_with_prefix *
+prune tests/static/.sass-cache
+prune tests/staticfiles_dir/.sass-cache

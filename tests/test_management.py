@@ -64,7 +64,6 @@ def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
         assert stdout == ""
 
 
-@pytest.mark.skip("Re-enable when pytest-django>3.1.2 is released")
 @pytest.mark.django_db
 def test_ignore_dependencies_option(django_assert_num_queries, monkeypatch, tmpdir):
 
