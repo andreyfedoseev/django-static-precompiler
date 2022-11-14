@@ -1,5 +1,0 @@
--r requirements-test.txt
-flake8
-codecov
-black
-isort
