@@ -76,9 +76,7 @@ def test_sourcemap(compiler_module, monkeypatch, tmpdir):
     assert sourcemap["file"] == "test.css"
 
     with open(full_output_path) as compiled_file:
-        assert "/*# sourceMappingURL=test.css.map */" in {
-            line.strip() for line in compiled_file.readlines()
-        }
+        assert "/*# sourceMappingURL=test.css.map */" in {line.strip() for line in compiled_file.readlines()}
 
 
 @pytest.mark.parametrize("compiler_module", (libsass, scss))

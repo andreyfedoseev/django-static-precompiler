@@ -2,6 +2,11 @@
 Changelog
 *********
 
+2.3
+===
+
+ - Fix incorrect source map URL with ``libsass``
+
 2.2
 ===
 
