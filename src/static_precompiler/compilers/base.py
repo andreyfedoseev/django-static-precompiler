@@ -14,7 +14,7 @@ logger = logging.getLogger("static_precompiler")
 __all__ = ("BaseCompiler",)
 
 
-class BaseCompiler(object):
+class BaseCompiler:
 
     name = None
     supports_dependencies = False
@@ -56,7 +56,7 @@ class BaseCompiler(object):
             full_path = None
 
         if full_path is None:
-            raise ValueError("Can't find staticfile named: {0}".format(source_path))
+            raise ValueError(f"Can't find staticfile named: {source_path}")
 
         return full_path
 
@@ -68,7 +68,7 @@ class BaseCompiler(object):
         :returns: str
 
         """
-        return "{0}.{1}".format(os.path.splitext(source_filename)[0], self.output_extension)
+        return f"{os.path.splitext(source_filename)[0]}.{self.output_extension}"
 
     def get_output_path(self, source_path):
         """Get relative path to compiled file based for the given source file.
@@ -171,7 +171,7 @@ class BaseCompiler(object):
 
         """
         if not self.is_supported(source_path):
-            raise ValueError("'{0}' file type is not supported by '{1}'".format(source_path, self.__class__.__name__))
+            raise ValueError(f"'{source_path}' file type is not supported by '{self.__class__.__name__}'")
 
         compiled_path = self.get_output_path(source_path)
 
@@ -182,7 +182,7 @@ class BaseCompiler(object):
             if self.supports_dependencies:
                 self.update_dependencies(source_path, self.find_dependencies(source_path))
 
-            message = "Compiled '{0}' to '{1}'".format(source_path, compiled_path)
+            message = f"Compiled '{source_path}' to '{compiled_path}'"
 
             if from_management and verbosity >= 1:
                 print(message)

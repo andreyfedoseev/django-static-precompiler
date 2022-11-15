@@ -14,7 +14,7 @@ class StaticPrecompilerFileStorage(storage.FileSystemStorage):
     def __init__(self, location=None, base_url=None):
         if location is None:
             location = settings.ROOT
-        super(StaticPrecompilerFileStorage, self).__init__(location, base_url)
+        super().__init__(location, base_url)
 
 
 class StaticPrecompilerFinder(finders.BaseStorageFinder):
@@ -27,5 +27,5 @@ class StaticPrecompilerFinder(finders.BaseStorageFinder):
 
     def list(self, ignore_patterns):
         if settings.FINDER_LIST_FILES:
-            return super(StaticPrecompilerFinder, self).list(ignore_patterns)
+            return super().list(ignore_patterns)
         return []

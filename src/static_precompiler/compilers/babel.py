@@ -21,7 +21,7 @@ class Babel(base.BaseCompiler):
         self.modules = modules
         self.plugins = plugins
         self.presets = presets
-        super(Babel, self).__init__()
+        super().__init__()
 
     def get_extra_args(self):
         args = []

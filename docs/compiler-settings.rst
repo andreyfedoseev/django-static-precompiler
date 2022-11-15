@@ -16,10 +16,13 @@ Example:
 .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.CoffeeScript', {
-            "executable": "/usr/bin/coffee",
-            "sourcemap_enabled": True,
-        }),
+        (
+            "static_precompiler.compilers.CoffeeScript",
+            {
+                "executable": "/usr/bin/coffee",
+                "sourcemap_enabled": True,
+            },
+        ),
     )
 
 
@@ -43,12 +46,15 @@ Example:
 .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Babel', {
-            "executable": "/usr/bin/babel",
-            "sourcemap_enabled": True,
-            "plugins": "transform-react-jsx",
-            "presets": "es2015,react",
-        }),
+        (
+            "static_precompiler.compilers.Babel",
+            {
+                "executable": "/usr/bin/babel",
+                "sourcemap_enabled": True,
+                "plugins": "transform-react-jsx",
+                "presets": "es2015,react",
+            },
+        ),
     )
 
 
@@ -66,10 +72,13 @@ Example:
 .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.LiveScript', {
-            "executable": "/usr/bin/lsc",
-            "sourcemap_enabled": True,
-        }),
+        (
+            "static_precompiler.compilers.LiveScript",
+            {
+                "executable": "/usr/bin/lsc",
+                "sourcemap_enabled": True,
+            },
+        ),
     )
 
 
@@ -96,11 +105,14 @@ Example:
 .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Handlebars', {
-            "executable": "/usr/bin/handlebars",
-            "sourcemap_enabled": True,
-            "simple": True,
-        }),
+        (
+            "static_precompiler.compilers.Handlebars",
+            {
+                "executable": "/usr/bin/handlebars",
+                "sourcemap_enabled": True,
+                "simple": True,
+            },
+        ),
     )
 
 
@@ -133,14 +145,17 @@ Example:
 .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.SCSS', {
-            "executable": "/usr/bin/sass",
-            "sourcemap_enabled": True,
-            "compass_enabled": True,
-            "load_paths": ["/path"],
-            "precision": 8,
-            "output_style": "compressed",
-        }),
+        (
+            "static_precompiler.compilers.SCSS",
+            {
+                "executable": "/usr/bin/sass",
+                "sourcemap_enabled": True,
+                "compass_enabled": True,
+                "load_paths": ["/path"],
+                "precision": 8,
+                "output_style": "compressed",
+            },
+        ),
     )
 
 
@@ -178,17 +193,23 @@ Example:
 .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.libsass.SCSS', {
-            "sourcemap_enabled": True,
-            "load_paths": ["/path"],
-            "precision": 8,
-        }),
-        ('static_precompiler.compilers.libsass.SASS', {
-            "sourcemap_enabled": True,
-            "load_paths": ["/path"],
-            "precision": 8,
-            "output_style": "compressed",
-        }),
+        (
+            "static_precompiler.compilers.libsass.SCSS",
+            {
+                "sourcemap_enabled": True,
+                "load_paths": ["/path"],
+                "precision": 8,
+            },
+        ),
+        (
+            "static_precompiler.compilers.libsass.SASS",
+            {
+                "sourcemap_enabled": True,
+                "load_paths": ["/path"],
+                "precision": 8,
+                "output_style": "compressed",
+            },
+        ),
     )
 
 .. note:: Libsass compiler doesn't support Compass extension, but you can replace it with `compass-mixins <https://github.com/Igosuki/compass-mixins>`_.
@@ -217,11 +238,14 @@ Example:
 .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.LESS', {
-            "executable": "/usr/bin/lessc",
-            "sourcemap_enabled": True,
-            "global_vars": {"link-color": "red"},
-        }),
+        (
+            "static_precompiler.compilers.LESS",
+            {
+                "executable": "/usr/bin/lessc",
+                "sourcemap_enabled": True,
+                "global_vars": {"link-color": "red"},
+            },
+        ),
     )
 
 
@@ -239,6 +263,5 @@ Example:
 .. code-block:: python
 
     STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.Stylus', {"executable": "/usr/bin/stylus", "sourcemap_enabled": True),
+        ("static_precompiler.compilers.Stylus", {"executable": "/usr/bin/stylus", "sourcemap_enabled": True}),
     )
-

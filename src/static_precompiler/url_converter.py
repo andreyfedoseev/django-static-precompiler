@@ -28,7 +28,7 @@ def convert(content, path):
     if not source_dir.endswith("/"):
         source_dir += "/"
 
-    return URL_PATTERN.sub(lambda matchobj: "url({0})".format(convert_url(matchobj.group(1), source_dir)), content)
+    return URL_PATTERN.sub(lambda matchobj: f"url({convert_url(matchobj.group(1), source_dir)})", content)
 
 
 def convert_urls(compiled_full_path, source_path):

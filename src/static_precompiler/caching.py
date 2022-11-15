@@ -14,7 +14,7 @@ def get_cache():
 
 
 def get_cache_key(key):
-    return "static_precompiler.{0}.{1}".format(socket.gethostname(), key)
+    return f"static_precompiler.{socket.gethostname()}.{key}"
 
 
 def get_hexdigest(plaintext, length=None):

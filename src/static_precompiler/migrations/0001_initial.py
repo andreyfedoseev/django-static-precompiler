@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import migrations, models
 
 
@@ -21,6 +18,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name="dependency",
-            unique_together=set([("source", "depends_on")]),
+            unique_together={("source", "depends_on")},
         ),
     ]

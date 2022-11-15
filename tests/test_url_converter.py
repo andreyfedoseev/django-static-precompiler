@@ -1,4 +1,3 @@
-# coding: utf-8
 from static_precompiler import url_converter
 
 

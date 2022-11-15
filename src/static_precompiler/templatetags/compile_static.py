@@ -49,9 +49,7 @@ class InlineCompileNode(django.template.Node):
             compiler = registry.get_compiler_by_name(compiler)
 
         if settings.USE_CACHE:
-            cache_key = caching.get_cache_key(
-                "{0}.{1}".format(compiler.__class__.__name__, caching.get_hexdigest(source))
-            )
+            cache_key = caching.get_cache_key(f"{compiler.__class__.__name__}.{caching.get_hexdigest(source)}")
             cache = caching.get_cache()
             cached = cache.get(cache_key, None)
             if cached is not None:

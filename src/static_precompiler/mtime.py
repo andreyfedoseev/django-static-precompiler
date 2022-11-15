@@ -4,7 +4,7 @@ from . import caching, settings
 
 
 def get_mtime_cachekey(filename):
-    return caching.get_cache_key("mtime.{0}".format(caching.get_hexdigest(filename)))
+    return caching.get_cache_key(f"mtime.{caching.get_hexdigest(filename)}")
 
 
 def get_mtime(filename):

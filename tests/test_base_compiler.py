@@ -137,7 +137,7 @@ def test_should_compile(monkeypatch):
 
 def test_get_source():
     compiler = compilers.BaseCompiler()
-    assert compiler.get_source("scripts/test.coffee") == 'console.log "Hello, World!"'
+    assert compiler.get_source("scripts/test.coffee") == 'console.log "Hello, World!"\n'
 
 
 def test_compile_source():

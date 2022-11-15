@@ -41,7 +41,7 @@ class SCSS(base.BaseCompiler):
             raise ValueError("load_paths option must be an iterable object (list, tuple)")
         else:
             self.load_paths = load_paths
-        super(SCSS, self).__init__()
+        super().__init__()
 
     def get_extra_args(self):
         args = []
@@ -64,14 +64,14 @@ class SCSS(base.BaseCompiler):
         # Do not compile the files that start with "_" if run from management
         if from_management and os.path.basename(source_path).startswith("_"):
             return False
-        return super(SCSS, self).should_compile(source_path, from_management)
+        return super().should_compile(source_path, from_management)
 
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)
         full_output_path = self.get_full_output_path(source_path)
         args = [
             self.executable,
-            "--sourcemap={0}".format("auto" if self.is_sourcemap_enabled else "none"),
+            "--sourcemap={}".format("auto" if self.is_sourcemap_enabled else "none"),
         ] + self.get_extra_args()
 
         args.extend(
@@ -242,7 +242,7 @@ class SCSS(base.BaseCompiler):
 
     def get_full_source_path(self, source_path):
         try:
-            return super(SCSS, self).get_full_source_path(source_path)
+            return super().get_full_source_path(source_path)
         except ValueError:
             # Try to locate the source file in directories specified in `load_paths`
             norm_source_path = utils.normalize_path(source_path.lstrip("/"))
@@ -293,7 +293,7 @@ class SCSS(base.BaseCompiler):
                 if os.path.exists(os.path.join(dirname, utils.normalize_path(source_path))):
                     return source_path
 
-        raise exceptions.StaticCompilationError("Can't locate the imported file: {0}".format(import_path))
+        raise exceptions.StaticCompilationError(f"Can't locate the imported file: {import_path}")
 
     def find_dependencies(self, source_path):
         source = self.get_source(source_path)

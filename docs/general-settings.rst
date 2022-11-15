@@ -7,24 +7,24 @@ General settings
 
   .. code-block:: python
 
-    STATIC_PRECOMPILER_COMPILERS = (
-        'static_precompiler.compilers.CoffeeScript',
-        'static_precompiler.compilers.Babel',
-        'static_precompiler.compilers.Handlebars',
-        'static_precompiler.compilers.SASS',
-        'static_precompiler.compilers.SCSS',
-        'static_precompiler.compilers.LESS',
-        'static_precompiler.compilers.Stylus',
-    )
+      STATIC_PRECOMPILER_COMPILERS = (
+          "static_precompiler.compilers.CoffeeScript",
+          "static_precompiler.compilers.Babel",
+          "static_precompiler.compilers.Handlebars",
+          "static_precompiler.compilers.SASS",
+          "static_precompiler.compilers.SCSS",
+          "static_precompiler.compilers.LESS",
+          "static_precompiler.compilers.Stylus",
+      )
 
   You can specify compiler options using the following format:
 
   .. code-block:: python
 
-    STATIC_PRECOMPILER_COMPILERS = (
-        ('static_precompiler.compilers.CoffeeScript', {"executable": "/usr/bin/coffeescript"}),
-        ('static_precompiler.compilers.SCSS', {"compass_enabled": True}),
-    )
+      STATIC_PRECOMPILER_COMPILERS = (
+          ("static_precompiler.compilers.CoffeeScript", {"executable": "/usr/bin/coffeescript"}),
+          ("static_precompiler.compilers.SCSS", {"compass_enabled": True}),
+      )
 
 
 ``STATIC_PRECOMPILER_ROOT``
@@ -55,4 +55,3 @@ General settings
 ``STATIC_PRECOMPILER_FINDER_LIST_FILES``
   Whether or not ``static_precompiler.finders.StaticPrecompilerFinder`` will list compiled files when ``collectstatic``
   command is executed. Set to ``True`` if you want compiled files to be found by ``collectstatic``. Default: ``False``.
-

@@ -28,13 +28,13 @@ class LESS(base.BaseCompiler):
         self.include_path = include_path
         self.clean_css = clean_css
         self.global_vars = global_vars
-        super(LESS, self).__init__()
+        super().__init__()
 
     def should_compile(self, source_path, from_management=False):
         # Do not compile the files that start with "_" if run from management
         if from_management and os.path.basename(source_path).startswith("_"):
             return False
-        return super(LESS, self).should_compile(source_path, from_management)
+        return super().should_compile(source_path, from_management)
 
     def compile_file(self, source_path):
         full_source_path = self.get_full_source_path(source_path)
@@ -46,29 +46,16 @@ class LESS(base.BaseCompiler):
 
         args = [self.executable]
         if self.is_sourcemap_enabled:
-            args.extend(["--source-map"])
+            args.append("--source-map")
         if self.include_path:
-            args.extend(["--include-path={}".format(self.include_path)])
+            args.append(f"--include-path={self.include_path}")
         if self.clean_css:
-            args.extend(
-                [
-                    "--clean-css",
-                ]
-            )
+            args.append("--clean-css")
         if self.global_vars:
             for variable_name, variable_value in self.global_vars.items():
-                args.extend(
-                    [
-                        "--global-var={0}={1}".format(variable_name, variable_value),
-                    ]
-                )
+                args.append(f"--global-var={variable_name}={variable_value}")
 
-        args.extend(
-            [
-                self.get_full_source_path(source_path),
-                full_output_path,
-            ]
-        )
+        args.extend([self.get_full_source_path(source_path), full_output_path])
         return_code, out, errors = utils.run_command(args, cwd=cwd)
 
         if return_code:
@@ -84,7 +71,7 @@ class LESS(base.BaseCompiler):
     def compile_source(self, source):
         args = [self.executable, "-"]
         if self.include_path:
-            args.extend(["--include-path={}".format(self.include_path)])
+            args.append(f"--include-path={self.include_path}")
 
         return_code, out, errors = utils.run_command(args, input=source)
 
@@ -157,7 +144,7 @@ class LESS(base.BaseCompiler):
         except ValueError:
             pass
 
-        raise exceptions.StaticCompilationError("Can't locate the imported file: {0}".format(import_path))
+        raise exceptions.StaticCompilationError(f"Can't locate the imported file: {import_path}")
 
     def find_dependencies(self, source_path):
         source = self.get_source(source_path)

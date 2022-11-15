@@ -34,4 +34,3 @@ renders to:
       console.log("Hello, World!");
     }).call(this);
   </script>
-

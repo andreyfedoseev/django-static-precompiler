@@ -34,30 +34,28 @@ def build_compilers():
             compiler_path, compiler_options = compiler_path
             if not isinstance(compiler_options, dict):
                 raise django.core.exceptions.ImproperlyConfigured(
-                    "Compiler options must be a dict, got {0}".format(compiler_options)
+                    f"Compiler options must be a dict, got {compiler_options}"
                 )
 
         try:
             compiler_module, compiler_classname = compiler_path.rsplit(".", 1)
         except ValueError:
-            raise django.core.exceptions.ImproperlyConfigured("{0} isn't a compiler module".format(compiler_path))
+            raise django.core.exceptions.ImproperlyConfigured(f"{compiler_path} isn't a compiler module")
         try:
             mod = importlib.import_module(compiler_module)
         except ImportError as e:
-            raise django.core.exceptions.ImproperlyConfigured(
-                'Error importing compiler {0}: "{1}"'.format(compiler_module, e)
-            )
+            raise django.core.exceptions.ImproperlyConfigured(f'Error importing compiler {compiler_module}: "{e}"')
         try:
             compiler_class = getattr(mod, compiler_classname)
         except AttributeError:
             raise django.core.exceptions.ImproperlyConfigured(
-                'Compiler module "{0}" does not define a "{1}" class'.format(compiler_module, compiler_classname)
+                f'Compiler module "{compiler_module}" does not define a "{compiler_classname}" class'
             )
 
         compiler_to_add = compiler_class(**compiler_options)
         compiler = compilers.setdefault(compiler_class.name, compiler_to_add)
         if compiler_to_add != compiler:
-            warnings.warn("Both compilers {0} and {1} have the same name.".format(compiler_to_add, compiler))
+            warnings.warn(f"Both compilers {compiler_to_add} and {compiler} have the same name.")
 
     return compilers
 
@@ -67,7 +65,7 @@ def get_compiler_by_name(name):
     try:
         return get_compilers()[name]
     except KeyError:
-        raise exceptions.CompilerNotFound("There is no compiler with name '{0}'.".format(name))
+        raise exceptions.CompilerNotFound(f"There is no compiler with name '{name}'.")
 
 
 def get_compiler_by_path(path):
@@ -76,6 +74,4 @@ def get_compiler_by_path(path):
         if compiler.is_supported(path):
             return compiler
 
-    raise exceptions.UnsupportedFile(
-        "The source file '{0}' is not supported by any of available compilers.".format(path)
-    )
+    raise exceptions.UnsupportedFile(f"The source file '{path}' is not supported by any of available compilers.")

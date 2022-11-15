@@ -15,7 +15,7 @@ class EventHandler(events.FileSystemEventHandler):
         self.scanned_dir = scanned_dir
         self.verbosity = verbosity
         self.compilers = compilers
-        super(EventHandler, self).__init__()
+        super().__init__()
 
     def on_any_event(self, e):
         if e.is_directory or e.event_type not in ("created", "modified"):
@@ -26,7 +26,7 @@ class EventHandler(events.FileSystemEventHandler):
         for compiler in self.compilers:
             if compiler.is_supported(path):
                 if self.verbosity > 1:
-                    print("Modified: '{0}'".format(path))
+                    print(f"Modified: '{path}'")
                 try:
                     compiler.compile(path, from_management=True, verbosity=self.verbosity)
                     if compiler.supports_dependencies:

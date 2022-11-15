@@ -31,7 +31,7 @@ class Handlebars(base.BaseCompiler):
             self.known_helpers = known_helpers
         self.namespace = namespace
         self.simple = simple
-        super(Handlebars, self).__init__()
+        super().__init__()
 
     def get_extra_args(self):
         args = []

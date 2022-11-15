@@ -24,4 +24,3 @@ renders to:
   <script src="/static/COMPILED/path/to/script.js"></script>
   <link rel="stylesheet" href="/static/COMPILED/path/to/styles1.css" />
   <link rel="stylesheet" href="/static/COMPILED/path/to/styles2.css" />
-

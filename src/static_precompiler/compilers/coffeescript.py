@@ -15,7 +15,7 @@ class CoffeeScript(base.BaseCompiler):
     def __init__(self, executable="coffee", sourcemap_enabled=False):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
-        super(CoffeeScript, self).__init__()
+        super().__init__()
 
     def compile_file(self, source_path):
         full_output_path = self.get_full_output_path(source_path)

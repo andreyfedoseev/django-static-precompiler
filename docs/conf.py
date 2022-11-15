@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # django-static-precompiler documentation build configuration file, created by
 # sphinx-quickstart on Sat Nov 21 19:04:09 2015.
@@ -12,9 +11,6 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
-import os
-import shlex
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -46,9 +42,9 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"django-static-precompiler"
-copyright = u"2021, Andrey Fedoseev"
-author = u"Andrey Fedoseev"
+project = "django-static-precompiler"
+copyright = "2021, Andrey Fedoseev"
+author = "Andrey Fedoseev"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -206,13 +202,13 @@ htmlhelp_basename = "django-static-precompilerdoc"
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
-    #'papersize': 'letterpaper',
+    # 'papersize': 'letterpaper',
     # The font size ('10pt', '11pt' or '12pt').
-    #'pointsize': '10pt',
+    # 'pointsize': '10pt',
     # Additional stuff for the LaTeX preamble.
-    #'preamble': '',
+    # 'preamble': '',
     # Latex figure (float) alignment
-    #'figure_align': 'htbp',
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
@@ -222,8 +218,8 @@ latex_documents = [
     (
         master_doc,
         "django-static-precompiler.tex",
-        u"django-static-precompiler Documentation",
-        u"Andrey Fedoseev",
+        "django-static-precompiler Documentation",
+        "Andrey Fedoseev",
         "manual",
     ),
 ]
@@ -253,7 +249,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "django-static-precompiler", u"django-static-precompiler Documentation", [author], 1)]
+man_pages = [(master_doc, "django-static-precompiler", "django-static-precompiler Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -268,7 +264,7 @@ texinfo_documents = [
     (
         master_doc,
         "django-static-precompiler",
-        u"django-static-precompiler Documentation",
+        "django-static-precompiler Documentation",
         author,
         "django-static-precompiler",
         "One line description of project.",

@@ -25,5 +25,3 @@ source files and re-compile them on the fly. It can be handy if you use tools su
 You should install `Watchdog <http://pythonhosted.org/watchdog/>`_ to use watch mode or install ``django-static-precompiler`` with the ``watch`` extra::
 
     $ pip install django-static-precompiler[watch]
-
-

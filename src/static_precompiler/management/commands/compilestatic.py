@@ -32,9 +32,9 @@ def list_files(scanned_dirs):
 
 
 def delete_stale_files(compiled_files):
-    compiled_files = set(
+    compiled_files = {
         os.path.join(settings.ROOT, utils.normalize_path(compiled_file)) for compiled_file in compiled_files
-    )
+    }
     actual_files = set()
     for dirname, dirnames, filenames in os.walk(os.path.join(settings.ROOT, settings.OUTPUT_DIR)):
         for filename in filenames:
