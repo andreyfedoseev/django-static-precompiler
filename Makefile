@@ -17,17 +17,5 @@ test-publish: package
 publish: package
 	twine upload dist/*
 
-check-flake8:
-	docker-compose run --rm app flake8
-
-check-black:
-	docker-compose run --rm app black --check ./src/static_precompiler ./tests
-
-apply-black:
-	docker-compose run --rm app black ./src/static_precompiler ./tests
-
-check-isort:
-	docker-compose run --rm app isort --check ./src/static_precompiler ./tests
-
-apply-isort:
-	docker-compose run --rm app isort ./src/static_precompiler ./tests
+pre-commit:
+	pre-commit run -a

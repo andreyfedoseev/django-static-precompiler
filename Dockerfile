@@ -18,6 +18,6 @@ RUN apt update && \
 RUN mkdir /app
 WORKDIR /app
 ADD requirements-*.txt /app/
-RUN pip3 install -r requirements-dev.txt
+RUN pip3 install -r requirements-test.txt
 ADD . /app/
 RUN pip3 install -e .[libsass]
