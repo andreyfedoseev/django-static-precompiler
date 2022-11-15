@@ -6,3 +6,6 @@ fdeb710c4c5173cb78a884b3d8a9c41464bcab91
 
 # Apply isort formatting
 497083016c0a8ee9e496dc2261f883f5d73f2b81
+
+# Apply pre-commit fixes
+7661300cf5258a3cf82a94720245a7f350ddc723
