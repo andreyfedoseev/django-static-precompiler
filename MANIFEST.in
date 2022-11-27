@@ -2,6 +2,7 @@ include AUTHORS
 include README.md
 include CHANGES.md
 include LICENSE
+include py.typed
 recursive-include tests/static *
 recursive-include tests/staticfiles_dir *
 recursive-include tests/staticfiles_dir_with_prefix *

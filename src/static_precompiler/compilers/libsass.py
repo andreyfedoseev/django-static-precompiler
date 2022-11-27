@@ -1,10 +1,12 @@
 import os
 import re
+from typing import Any, Dict, Optional
 
-import sass
+import sass  # type: ignore
 from django.utils import encoding
 
 from .. import exceptions, url_converter, utils
+from ..types import StrCollection
 from . import scss
 
 __all__ = (
@@ -19,19 +21,20 @@ class SCSS(scss.SCSS):
     indented = False
     is_compass_enabled = False
 
-    def __init__(self, sourcemap_enabled=False, load_paths=None, precision=None, output_style=None):
+    def __init__(
+        self,
+        sourcemap_enabled: bool = False,
+        load_paths: Optional[StrCollection] = None,
+        precision: Optional[int] = None,
+        output_style: Optional[str] = None,
+    ):
         self.is_sourcemap_enabled = sourcemap_enabled
         self.precision = precision
         self.output_style = output_style
-        if load_paths is None:
-            self.load_paths = []
-        elif not isinstance(load_paths, (list, tuple)):
-            raise ValueError("load_paths option must be an iterable object (list, tuple)")
-        else:
-            self.load_paths = load_paths
+        self.load_paths: StrCollection = load_paths or []
         super(scss.SCSS, self).__init__()
 
-    def compile_file(self, source_path):
+    def compile_file(self, source_path: str) -> str:
         full_source_path = self.get_full_source_path(source_path)
         full_output_path = self.get_full_output_path(source_path)
 
@@ -51,10 +54,10 @@ class SCSS(scss.SCSS):
                     include_paths=self.load_paths,
                 )
             else:
-                compile_kwargs = {}
+                compile_kwargs: Dict[str, Any] = {}
                 if self.load_paths:
                     compile_kwargs["include_paths"] = self.load_paths
-                if self.precision:
+                if self.precision is not None:
                     compile_kwargs["precision"] = self.precision
                 if self.output_style:
                     compile_kwargs["output_style"] = self.output_style
@@ -75,15 +78,13 @@ class SCSS(scss.SCSS):
 
         return self.get_output_path(source_path)
 
-    def compile_source(self, source):
+    def compile_source(self, source: str) -> str:
         try:
-            compiled = sass.compile(string=source, indented=self.indented, include_paths=self.load_paths)
+            compiled: str = sass.compile(string=source, indented=self.indented, include_paths=self.load_paths)
         except sass.CompileError as e:
             raise exceptions.StaticCompilationError(encoding.force_str(e))
 
-        compiled = encoding.force_str(compiled)
-
-        return compiled
+        return encoding.force_str(compiled)
 
 
 # noinspection PyAbstractClass

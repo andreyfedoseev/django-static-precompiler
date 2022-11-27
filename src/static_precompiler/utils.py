@@ -2,6 +2,7 @@ import json
 import os
 import posixpath
 import subprocess
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import django.conf
 import django.core.cache
@@ -11,25 +12,25 @@ from django.utils import encoding
 from . import settings
 
 
-def get_file_encoding():
+def get_file_encoding() -> str:
     return getattr(django.conf.settings, "FILE_CHARSET", "utf-8")
 
 
-def normalize_path(posix_path):
+def normalize_path(posix_path: str) -> str:
     """Convert posix style path to OS-dependent path."""
     if settings.POSIX_COMPATIBLE:
         return posix_path
     return os.path.join(*posix_path.split("/"))
 
 
-def read_file(path):
-    """Return the contents of a file as unicode."""
+def read_file(path: str) -> str:
+    """Return the contents of a file as text."""
     with open(path, encoding=get_file_encoding()) as file_object:
         return file_object.read()
 
 
-def write_file(content, path):
-    """Write unicode content to a file."""
+def write_file(content: str, path: str) -> None:
+    """Write text content to a file."""
 
     # Convert to unicode
     content = encoding.force_str(content)
@@ -38,15 +39,17 @@ def write_file(content, path):
         file_object.write(content)
 
 
-def fix_line_breaks(text):
+def fix_line_breaks(text: str) -> str:
     """Convert Win line breaks to Unix"""
     return text.replace("\r\n", "\n")
 
 
 # noinspection PyShadowingBuiltins
-def run_command(args, input=None, cwd=None):
+def run_command(
+    args: List[str], input: Optional[Union[bytes, str]] = None, cwd: Optional[str] = None
+) -> Tuple[int, str, str]:
 
-    popen_kwargs = dict(
+    popen_kwargs: Dict[str, Any] = dict(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
@@ -67,24 +70,24 @@ def run_command(args, input=None, cwd=None):
 
     output, error = p.communicate(input)
     return_code = p.poll()
+    assert return_code is not None
 
     return return_code, encoding.smart_str(output), encoding.smart_str(error)
 
 
-def compile_static(path):
-    # type: (str) -> str
+def compile_static(path: str) -> str:
     from . import registry
 
     return registry.get_compiler_by_path(path).compile(path)
 
 
-def compile_static_lazy(path):
+def compile_static_lazy(path: str) -> str:
     from . import registry
 
     return registry.get_compiler_by_path(path).compile_lazy(path)
 
 
-def fix_sourcemap(sourcemap_full_path, source_path, compiled_full_path):
+def fix_sourcemap(sourcemap_full_path: str, source_path: str, compiled_full_path: str) -> None:
 
     sourcemap = json.loads(read_file(sourcemap_full_path))
 

@@ -8,3 +8,5 @@ libsass
 coverage
 pytest-cov==4.0.0
 tox
+mypy
+django-stubs[compatible-mypy]

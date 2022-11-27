@@ -7,7 +7,7 @@ from . import settings, utils
 URL_PATTERN = re.compile(r"url\((.+)\)")
 
 
-def convert_url(url, source_dir):
+def convert_url(url: str, source_dir: str) -> str:
     assert source_dir[-1] == "/"
 
     url = url.strip()
@@ -23,7 +23,7 @@ def convert_url(url, source_dir):
     return "{original_quote}{url}{original_quote}".format(original_quote=original_quote, url=url)
 
 
-def convert(content, path):
+def convert(content: str, path: str) -> str:
     source_dir = os.path.dirname(path)
     if not source_dir.endswith("/"):
         source_dir += "/"
@@ -31,7 +31,7 @@ def convert(content, path):
     return URL_PATTERN.sub(lambda matchobj: f"url({convert_url(matchobj.group(1), source_dir)})", content)
 
 
-def convert_urls(compiled_full_path, source_path):
+def convert_urls(compiled_full_path: str, source_path: str) -> None:
     content = utils.read_file(compiled_full_path)
     converted_content = convert(content, source_path)
     utils.write_file(converted_content, compiled_full_path)

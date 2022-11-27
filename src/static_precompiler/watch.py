@@ -1,23 +1,22 @@
 import time
-from typing import List
+from typing import Any, Collection, Iterable
 
-from watchdog import events, observers
+from watchdog import events, observers  # type: ignore
 
 from . import exceptions, registry
 from .compilers import BaseCompiler  # noqa
 
 
-class EventHandler(events.FileSystemEventHandler):
+class EventHandler(events.FileSystemEventHandler):  # type: ignore
 
     # noinspection PyShadowingNames
-    def __init__(self, scanned_dir, verbosity, compilers):
-        # type: (str, int, List[BaseCompiler]) -> None
+    def __init__(self, scanned_dir: str, verbosity: int, compilers: Collection[BaseCompiler]) -> None:
         self.scanned_dir = scanned_dir
         self.verbosity = verbosity
         self.compilers = compilers
         super().__init__()
 
-    def on_any_event(self, e):
+    def on_any_event(self, e: Any) -> None:
         if e.is_directory or e.event_type not in ("created", "modified"):
             return
         path = e.src_path[len(self.scanned_dir) :]
@@ -32,13 +31,13 @@ class EventHandler(events.FileSystemEventHandler):
                     if compiler.supports_dependencies:
                         for dependent in compiler.get_dependents(path):
                             compiler.compile(path, from_management=True, verbosity=self.verbosity)
-                            self.compile(dependent, from_management=True, verbosity=self.verbosity)
+                            compiler.compile(dependent, from_management=True, verbosity=self.verbosity)
                 except (exceptions.StaticCompilationError, ValueError) as e:
                     print(e)
                 break
 
 
-def watch_dirs(scanned_dirs, verbosity):
+def watch_dirs(scanned_dirs: Iterable[str], verbosity: int) -> None:
     print("Watching directories:")
     for scanned_dir in scanned_dirs:
         print(scanned_dir)

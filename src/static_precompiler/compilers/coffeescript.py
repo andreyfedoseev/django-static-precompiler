@@ -12,12 +12,12 @@ class CoffeeScript(base.BaseCompiler):
     input_extension = "coffee"
     output_extension = "js"
 
-    def __init__(self, executable="coffee", sourcemap_enabled=False):
+    def __init__(self, executable: str = "coffee", sourcemap_enabled: bool = False):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         super().__init__()
 
-    def compile_file(self, source_path):
+    def compile_file(self, source_path: str) -> str:
         full_output_path = self.get_full_output_path(source_path)
         args = [
             self.executable,
@@ -42,7 +42,7 @@ class CoffeeScript(base.BaseCompiler):
 
         return self.get_output_path(source_path)
 
-    def compile_source(self, source):
+    def compile_source(self, source: str) -> str:
         args = [
             self.executable,
             "-c",

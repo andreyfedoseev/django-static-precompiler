@@ -1,8 +1,10 @@
 import os
 import posixpath
 import re
+from typing import List, Optional
 
 from .. import exceptions, url_converter, utils
+from ..types import StrCollection
 from . import base
 
 __all__ = (
@@ -23,27 +25,22 @@ class SCSS(base.BaseCompiler):
 
     def __init__(
         self,
-        executable="sass",
-        sourcemap_enabled=False,
-        compass_enabled=False,
-        load_paths=None,
-        precision=None,
-        output_style=None,
+        executable: str = "sass",
+        sourcemap_enabled: bool = False,
+        compass_enabled: bool = False,
+        load_paths: Optional[StrCollection] = None,
+        precision: Optional[int] = None,
+        output_style: Optional[str] = None,
     ):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         self.is_compass_enabled = compass_enabled
         self.precision = precision
         self.output_style = output_style
-        if load_paths is None:
-            self.load_paths = []
-        elif not isinstance(load_paths, (list, tuple)):
-            raise ValueError("load_paths option must be an iterable object (list, tuple)")
-        else:
-            self.load_paths = load_paths
+        self.load_paths: StrCollection = load_paths or []
         super().__init__()
 
-    def get_extra_args(self):
+    def get_extra_args(self) -> List[str]:
         args = []
 
         for path in self.load_paths:
@@ -60,13 +57,13 @@ class SCSS(base.BaseCompiler):
 
         return args
 
-    def should_compile(self, source_path, from_management=False):
+    def should_compile(self, source_path: str, from_management: bool = False) -> bool:
         # Do not compile the files that start with "_" if run from management
         if from_management and os.path.basename(source_path).startswith("_"):
             return False
         return super().should_compile(source_path, from_management)
 
-    def compile_file(self, source_path):
+    def compile_file(self, source_path: str) -> str:
         full_source_path = self.get_full_source_path(source_path)
         full_output_path = self.get_full_output_path(source_path)
         args = [
@@ -102,7 +99,7 @@ class SCSS(base.BaseCompiler):
 
         return self.get_output_path(source_path)
 
-    def compile_source(self, source):
+    def compile_source(self, source: str) -> str:
         args = [
             self.executable,
             "-s",
@@ -118,11 +115,9 @@ class SCSS(base.BaseCompiler):
         return out
 
     # noinspection PyMethodMayBeStatic
-    def parse_import_string(self, import_string):
+    def parse_import_string(self, import_string: str) -> List[str]:
         """Extract import items from import string.
         :param import_string: import string
-        :type import_string: str
-        :returns: list of str
         """
         items = []
         item = ""
@@ -186,7 +181,7 @@ class SCSS(base.BaseCompiler):
 
         return sorted(items)
 
-    def strip_comments(self, source):
+    def strip_comments(self, source: str) -> str:
         """Strip comments from source, it does not remove comments inside
         strings or comments inside functions calls.
 
@@ -194,16 +189,13 @@ class SCSS(base.BaseCompiler):
         https://stackoverflow.com/questions/2319019/using-regex-to-remove-comments-from-source-files
 
         :param source: source code
-        :type source: str
-        :returns: str
-
         """
         pattern = r"(\".*?\"|\'.*?\'|\(.*?\))|(\s*/\*.*?\*/|\s*//[^\r\n]*$)"
         # first group captures quoted sources (double or single)
         # second group captures comments (//single-line or /* multi-line */)
         regex = re.compile(pattern, re.MULTILINE | re.DOTALL)
 
-        def _replacer(match):
+        def _replacer(match):  # type: ignore
             # if the 2nd group (capturing comments) is not None,
             # it means we have captured a non-quoted (real) comment source.
             if match.group(2) is not None:
@@ -213,13 +205,10 @@ class SCSS(base.BaseCompiler):
 
         return regex.sub(_replacer, source)
 
-    def find_imports(self, source):
+    def find_imports(self, source: str) -> List[str]:
         """Find the imported files in the source code.
 
         :param source: source code
-        :type source: str
-        :returns: list of str
-
         """
         source = self.strip_comments(source)
         imports = set()
@@ -240,7 +229,7 @@ class SCSS(base.BaseCompiler):
                 imports.add(import_item)
         return sorted(imports)
 
-    def get_full_source_path(self, source_path):
+    def get_full_source_path(self, source_path: str) -> str:
         try:
             return super().get_full_source_path(source_path)
         except ValueError:
@@ -252,16 +241,12 @@ class SCSS(base.BaseCompiler):
                     return full_path
             raise
 
-    def locate_imported_file(self, source_dir, import_path):
+    def locate_imported_file(self, source_dir: str, import_path: str) -> str:
         """Locate the imported file in the source directory.
             Return the path to the imported file relative to STATIC_ROOT
 
         :param source_dir: source directory
-        :type source_dir: str
         :param import_path: path to the imported file
-        :type import_path: str
-        :returns: str
-
         """
         import_filename = posixpath.basename(import_path)
         import_dirname = posixpath.dirname(import_path)
@@ -295,7 +280,7 @@ class SCSS(base.BaseCompiler):
 
         raise exceptions.StaticCompilationError(f"Can't locate the imported file: {import_path}")
 
-    def find_dependencies(self, source_path):
+    def find_dependencies(self, source_path: str) -> List[str]:
         source = self.get_source(source_path)
         source_dir = posixpath.dirname(source_path)
         dependencies = set()
@@ -315,7 +300,7 @@ class SASS(SCSS):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*(?:\n|$)")
 
-    def compile_source(self, source):
+    def compile_source(self, source: str) -> str:
         args = [
             self.executable,
             "-s",
