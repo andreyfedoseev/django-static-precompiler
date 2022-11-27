@@ -1,7 +1,10 @@
+from typing import Any, Iterable, Optional
+
 from django.contrib.staticfiles import finders
 from django.core.files import storage
 
 from . import settings
+from .types import StrCollection
 
 
 class StaticPrecompilerFileStorage(storage.FileSystemStorage):
@@ -11,7 +14,7 @@ class StaticPrecompilerFileStorage(storage.FileSystemStorage):
     The default for ``location`` is ``STATIC_PRECOMPILER_ROOT``
     """
 
-    def __init__(self, location=None, base_url=None):
+    def __init__(self, location: Optional[str] = None, base_url: Optional[str] = None):
         if location is None:
             location = settings.ROOT
         super().__init__(location, base_url)
@@ -23,9 +26,9 @@ class StaticPrecompilerFinder(finders.BaseStorageFinder):
     with staticfiles development file server or during deployment.
     """
 
-    storage = StaticPrecompilerFileStorage
+    storage = StaticPrecompilerFileStorage  # type: ignore
 
-    def list(self, ignore_patterns):
+    def list(self, ignore_patterns: Optional[StrCollection]) -> Iterable[Any]:
         if settings.FINDER_LIST_FILES:
             return super().list(ignore_patterns)
         return []

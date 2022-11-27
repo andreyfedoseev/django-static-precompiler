@@ -1,8 +1,10 @@
 import os
 import posixpath
 import re
+from typing import Dict, List, Optional
 
 from .. import exceptions, url_converter, utils
+from ..types import StrCollection
 from . import base
 
 __all__ = ("LESS",)
@@ -19,24 +21,29 @@ class LESS(base.BaseCompiler):
     IMPORT_ITEM_RE = re.compile(r"([\"'])(.+?)\1")
 
     def __init__(
-        self, executable="lessc", sourcemap_enabled=False, include_path=None, clean_css=False, global_vars=None
+        self,
+        executable: str = "lessc",
+        sourcemap_enabled: bool = False,
+        include_path: Optional[StrCollection] = None,
+        clean_css: bool = False,
+        global_vars: Optional[Dict[str, str]] = None,
     ):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
-        if isinstance(include_path, (list, tuple)):
-            include_path = ";".join(include_path)
-        self.include_path = include_path
+        self.include_path: Optional[str] = None
+        if include_path is not None:
+            self.include_path = ";".join(include_path)
         self.clean_css = clean_css
         self.global_vars = global_vars
         super().__init__()
 
-    def should_compile(self, source_path, from_management=False):
+    def should_compile(self, source_path: str, from_management: bool = False) -> bool:
         # Do not compile the files that start with "_" if run from management
         if from_management and os.path.basename(source_path).startswith("_"):
             return False
         return super().should_compile(source_path, from_management)
 
-    def compile_file(self, source_path):
+    def compile_file(self, source_path: str) -> str:
         full_source_path = self.get_full_source_path(source_path)
         full_output_path = self.get_full_output_path(source_path)
 
@@ -68,7 +75,7 @@ class LESS(base.BaseCompiler):
 
         return self.get_output_path(source_path)
 
-    def compile_source(self, source):
+    def compile_source(self, source: str) -> str:
         args = [self.executable, "-"]
         if self.include_path:
             args.append(f"--include-path={self.include_path}")
@@ -80,13 +87,10 @@ class LESS(base.BaseCompiler):
 
         return out
 
-    def find_imports(self, source):
+    def find_imports(self, source: str) -> List[str]:
         """Find the imported files in the source code.
 
         :param source: source code
-        :type source: str
-        :returns: list of str
-
         """
         imports = set()
         for import_string in self.IMPORT_RE.findall(source):
@@ -107,16 +111,12 @@ class LESS(base.BaseCompiler):
 
         return sorted(imports)
 
-    def locate_imported_file(self, source_dir, import_path):
+    def locate_imported_file(self, source_dir: str, import_path: str) -> str:
         """Locate the imported file in the source directory.
             Return the relative path to the imported file in posix format.
 
         :param source_dir: source directory
-        :type source_dir: str
         :param import_path: path to the imported file
-        :type import_path: str
-        :returns: str
-
         """
         if not import_path.endswith("." + self.input_extension):
             import_path += "." + self.input_extension
@@ -146,7 +146,7 @@ class LESS(base.BaseCompiler):
 
         raise exceptions.StaticCompilationError(f"Can't locate the imported file: {import_path}")
 
-    def find_dependencies(self, source_path):
+    def find_dependencies(self, source_path: str) -> List[str]:
         source = self.get_source(source_path)
         source_dir = posixpath.dirname(source_path)
         dependencies = set()

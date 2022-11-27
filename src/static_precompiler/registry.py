@@ -1,6 +1,6 @@
 import importlib
 import warnings
-from typing import Dict
+from typing import Dict, Optional
 
 import django.apps
 import django.core.exceptions
@@ -8,21 +8,19 @@ import django.core.exceptions
 from . import exceptions, settings
 from .compilers import BaseCompiler  # noqa
 
-registry = None
+registry: Optional[Dict[str, BaseCompiler]] = None
 
 
-def get_compilers():
-    # type: () -> Dict[str, BaseCompiler]
+def get_compilers() -> Dict[str, BaseCompiler]:
     global registry
     if registry is None:
         registry = build_compilers()
     return registry
 
 
-def build_compilers():
-    # type: () -> Dict[str, BaseCompiler]
+def build_compilers() -> Dict[str, BaseCompiler]:
     # noinspection PyShadowingNames
-    compilers = {}
+    compilers: Dict[str, BaseCompiler] = {}
     for compiler_path in settings.COMPILERS:
         compiler_options = {}
         if isinstance(compiler_path, (tuple, list)):
@@ -60,16 +58,14 @@ def build_compilers():
     return compilers
 
 
-def get_compiler_by_name(name):
-    # type: (str) -> BaseCompiler
+def get_compiler_by_name(name: str) -> BaseCompiler:
     try:
         return get_compilers()[name]
     except KeyError:
         raise exceptions.CompilerNotFound(f"There is no compiler with name '{name}'.")
 
 
-def get_compiler_by_path(path):
-    # type: (str) -> BaseCompiler
+def get_compiler_by_path(path: str) -> BaseCompiler:
     for compiler in get_compilers().values():
         if compiler.is_supported(path):
             return compiler

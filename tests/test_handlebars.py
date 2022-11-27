@@ -104,6 +104,3 @@ def test_get_extra_args(monkeypatch):
     compiler = compilers.Handlebars(known_helpers=["foo", "bar"], namespace="baz", simple=True)
 
     assert compiler.get_extra_args() == ["-k", "foo", "-k", "bar", "-n", "baz", "-s"]
-
-    with pytest.raises(ValueError):
-        compilers.Handlebars(known_helpers="foo")

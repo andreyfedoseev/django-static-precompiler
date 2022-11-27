@@ -7,6 +7,9 @@ shell:
 test:
 	docker-compose run --rm app tox
 
+mypy:
+	docker-compose run --rm app mypy --strict ./src
+
 package:
 	rm -rf ./dist
 	python3 -m build

@@ -1,6 +1,8 @@
 import os
+from typing import List, Optional
 
 from .. import exceptions, utils
+from ..types import StrCollection
 from . import base
 
 __all__ = ("Handlebars",)
@@ -15,25 +17,25 @@ class Handlebars(base.BaseCompiler):
     )
     output_extension = "js"
 
-    def is_supported(self, source_path):
+    def is_supported(self, source_path: str) -> bool:
         return os.path.splitext(source_path)[1].lstrip(".") in self.input_extensions
 
     def __init__(
-        self, executable="handlebars", sourcemap_enabled=False, known_helpers=None, namespace=None, simple=False
+        self,
+        executable: str = "handlebars",
+        sourcemap_enabled: bool = False,
+        known_helpers: Optional[StrCollection] = None,
+        namespace: Optional[str] = None,
+        simple: bool = False,
     ):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
-        if known_helpers is None:
-            self.known_helpers = []
-        elif not isinstance(known_helpers, (list, tuple)):
-            raise ValueError("known_helpers option must be an iterable object (list, tuple)")
-        else:
-            self.known_helpers = known_helpers
+        self.known_helpers: StrCollection = known_helpers or []
         self.namespace = namespace
         self.simple = simple
         super().__init__()
 
-    def get_extra_args(self):
+    def get_extra_args(self) -> List[str]:
         args = []
 
         for helper in self.known_helpers:
@@ -47,7 +49,7 @@ class Handlebars(base.BaseCompiler):
 
         return args
 
-    def compile_file(self, source_path):
+    def compile_file(self, source_path: str) -> str:
         full_output_path = self.get_full_output_path(source_path)
         output_dir = os.path.dirname(full_output_path)
 
@@ -78,7 +80,7 @@ class Handlebars(base.BaseCompiler):
 
         return self.get_output_path(source_path)
 
-    def compile_source(self, source):
+    def compile_source(self, source: str) -> str:
         args = [
             self.executable,
             "-i",

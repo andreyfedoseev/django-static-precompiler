@@ -9,3 +9,14 @@ line-length = 120
 profile = "black"
 multi_line_output = 3
 line_length = 120
+
+[tool.mypy]
+python_version = "3.6"
+plugins = ["mypy_django_plugin.main"]
+
+[[tool.mypy.overrides]]
+module = "pretend"
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "static_precompiler.mypy_django_settings"

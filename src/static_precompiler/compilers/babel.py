@@ -1,5 +1,6 @@
 import os
 import warnings
+from typing import List, Optional
 
 from .. import exceptions, utils
 from . import base
@@ -13,7 +14,14 @@ class Babel(base.BaseCompiler):
     input_extension = "es6"
     output_extension = "js"
 
-    def __init__(self, executable="babel", sourcemap_enabled=False, modules=None, plugins=None, presets=None):
+    def __init__(
+        self,
+        executable: str = "babel",
+        sourcemap_enabled: bool = False,
+        modules: Optional[str] = None,
+        plugins: Optional[str] = None,
+        presets: Optional[str] = None,
+    ):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         if modules:
@@ -23,7 +31,7 @@ class Babel(base.BaseCompiler):
         self.presets = presets
         super().__init__()
 
-    def get_extra_args(self):
+    def get_extra_args(self) -> List[str]:
         args = []
 
         if self.modules is not None:
@@ -37,7 +45,7 @@ class Babel(base.BaseCompiler):
 
         return args
 
-    def compile_file(self, source_path):
+    def compile_file(self, source_path: str) -> str:
         args = [
             self.executable,
         ] + self.get_extra_args()
@@ -63,7 +71,7 @@ class Babel(base.BaseCompiler):
 
         return self.get_output_path(source_path)
 
-    def compile_source(self, source):
+    def compile_source(self, source: str) -> str:
         args = [
             self.executable,
         ] + self.get_extra_args()

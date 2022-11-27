@@ -25,7 +25,9 @@ COMPILERS = getattr(
     ),
 )
 
-ROOT = getattr(settings, "STATIC_PRECOMPILER_ROOT", getattr(settings, "STATIC_ROOT", getattr(settings, "MEDIA_ROOT")))
+ROOT: str = getattr(
+    settings, "STATIC_PRECOMPILER_ROOT", getattr(settings, "STATIC_ROOT", getattr(settings, "MEDIA_ROOT"))
+)
 
 if not ROOT:
     raise django.core.exceptions.ImproperlyConfigured(

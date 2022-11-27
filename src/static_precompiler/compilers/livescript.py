@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from .. import exceptions, utils
 from . import base
@@ -12,12 +13,12 @@ class LiveScript(base.BaseCompiler):
     input_extension = "ls"
     output_extension = "js"
 
-    def __init__(self, executable="lsc", sourcemap_enabled=False):
+    def __init__(self, executable: str = "lsc", sourcemap_enabled: bool = False):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         super().__init__()
 
-    def compile_file(self, source_path):
+    def compile_file(self, source_path: str) -> str:
         full_output_path = self.get_full_output_path(source_path)
         # LiveScript bug with source map if the folder isn't already present
         if not os.path.exists(os.path.dirname(full_output_path)):
@@ -46,7 +47,7 @@ class LiveScript(base.BaseCompiler):
 
         return self.get_output_path(source_path)
 
-    def compile_source(self, source):
+    def compile_source(self, source: str) -> str:
         args = [
             self.executable,
             "-c",
@@ -59,5 +60,5 @@ class LiveScript(base.BaseCompiler):
 
         return out
 
-    def find_dependencies(self, source_path):
+    def find_dependencies(self, source_path: str) -> List[str]:
         return []

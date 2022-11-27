@@ -169,7 +169,6 @@ p {
     )
 
 
-@pytest.mark.xfail
 def test_find_imports():
     source = """
 @import "foo.css", ;
@@ -336,9 +335,6 @@ def test_get_extra_args():
         "compact",
     ]
 
-    with pytest.raises(ValueError):
-        scss.SCSS(load_paths="foo")
-
 
 @pytest.mark.parametrize("compiler_module", (libsass, scss))
 def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
@@ -363,9 +359,6 @@ def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
   font-weight: bold; }
 """
         )
-
-    with pytest.raises(ValueError):
-        compiler_module.SCSS(load_paths="path")
 
 
 @pytest.mark.parametrize("compiler_module", (libsass, scss))

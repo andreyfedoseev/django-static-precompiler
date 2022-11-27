@@ -1,6 +1,7 @@
 import os
 import posixpath
 import re
+from typing import List
 
 from .. import exceptions, url_converter, utils
 from . import base
@@ -17,12 +18,12 @@ class Stylus(base.BaseCompiler):
 
     IMPORT_RE = re.compile(r"@(?:import|require)\s+(.+?)\s*$", re.MULTILINE)
 
-    def __init__(self, executable="stylus", sourcemap_enabled=False):
+    def __init__(self, executable: str = "stylus", sourcemap_enabled: bool = False):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         super().__init__()
 
-    def compile_source(self, source):
+    def compile_source(self, source: str) -> str:
         args = [
             self.executable,
             "-p",
@@ -34,7 +35,7 @@ class Stylus(base.BaseCompiler):
 
         return out
 
-    def compile_file(self, source_path):
+    def compile_file(self, source_path: str) -> str:
         full_source_path = self.get_full_source_path(source_path)
         full_output_path = self.get_full_output_path(source_path)
         args = [
@@ -69,13 +70,10 @@ class Stylus(base.BaseCompiler):
 
         return self.get_output_path(source_path)
 
-    def find_imports(self, source):
+    def find_imports(self, source: str) -> List[str]:
         """Find the imported files in the source code.
 
         :param source: source code
-        :type source: str
-        :returns: list of str
-
         """
         imports = set()
         for import_string in self.IMPORT_RE.findall(source):
@@ -91,16 +89,12 @@ class Stylus(base.BaseCompiler):
             imports.add(import_string)
         return sorted(imports)
 
-    def locate_imported_file(self, source_dir, import_path):
+    def locate_imported_file(self, source_dir: str, import_path: str) -> str:
         """Locate the imported file in the source directory.
             Return the path to the imported file relative to STATIC_ROOT
 
         :param source_dir: source directory
-        :type source_dir: str
         :param import_path: path to the imported file
-        :type import_path: str
-        :returns: str
-
         """
         path = posixpath.normpath(posixpath.join(source_dir, import_path))
 
@@ -110,7 +104,7 @@ class Stylus(base.BaseCompiler):
             raise exceptions.StaticCompilationError(f"Can't locate the imported file: {import_path}")
         return path
 
-    def find_dependencies(self, source_path):
+    def find_dependencies(self, source_path: str) -> List[str]:
         source = self.get_source(source_path)
         source_dir = posixpath.dirname(source_path)
         dependencies = set()
