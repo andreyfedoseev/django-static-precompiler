@@ -1,5 +1,9 @@
 ## Changelog
 
+### Dev
+
+- Fix the bug with a greedy regex in the URL converter
+
 ### 2.3
 
 - Fix incorrect source map URL with `libsass`

@@ -1,10 +1,21 @@
 import os
 import re
+from typing import Match
 from urllib.parse import urljoin
 
 from . import settings, utils
 
-URL_PATTERN = re.compile(r"url\((.+)\)")
+URL_PATTERN = re.compile(
+    r"""
+    url\(
+    \s*      # any amount of whitespace
+    ([\'"]?) # optional quote
+    (.*?)    # any amount of anything, non-greedily (this is the actual url)
+    \1       # matching quote (or nothing if there was none)
+    \s*      # any amount of whitespace
+    \)""",
+    re.VERBOSE,
+)
 
 
 def convert_url(url: str, source_dir: str) -> str:
@@ -14,13 +25,10 @@ def convert_url(url: str, source_dir: str) -> str:
     if not url:
         return url
 
-    original_quote = url[0] if url[0] in ('"', "'") else "'"
-    url = url.strip("\"'")
-
-    if not url.startswith(("http://", "https://", "/", "data:")):
+    if not url.startswith(("http://", "https://", "/", "data:", "#")):
         url = urljoin(settings.STATIC_URL, urljoin(source_dir, url))
 
-    return "{original_quote}{url}{original_quote}".format(original_quote=original_quote, url=url)
+    return url
 
 
 def convert(content: str, path: str) -> str:
@@ -28,7 +36,12 @@ def convert(content: str, path: str) -> str:
     if not source_dir.endswith("/"):
         source_dir += "/"
 
-    return URL_PATTERN.sub(lambda matchobj: f"url({convert_url(matchobj.group(1), source_dir)})", content)
+    def url_converter(matchobj: Match[str]) -> str:
+        quote = matchobj.group(1)
+        converted_url = convert_url(matchobj.group(2), source_dir)
+        return f"url({quote}{converted_url}{quote})"
+
+    return URL_PATTERN.sub(url_converter, content)
 
 
 def convert_urls(compiled_full_path: str, source_path: str) -> None:

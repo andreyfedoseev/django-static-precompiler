@@ -1,7 +1,7 @@
 import os
 import posixpath
 import re
-from typing import List, Optional
+from typing import List, Match, Optional
 
 from .. import exceptions, url_converter, utils
 from ..types import StrCollection
@@ -195,7 +195,7 @@ class SCSS(base.BaseCompiler):
         # second group captures comments (//single-line or /* multi-line */)
         regex = re.compile(pattern, re.MULTILINE | re.DOTALL)
 
-        def _replacer(match):  # type: ignore
+        def _replacer(match: Match[str]) -> str:
             # if the 2nd group (capturing comments) is not None,
             # it means we have captured a non-quoted (real) comment source.
             if match.group(2) is not None:

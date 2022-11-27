@@ -3,20 +3,20 @@ from static_precompiler import url_converter
 
 def test_convert_url():
 
-    assert url_converter.convert_url("http://dummy.jpg", "styles/") == "'http://dummy.jpg'"
-    assert url_converter.convert_url("https://dummy.jpg", "styles/") == "'https://dummy.jpg'"
-    assert url_converter.convert_url("/dummy.jpg", "styles/") == "'/dummy.jpg'"
-    assert url_converter.convert_url("data:abc", "styles/") == "'data:abc'"
-    assert url_converter.convert_url("dummy.jpg", "styles/") == "'/static/styles/dummy.jpg'"
-    assert url_converter.convert_url("./dummy.jpg", "styles/") == "'/static/styles/dummy.jpg'"
-    assert url_converter.convert_url("../images/dummy.jpg", "styles/") == "'/static/images/dummy.jpg'"
+    assert url_converter.convert_url("http://dummy.jpg", "styles/") == "http://dummy.jpg"
+    assert url_converter.convert_url("https://dummy.jpg", "styles/") == "https://dummy.jpg"
+    assert url_converter.convert_url("/dummy.jpg", "styles/") == "/dummy.jpg"
+    assert url_converter.convert_url("data:abc", "styles/") == "data:abc"
+    assert url_converter.convert_url("dummy.jpg", "styles/") == "/static/styles/dummy.jpg"
+    assert url_converter.convert_url("./dummy.jpg", "styles/") == "/static/styles/dummy.jpg"
+    assert url_converter.convert_url("../images/dummy.jpg", "styles/") == "/static/images/dummy.jpg"
 
 
 def test_convert():
 
     assert (
         url_converter.convert("p {\n  background: url(../images/ham.jpg) no-repeat 0 0;\n}", "styles/")
-        == "p {\n  background: url('/static/images/ham.jpg') no-repeat 0 0;\n}"
+        == "p {\n  background: url(/static/images/ham.jpg) no-repeat 0 0;\n}"
     )
     assert (
         url_converter.convert(
@@ -42,4 +42,28 @@ def test_convert():
   content: "Zobacz także:";
   background: url("/static/images/картинка.png"); }
 """
+    )
+
+    assert (
+        url_converter.convert(
+            """#features details {
+  background: url("/static/profile/ui/img/asideicons.png") no-repeat;
+}
+
+@media (min-width: 768px) {
+  #bodyContent {
+    margin-top: 300px;
+  }
+}""",
+            "styles/",
+        )
+        == """#features details {
+  background: url("/static/profile/ui/img/asideicons.png") no-repeat;
+}
+
+@media (min-width: 768px) {
+  #bodyContent {
+    margin-top: 300px;
+  }
+}"""
     )
