@@ -38,7 +38,7 @@ class CoffeeScript(base.BaseCompiler):
             raise exceptions.StaticCompilationError(errors)
 
         if self.is_sourcemap_enabled:
-            utils.fix_sourcemap(os.path.splitext(full_output_path)[0] + ".map", source_path, full_output_path)
+            utils.fix_sourcemap(full_output_path + ".map", source_path, full_output_path)
 
         return self.get_output_path(source_path)
 

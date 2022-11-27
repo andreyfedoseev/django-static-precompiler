@@ -3,6 +3,11 @@
 ### Dev
 
 - Fix the bug with a greedy regex in the URL converter
+- Ensure compatibility with the latest versions of compilers:
+  - coffeescript@2.7.0 (may break compatibility with older versions)
+  - livescript@1.6.0
+  - less@4.1.3
+  - handlebars@4.7.7
 
 ### 2.3
 
