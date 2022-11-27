@@ -1,4 +1,4 @@
-FROM andreyfedoseev/django-static-precompiler:18.04
+FROM andreyfedoseev/django-static-precompiler:18.04-1
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 RUN apt update && \

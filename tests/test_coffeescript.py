@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 
 import pytest
 
@@ -28,16 +29,16 @@ def test_sourcemap(monkeypatch, tmpdir):
 
     compiler = compilers.CoffeeScript(sourcemap_enabled=False)
     compiler.compile_file("scripts/test.coffee")
-    full_output_path = compiler.get_full_output_path("scripts/test.coffee")
-    assert not os.path.exists(os.path.splitext(full_output_path)[0] + ".map")
+    full_output_path = Path(compiler.get_full_output_path("scripts/test.coffee"))
+    source_map_path = full_output_path.with_suffix(".js.map")
+    assert not source_map_path.exists()
 
     compiler = compilers.CoffeeScript(sourcemap_enabled=True)
     compiler.compile_file("scripts/test.coffee")
-    full_output_path = compiler.get_full_output_path("scripts/test.coffee")
-    assert os.path.exists(os.path.splitext(full_output_path)[0] + ".map")
 
-    with open(os.path.splitext(full_output_path)[0] + ".map") as sourcemap_file:
-        sourcemap = json.load(sourcemap_file)
+    assert source_map_path.exists()
+
+    sourcemap = json.loads(source_map_path.read_text())
     assert sourcemap["sourceRoot"] == "../../scripts"
     assert sourcemap["sources"] == ["test.coffee"]
     assert sourcemap["file"] == "test.js"
