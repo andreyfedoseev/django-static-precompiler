@@ -6,10 +6,10 @@ import pretend
 import pytest
 
 from static_precompiler import exceptions, utils
-from static_precompiler.compilers import libsass, scss
+from static_precompiler.compilers import libsass, ruby_scss
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_get_full_source_path(compiler_module):
 
     compiler = compiler_module.SCSS()
@@ -23,7 +23,7 @@ def test_get_full_source_path(compiler_module):
     assert compiler.get_full_source_path("_extra.scss") == os.path.join(extra_path, "_extra.scss")
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_compile_file(compiler_module, monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     convert_urls = pretend.call_recorder(lambda *args: None)
@@ -52,7 +52,7 @@ def test_compile_file(compiler_module, monkeypatch, tmpdir):
         compiler.compile_file("styles/sass/invalid-syntax.scss")
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_sourcemap(compiler_module, monkeypatch, tmpdir):
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
@@ -78,7 +78,7 @@ def test_sourcemap(compiler_module, monkeypatch, tmpdir):
         assert "/*# sourceMappingURL=test.css.map */" in {line.strip() for line in compiled_file.readlines()}
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_compile_source(compiler_module):
 
     compiler = compiler_module.SCSS()
@@ -105,7 +105,7 @@ def test_compile_source(compiler_module):
     )
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_parse_import_string(compiler_module):
     compiler = compiler_module.SCSS()
     import_string = """"foo, bar" , "foo", url(bar,baz),
@@ -128,7 +128,7 @@ def test_parse_import_string(compiler_module):
     assert compiler.parse_import_string(import_string) == ["foo"]
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_strip_comments(compiler_module):
 
     source = """
@@ -151,7 +151,7 @@ p {
   background-image: url(//not-a-comment.com); // comment
 }
     """
-    compiler = scss.SCSS()
+    compiler = compiler_module.SCSS()
     assert (
         compiler.strip_comments(source)
         == """
@@ -203,10 +203,10 @@ def test_find_imports():
         "rounded-corners",
         "text-shadow",
     ]
-    compiler = scss.SCSS(compass_enabled=False)
+    compiler = ruby_scss.SCSS(compass_enabled=False)
     assert compiler.find_imports(source) == expected
 
-    compiler = scss.SCSS(compass_enabled=True)
+    compiler = ruby_scss.SCSS(compass_enabled=True)
     expected = [
         "bar,foo",
         "foo",
@@ -218,7 +218,7 @@ def test_find_imports():
     assert compiler.find_imports(source) == expected
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_locate_imported_file(compiler_module, monkeypatch):
 
     root = os.path.dirname(__file__)
@@ -248,7 +248,7 @@ def test_locate_imported_file(compiler_module, monkeypatch):
         compiler.locate_imported_file("", "Z.scss")
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_find_dependencies(compiler_module, monkeypatch):
     compiler = compiler_module.SCSS()
     files = {
@@ -275,7 +275,7 @@ def test_find_dependencies(compiler_module, monkeypatch):
 def test_compass(monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
-    compiler = scss.SCSS(compass_enabled=True)
+    compiler = ruby_scss.SCSS(compass_enabled=True)
 
     assert compiler.compile_file("test-compass.scss") == "COMPILED/test-compass.css"
 
@@ -293,7 +293,7 @@ def test_compass(monkeypatch, tmpdir):
 def test_compass_import(monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
-    compiler = scss.SCSS(compass_enabled=True)
+    compiler = ruby_scss.SCSS(compass_enabled=True)
 
     assert (
         compiler.compile_file("styles/sass/test-compass-import.scss") == "COMPILED/styles/sass/test-compass-import.css"
@@ -312,16 +312,16 @@ def test_compass_import(monkeypatch, tmpdir):
 """
         )
 
-    compiler = scss.SCSS(compass_enabled=False)
+    compiler = ruby_scss.SCSS(compass_enabled=False)
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_file("styles/sass/test-compass-import.scss")
 
 
 def test_get_extra_args():
 
-    assert scss.SCSS().get_extra_args() == []
+    assert ruby_scss.SCSS().get_extra_args() == []
 
-    assert scss.SCSS(
+    assert ruby_scss.SCSS(
         compass_enabled=True, load_paths=["foo", "bar"], precision=10, output_style="compact"
     ).get_extra_args() == [
         "-I",
@@ -336,7 +336,7 @@ def test_get_extra_args():
     ]
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
@@ -361,7 +361,7 @@ def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
         )
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 @pytest.mark.parametrize("precision", (None, 10))
 def test_precision(compiler_module, precision, monkeypatch, tmpdir):
 
@@ -383,7 +383,7 @@ def test_precision(compiler_module, precision, monkeypatch, tmpdir):
         assert len(line_height.split(".")[-1]) == expected_precision
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, scss))
+@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 def test_output_style(compiler_module, monkeypatch, tmpdir):
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
