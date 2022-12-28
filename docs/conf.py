@@ -43,7 +43,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "django-static-precompiler"
-copyright = "2021, Andrey Fedoseev"
+copyright = "2022, Andrey Fedoseev"
 author = "Andrey Fedoseev"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -60,7 +60,7 @@ release = version
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:

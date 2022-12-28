@@ -2,7 +2,21 @@
 
 ### Dev
 
+#### Deprecation
+
+- Ruby-based Sass compiler is deprecated and will be removed in 3.0
+
+#### New
+
+- Added support for Dart Sass, see documentation on how to enable it.
+  Dart Sass will become the default Sass compiler starting from 3.0
+
+#### Bugfixes
+
 - Fix the bug with a greedy regex in the URL converter
+
+#### Misc
+
 - Ensure compatibility with the latest versions of compilers:
   - coffeescript@2.7.0 (may break compatibility with older versions)
   - livescript@1.6.0

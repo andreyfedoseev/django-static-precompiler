@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 MAINTAINER Andrey Fedoseev <andrey.fedoseev@gmail.com>
-RUN apt-get update && apt-get install -y autoconf libtool ruby-dev npm
+RUN apt-get update && apt-get install -y autoconf libtool ruby-dev npm wget
 RUN ln -s /usr/bin/nodejs /usr/local/bin/node
 RUN npm install -g coffeescript@2.7.0
 RUN npm install -g livescript@1.6.0
@@ -10,3 +10,6 @@ RUN npm install -g stylus@0.50.0
 RUN npm install -g handlebars@4.7.7
 RUN gem install sass -v 3.4.22
 RUN gem install compass -v 1.0.1
+RUN wget -O /tmp/dart-sass.tar.gz https://github.com/sass/dart-sass/releases/download/1.56.1/dart-sass-1.56.1-linux-x64.tar.gz && \
+    tar -xzf /tmp/dart-sass.tar.gz -C /opt && \
+    rm -rf /tmp/dart-sass.tar.gz

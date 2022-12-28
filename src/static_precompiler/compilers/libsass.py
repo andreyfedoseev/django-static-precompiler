@@ -7,7 +7,7 @@ from django.utils import encoding
 
 from .. import exceptions, url_converter, utils
 from ..types import StrCollection
-from . import scss
+from . import dart_sass
 
 __all__ = (
     "SCSS",
@@ -15,7 +15,7 @@ __all__ = (
 )
 
 
-class SCSS(scss.SCSS):
+class SCSS(dart_sass.SCSS):
 
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     indented = False
@@ -32,7 +32,7 @@ class SCSS(scss.SCSS):
         self.precision = precision
         self.output_style = output_style
         self.load_paths: StrCollection = load_paths or []
-        super(scss.SCSS, self).__init__()
+        super(dart_sass.SCSS, self).__init__()
 
     def compile_file(self, source_path: str) -> str:
         full_source_path = self.get_full_source_path(source_path)

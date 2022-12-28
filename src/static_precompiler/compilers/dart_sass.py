@@ -1,7 +1,6 @@
 import os
 import posixpath
 import re
-import warnings
 from typing import List, Match, Optional
 
 from .. import exceptions, url_converter, utils
@@ -11,13 +10,6 @@ from . import base
 __all__ = (
     "SCSS",
     "SASS",
-)
-
-
-warnings.warn(
-    "Ruby-based SCSS/SASS compilers are deprecated and will be removed in version 3.0. "
-    "The default SCSS/SASS compiler will be switched to Dart SASS in version 3.0",
-    DeprecationWarning,
 )
 
 
@@ -35,15 +27,11 @@ class SCSS(base.BaseCompiler):
         self,
         executable: str = "sass",
         sourcemap_enabled: bool = False,
-        compass_enabled: bool = False,
         load_paths: Optional[StrCollection] = None,
-        precision: Optional[int] = None,
         output_style: Optional[str] = None,
     ):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
-        self.is_compass_enabled = compass_enabled
-        self.precision = precision
         self.output_style = output_style
         self.load_paths: StrCollection = load_paths or []
         super().__init__()
@@ -54,14 +42,8 @@ class SCSS(base.BaseCompiler):
         for path in self.load_paths:
             args += ["-I", path]
 
-        if self.is_compass_enabled:
-            args.append("--compass")
-
-        if self.precision:
-            args += ["--precision", str(self.precision)]
-
         if self.output_style:
-            args += ["-t", self.output_style]
+            args += ["-s", self.output_style]
 
         return args
 
@@ -74,10 +56,11 @@ class SCSS(base.BaseCompiler):
     def compile_file(self, source_path: str) -> str:
         full_source_path = self.get_full_source_path(source_path)
         full_output_path = self.get_full_output_path(source_path)
-        args = [
-            self.executable,
-            "--sourcemap={}".format("auto" if self.is_sourcemap_enabled else "none"),
-        ] + self.get_extra_args()
+        args = [self.executable] + self.get_extra_args()
+        if self.is_sourcemap_enabled:
+            args.append("--source-map")
+        else:
+            args.append("--no-source-map")
 
         args.extend(
             [
@@ -108,13 +91,7 @@ class SCSS(base.BaseCompiler):
         return self.get_output_path(source_path)
 
     def compile_source(self, source: str) -> str:
-        args = [
-            self.executable,
-            "-s",
-        ] + self.get_extra_args()
-
-        if self.executable.endswith("sass"):
-            args.append("--scss")
+        args = [self.executable, "--stdin", "--no-indented"] + self.get_extra_args()
 
         return_code, out, errors = utils.run_command(args, input=source)
         if return_code:
@@ -229,11 +206,6 @@ class SCSS(base.BaseCompiler):
                     continue
                 if import_item.startswith("http://") or import_item.startswith("https://"):
                     continue
-                if self.is_compass_enabled and (
-                    import_item in ("compass", "compass.scss") or import_item.startswith("compass/")
-                ):
-                    # Ignore compass imports if Compass is enabled.
-                    continue
                 imports.add(import_item)
         return sorted(imports)
 
@@ -309,12 +281,7 @@ class SASS(SCSS):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*(?:\n|$)")
 
     def compile_source(self, source: str) -> str:
-        args = [
-            self.executable,
-            "-s",
-        ] + self.get_extra_args()
-        if self.executable.endswith("scss"):
-            args.append("--sass")
+        args = [self.executable, "--stdin", "--indented"] + self.get_extra_args()
 
         return_code, out, errors = utils.run_command(args, input=source)
         if return_code:

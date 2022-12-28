@@ -56,7 +56,7 @@ def test_sourcemap(monkeypatch, tmpdir):
 def test_compile_source():
     compiler = compilers.Stylus()
 
-    assert utils.fix_line_breaks(compiler.compile_source("p\n  color: red;")) == "p {\n  color: #f00;\n}\n\n"
+    assert utils.normalize_whitespace(compiler.compile_source("p\n  color: red;")) == "p { color: #f00; }"
 
     with pytest.raises(exceptions.StaticCompilationError):
         assert compiler.compile_source("broken")
