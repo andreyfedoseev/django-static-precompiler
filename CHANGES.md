@@ -1,6 +1,6 @@
 ## Changelog
 
-### Dev
+### 2.4
 
 #### Deprecation
 
