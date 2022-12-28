@@ -63,7 +63,7 @@ class SCSS(dart_sass.SCSS):
                     compile_kwargs["output_style"] = self.output_style
                 compiled = sass.compile(filename=full_source_path, **compile_kwargs)
         except sass.CompileError as e:
-            raise exceptions.StaticCompilationError(encoding.force_str(e))
+            raise exceptions.StaticCompilationError(f"Could not compile {source_path}") from e
 
         compiled = encoding.force_str(compiled)
         sourcemap = encoding.force_str(sourcemap)
@@ -82,7 +82,7 @@ class SCSS(dart_sass.SCSS):
         try:
             compiled: str = sass.compile(string=source, indented=self.indented, include_paths=self.load_paths)
         except sass.CompileError as e:
-            raise exceptions.StaticCompilationError(encoding.force_str(e))
+            raise exceptions.StaticCompilationError("Could not compile source") from e
 
         return encoding.force_str(compiled)
 

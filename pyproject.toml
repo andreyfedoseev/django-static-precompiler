@@ -5,10 +5,14 @@ build-backend = "setuptools.build_meta"
 [tool.black]
 line-length = 120
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-line_length = 120
+[tool.ruff]
+select = ["F", "E", "W", "I", "YTT", "B", "C4", "T10", "SIM", "ERA", "RUF", "UP"]
+ignore = ["RUF001"]
+line-length = 120
+target-version = "py36"
+
+[tool.ruff.isort]
+known-first-party = ["static_precompiler"]
 
 [tool.mypy]
 python_version = "3.6"

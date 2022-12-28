@@ -101,7 +101,7 @@ class Stylus(base.BaseCompiler):
         try:
             self.get_full_source_path(path)
         except ValueError:
-            raise exceptions.StaticCompilationError(f"Can't locate the imported file: {import_path}")
+            raise exceptions.StaticCompilationError(f"Can't locate the imported file: {import_path}") from None
         return path
 
     def find_dependencies(self, source_path: str) -> List[str]:
@@ -119,7 +119,9 @@ class Stylus(base.BaseCompiler):
                 try:
                     imported_dir_full_path = self.get_full_source_path(imported_dir)
                 except ValueError:
-                    raise exceptions.StaticCompilationError(f"Can't locate the imported directory: {import_path}")
+                    raise exceptions.StaticCompilationError(
+                        f"Can't locate the imported directory: {import_path}"
+                    ) from None
                 if not os.path.isdir(imported_dir_full_path):
                     raise exceptions.StaticCompilationError(f"Imported path is not a directory: {import_path}")
                 for filename in os.listdir(imported_dir_full_path):

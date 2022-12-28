@@ -40,7 +40,7 @@ def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
     output_path = os.path.join(tmpdir.strpath, static_precompiler.settings.OUTPUT_DIR)
 
     compiled_files = []
-    for root, dirs, files in os.walk(output_path):
+    for root, _dirs, files in os.walk(output_path):
         for filename in files:
             compiled_files.append(os.path.join(root[len(output_path) :].lstrip("/"), filename))
 
@@ -100,7 +100,7 @@ def test_delete_stale_files(monkeypatch, tmpdir):
     management.call_command("compilestatic", delete_stale_files=True)
 
     compiled_files = []
-    for root, dirs, files in os.walk(output_path):
+    for root, _dirs, files in os.walk(output_path):
         for filename in files:
             compiled_files.append(os.path.join(root[len(output_path) :].lstrip("/"), filename))
 

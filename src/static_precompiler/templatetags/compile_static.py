@@ -73,7 +73,7 @@ def inlinecompile(parser: Any, token: Any) -> Any:
     try:
         (compiler,) = bits[1:]
     except ValueError:
-        raise django.template.TemplateSyntaxError("%r tag requires exactly one argument." % tag_name)
+        raise django.template.TemplateSyntaxError(f"{tag_name!r} tag requires exactly one argument.") from None
     if compiler.startswith("compiler="):
         compiler = compiler[len("compiler=") :]
     nodelist = parser.parse(("end" + tag_name,))

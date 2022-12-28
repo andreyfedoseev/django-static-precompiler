@@ -49,10 +49,10 @@ def run_command(
     args: List[str], input: Optional[Union[bytes, str]] = None, cwd: Optional[str] = None
 ) -> Tuple[int, str, str]:
 
-    popen_kwargs: Dict[str, Any] = dict(
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
+    popen_kwargs: Dict[str, Any] = {
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+    }
 
     if cwd is not None:
         popen_kwargs["cwd"] = cwd
