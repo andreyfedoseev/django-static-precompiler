@@ -4,7 +4,7 @@ from typing import Any, Collection, Iterable
 from watchdog import events, observers  # type: ignore
 
 from . import exceptions, registry
-from .compilers import BaseCompiler  # noqa
+from .compilers import BaseCompiler
 
 
 class EventHandler(events.FileSystemEventHandler):  # type: ignore

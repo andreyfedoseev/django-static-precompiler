@@ -96,11 +96,11 @@ def test_should_compile(monkeypatch):
 
     monkeypatch.setattr(compiler, "get_dependencies", lambda source_path: ["B", "C"])
 
-    mtimes = dict(
-        A=1,
-        B=3,
-        C=5,
-    )
+    mtimes = {
+        "A": 1,
+        "B": 3,
+        "C": 5,
+    }
 
     monkeypatch.setattr(compiler, "get_source_mtime", lambda x: mtimes[x])
     monkeypatch.setattr(compiler, "get_output_mtime", lambda x: None)

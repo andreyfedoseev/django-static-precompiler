@@ -32,7 +32,7 @@ def get_scanned_dirs() -> List[str]:
 
 def list_files(scanned_dirs: StrCollection) -> Iterable[str]:
     for scanned_dir in scanned_dirs:
-        for dirname, dirnames, filenames in os.walk(scanned_dir):
+        for dirname, _dirnames, filenames in os.walk(scanned_dir):
             for filename in filenames:
                 path = os.path.join(dirname, filename)[len(scanned_dir) :]
                 if path.startswith("/"):
@@ -45,7 +45,7 @@ def delete_stale_files(compiled_files: StrCollection) -> None:
         os.path.join(settings.ROOT, utils.normalize_path(compiled_file)) for compiled_file in compiled_files
     }
     actual_files = set()
-    for dirname, dirnames, filenames in os.walk(os.path.join(settings.ROOT, settings.OUTPUT_DIR)):
+    for dirname, _dirnames, filenames in os.walk(os.path.join(settings.ROOT, settings.OUTPUT_DIR)):
         for filename in filenames:
             actual_files.add(os.path.join(dirname, filename))
     stale_files = actual_files - compiled_files

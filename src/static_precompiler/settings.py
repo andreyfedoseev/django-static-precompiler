@@ -3,8 +3,8 @@ import os
 import django.core.exceptions
 from django.conf import settings
 
-STATIC_ROOT = getattr(settings, "STATIC_ROOT", getattr(settings, "MEDIA_ROOT"))
-STATIC_URL = getattr(settings, "STATIC_URL", getattr(settings, "MEDIA_URL"))
+STATIC_ROOT = getattr(settings, "STATIC_ROOT", settings.MEDIA_ROOT)
+STATIC_URL = getattr(settings, "STATIC_URL", settings.MEDIA_URL)
 
 POSIX_COMPATIBLE = True if os.name == "posix" else False
 
@@ -25,9 +25,7 @@ COMPILERS = getattr(
     ),
 )
 
-ROOT: str = getattr(
-    settings, "STATIC_PRECOMPILER_ROOT", getattr(settings, "STATIC_ROOT", getattr(settings, "MEDIA_ROOT"))
-)
+ROOT: str = getattr(settings, "STATIC_PRECOMPILER_ROOT", getattr(settings, "STATIC_ROOT", settings.MEDIA_ROOT))
 
 if not ROOT:
     raise django.core.exceptions.ImproperlyConfigured(
