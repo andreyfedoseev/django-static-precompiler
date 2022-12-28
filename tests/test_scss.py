@@ -6,30 +6,43 @@ import pretend
 import pytest
 
 from static_precompiler import exceptions, utils
-from static_precompiler.compilers import libsass, ruby_scss
+from static_precompiler.compilers import dart_sass, libsass, ruby_scss
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_get_full_source_path(compiler_module):
+@pytest.fixture(scope="module", params=(libsass, ruby_scss, dart_sass))
+def compiler_factory(request):
+    compiler_module = request.param
 
-    compiler = compiler_module.SCSS()
+    def factory(compiler_type, *args, **kwargs):
+        if compiler_module is dart_sass:
+            kwargs["executable"] = "/opt/dart-sass/sass"
+        if compiler_type == "scss":
+            return compiler_module.SCSS(*args, **kwargs)
+        elif compiler_type == "sass":
+            return compiler_module.SASS(*args, **kwargs)
+
+    return factory
+
+
+def test_get_full_source_path(compiler_factory):
+
+    compiler = compiler_factory("scss")
     with pytest.raises(ValueError):
         compiler.get_full_source_path("_extra.scss")
 
     extra_path = os.path.join(os.path.dirname(__file__), "static", "styles", "sass", "extra-path")
 
-    compiler = compiler_module.SCSS(load_paths=(extra_path,))
+    compiler = compiler_factory("scss", load_paths=(extra_path,))
 
     assert compiler.get_full_source_path("_extra.scss") == os.path.join(extra_path, "_extra.scss")
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_compile_file(compiler_module, monkeypatch, tmpdir):
+def test_compile_file(compiler_factory, monkeypatch, tmpdir):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     convert_urls = pretend.call_recorder(lambda *args: None)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", convert_urls)
 
-    compiler = compiler_module.SCSS()
+    compiler = compiler_factory("scss")
 
     assert compiler.compile_file("styles/sass/test.scss") == "COMPILED/styles/sass/test.css"
 
@@ -39,31 +52,23 @@ def test_compile_file(compiler_module, monkeypatch, tmpdir):
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert (
-            compiled.read()
-            == """p {
-  font-size: 15px; }
-  p a {
-    color: red; }
-"""
-        )
+        assert utils.normalize_whitespace(compiled.read()) == "p { font-size: 15px; } p a { color: red; }"
 
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_file("styles/sass/invalid-syntax.scss")
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_sourcemap(compiler_module, monkeypatch, tmpdir):
+def test_sourcemap(compiler_factory, monkeypatch, tmpdir):
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
-    compiler = compiler_module.SCSS(sourcemap_enabled=False)
+    compiler = compiler_factory("scss", sourcemap_enabled=False)
     compiler.compile_file("styles/sass/test.scss")
     full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
     assert not os.path.exists(full_output_path + ".map")
 
-    compiler = compiler_module.SCSS(sourcemap_enabled=True)
+    compiler = compiler_factory("scss", sourcemap_enabled=True)
     compiler.compile_file("styles/sass/test.scss")
     full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
     assert os.path.exists(full_output_path + ".map")
@@ -78,36 +83,30 @@ def test_sourcemap(compiler_module, monkeypatch, tmpdir):
         assert "/*# sourceMappingURL=test.css.map */" in {line.strip() for line in compiled_file.readlines()}
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_compile_source(compiler_module):
+def test_compile_source(compiler_factory):
 
-    compiler = compiler_module.SCSS()
+    compiler = compiler_factory("scss")
     assert (
-        utils.fix_line_breaks(compiler.compile_source("p {font-size: 15px; a {color: red;}}"))
-        == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+        utils.normalize_whitespace(compiler.compile_source("p {font-size: 15px; a {color: red;}}"))
+        == "p { font-size: 15px; } p a { color: red; }"
     )
 
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_source("invalid syntax")
 
     # Test non-ascii
-    NON_ASCII = """@charset "UTF-8";
-.external_link:first-child:before {
-  content: "Zobacz także:";
-  background: url("картинка.png"); }
-"""
-    assert utils.fix_line_breaks(compiler.compile_source(NON_ASCII)) == NON_ASCII
+    NON_ASCII = """@charset "UTF-8"; .external_link:first-child:before { content: "Zobacz także:"; background: url("картинка.png"); }"""  # noqa
+    assert utils.normalize_whitespace(compiler.compile_source(NON_ASCII)) == NON_ASCII
 
-    compiler = compiler_module.SASS()
+    compiler = compiler_factory("sass")
     assert (
-        utils.fix_line_breaks(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red"))
-        == "p {\n  font-size: 15px; }\n  p a {\n    color: red; }\n"
+        utils.normalize_whitespace(compiler.compile_source("p\n  font-size: 15px\n  a\n    color: red"))
+        == "p { font-size: 15px; } p a { color: red; }"
     )
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_parse_import_string(compiler_module):
-    compiler = compiler_module.SCSS()
+def test_parse_import_string(compiler_factory):
+    compiler = compiler_factory("scss")
     import_string = """"foo, bar" , "foo", url(bar,baz),
      'bar,foo',bar screen, projection"""
     assert compiler.parse_import_string(import_string) == [
@@ -128,8 +127,7 @@ def test_parse_import_string(compiler_module):
     assert compiler.parse_import_string(import_string) == ["foo"]
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_strip_comments(compiler_module):
+def test_strip_comments(compiler_factory):
 
     source = """
 // Single-line comment
@@ -151,7 +149,7 @@ p {
   background-image: url(//not-a-comment.com); // comment
 }
     """
-    compiler = compiler_module.SCSS()
+    compiler = compiler_factory("scss")
     assert (
         compiler.strip_comments(source)
         == """
@@ -218,8 +216,7 @@ def test_find_imports():
     assert compiler.find_imports(source) == expected
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_locate_imported_file(compiler_module, monkeypatch):
+def test_locate_imported_file(compiler_factory, monkeypatch):
 
     root = os.path.dirname(__file__)
 
@@ -232,7 +229,7 @@ def test_locate_imported_file(compiler_module, monkeypatch):
 
     monkeypatch.setattr("os.path.exists", lambda x: x in existing_files)
 
-    compiler = compiler_module.SCSS(load_paths=(additional_path,))
+    compiler = compiler_factory("scss", load_paths=(additional_path,))
 
     assert compiler.locate_imported_file("A", "B.scss") == "A/B.scss"
     assert compiler.locate_imported_file("A", "C") == "A/_C.scss"
@@ -248,9 +245,8 @@ def test_locate_imported_file(compiler_module, monkeypatch):
         compiler.locate_imported_file("", "Z.scss")
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_find_dependencies(compiler_module, monkeypatch):
-    compiler = compiler_module.SCSS()
+def test_find_dependencies(compiler_factory, monkeypatch):
+    compiler = compiler_factory("scss")
     files = {
         "A.scss": "@import 'B/C.scss';",
         "B/C.scss": "@import '../E';",
@@ -317,7 +313,7 @@ def test_compass_import(monkeypatch, tmpdir):
         compiler.compile_file("styles/sass/test-compass-import.scss")
 
 
-def test_get_extra_args():
+def test_ruby_get_extra_args():
 
     assert ruby_scss.SCSS().get_extra_args() == []
 
@@ -336,16 +332,29 @@ def test_get_extra_args():
     ]
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
+def test_get_extra_args():
+
+    assert dart_sass.SCSS().get_extra_args() == []
+
+    assert dart_sass.SCSS(load_paths=["foo", "bar"], output_style="compact").get_extra_args() == [
+        "-I",
+        "foo",
+        "-I",
+        "bar",
+        "-s",
+        "compact",
+    ]
+
+
+def test_load_paths(compiler_factory, monkeypatch, tmpdir, settings):
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
-    compiler = compiler_module.SCSS()
+    compiler = compiler_factory("scss")
     with pytest.raises(exceptions.StaticCompilationError):
         compiler.compile_file("styles/sass/load-paths.scss")
 
-    compiler = compiler_module.SCSS(load_paths=[os.path.join(settings.STATIC_ROOT, "styles", "sass", "extra-path")])
+    compiler = compiler_factory("scss", load_paths=[os.path.join(settings.STATIC_ROOT, "styles", "sass", "extra-path")])
 
     compiler.compile_file("styles/sass/load-paths.scss")
 
@@ -353,12 +362,7 @@ def test_load_paths(compiler_module, monkeypatch, tmpdir, settings):
     assert os.path.exists(full_output_path)
 
     with open(full_output_path) as compiled:
-        assert (
-            compiled.read()
-            == """p {
-  font-weight: bold; }
-"""
-        )
+        assert utils.normalize_whitespace(compiled.read()) == "p { font-weight: bold; }"
 
 
 @pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
@@ -383,13 +387,12 @@ def test_precision(compiler_module, precision, monkeypatch, tmpdir):
         assert len(line_height.split(".")[-1]) == expected_precision
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
-def test_output_style(compiler_module, monkeypatch, tmpdir):
+def test_output_style(compiler_factory, monkeypatch, tmpdir):
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
-    compiler = compiler_module.SCSS(output_style="compressed")
+    compiler = compiler_factory("scss", output_style="compressed")
 
     compiler.compile_file("styles/sass/test.scss")
 

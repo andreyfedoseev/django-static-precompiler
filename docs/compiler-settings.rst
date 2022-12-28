@@ -119,6 +119,8 @@ Example:
 SASS / SCSS
 ===========
 
+Ruby-based (legacy) SASS compiler.
+
 ``executable``
   Path to SASS compiler executable. Default: "sass".
 
@@ -153,6 +155,48 @@ Example:
                 "compass_enabled": True,
                 "load_paths": ["/path"],
                 "precision": 8,
+                "output_style": "compressed",
+            },
+        ),
+    )
+
+
+Dart Sass
+=========
+
+Dart Sass is the current implementation of SASS.
+
+.. note:: Dart Sass compiler is not enabled by default. See the example below for how to enable it.
+
+Options:
+
+``sourcemap_enabled``
+  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
+
+``load_paths``
+  List of additional paths to find imports. Default: ``None``.
+
+``output_style``
+  Output style. Default: ``None``.
+  Can be "expanded" or "compressed".
+
+Example:
+
+.. code-block:: python
+
+    STATIC_PRECOMPILER_COMPILERS = (
+        (
+            "static_precompiler.compilers.dart_sass.SCSS",
+            {
+                "sourcemap_enabled": True,
+                "load_paths": ["/path"],
+            },
+        ),
+        (
+            "static_precompiler.compilers.dart_sass.SASS",
+            {
+                "sourcemap_enabled": True,
+                "load_paths": ["/path"],
                 "output_style": "compressed",
             },
         ),
@@ -211,8 +255,6 @@ Example:
             },
         ),
     )
-
-.. note:: Libsass compiler doesn't support Compass extension, but you can replace it with `compass-mixins <https://github.com/Igosuki/compass-mixins>`_.
 
 
 LESS

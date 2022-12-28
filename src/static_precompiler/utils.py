@@ -39,9 +39,9 @@ def write_file(content: str, path: str) -> None:
         file_object.write(content)
 
 
-def fix_line_breaks(text: str) -> str:
-    """Convert Win line breaks to Unix"""
-    return text.replace("\r\n", "\n")
+def normalize_whitespace(text: str) -> str:
+    """Normalize whitespace in a string."""
+    return " ".join(text.split())
 
 
 # noinspection PyShadowingBuiltins
