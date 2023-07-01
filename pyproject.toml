@@ -9,7 +9,7 @@ line-length = 120
 select = ["F", "E", "W", "I", "YTT", "B", "C4", "T10", "SIM", "ERA", "RUF", "UP"]
 ignore = ["RUF001"]
 line-length = 120
-target-version = "py36"
+target-version = "py37"
 
 [tool.ruff.isort]
 known-first-party = ["static_precompiler"]
