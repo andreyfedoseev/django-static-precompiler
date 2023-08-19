@@ -1,5 +1,12 @@
 ## Changelog
 
+### 3.0
+
+- BREAKING: The minimum supported Django version is now 3.2
+  (other versions may work, but are not tested)
+- BREAKING: Drop support for Python 3.7 and below
+- BREAKING: Drop support for Ruby-based Sass compiler
+
 ### 2.4
 
 #### Deprecation

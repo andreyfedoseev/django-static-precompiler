@@ -6,7 +6,7 @@ from django.conf import settings
 STATIC_ROOT = getattr(settings, "STATIC_ROOT", settings.MEDIA_ROOT)
 STATIC_URL = getattr(settings, "STATIC_URL", settings.MEDIA_URL)
 
-POSIX_COMPATIBLE = True if os.name == "posix" else False
+POSIX_COMPATIBLE = os.name == "posix"
 
 MTIME_DELAY = getattr(settings, "STATIC_PRECOMPILER_MTIME_DELAY", 10)  # 10 seconds
 

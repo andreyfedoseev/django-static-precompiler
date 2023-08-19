@@ -12,7 +12,7 @@ from . import settings
 def get_cache() -> BaseCache:
     if settings.CACHE_NAME:
         return django.core.cache.caches.get(settings.CACHE_NAME)  # type: ignore
-    return django.core.cache.cache  # type: ignore
+    return django.core.cache.cache
 
 
 def get_cache_key(key: str) -> str:

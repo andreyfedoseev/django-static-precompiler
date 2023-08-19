@@ -38,7 +38,6 @@ h1 {
 
 
 def test_sourcemap(monkeypatch, tmpdir):
-
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
@@ -155,7 +154,6 @@ def test_find_dependencies(monkeypatch):
 
 
 def test_global_vars(monkeypatch, tmpdir):
-
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 

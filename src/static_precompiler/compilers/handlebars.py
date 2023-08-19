@@ -9,7 +9,6 @@ __all__ = ("Handlebars",)
 
 
 class Handlebars(base.BaseCompiler):
-
     name = "handlebars"
     input_extensions = (
         "hbs",
@@ -65,7 +64,8 @@ class Handlebars(base.BaseCompiler):
             template_extension,
             "-f",
             full_output_path,
-        ] + self.get_extra_args()
+            *self.get_extra_args(),
+        ]
 
         if self.is_sourcemap_enabled:
             args += ["--map", full_output_path + ".map"]
@@ -81,11 +81,7 @@ class Handlebars(base.BaseCompiler):
         return self.get_output_path(source_path)
 
     def compile_source(self, source: str) -> str:
-        args = [
-            self.executable,
-            "-i",
-            "-",
-        ] + self.get_extra_args()
+        args = [self.executable, "-i", "-", *self.get_extra_args()]
 
         return_code, out, errors = utils.run_command(args, input=source)
         if return_code:

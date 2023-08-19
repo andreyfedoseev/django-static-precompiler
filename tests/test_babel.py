@@ -27,7 +27,6 @@ def test_compile_file(monkeypatch, tmpdir):
 
 
 def test_sourcemap(monkeypatch, tmpdir):
-
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.Babel(sourcemap_enabled=False)
@@ -65,7 +64,6 @@ def test_compile_source():
 
 
 def test_get_extra_args():
-
     compiler = compilers.Babel(plugins="bar", presets="baz")
 
     assert compiler.get_extra_args() == [

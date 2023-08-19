@@ -6,10 +6,10 @@ import pretend
 import pytest
 
 from static_precompiler import exceptions, utils
-from static_precompiler.compilers import dart_sass, libsass, ruby_scss
+from static_precompiler.compilers import dart_sass, libsass
 
 
-@pytest.fixture(scope="module", params=(libsass, ruby_scss, dart_sass))
+@pytest.fixture(scope="module", params=(libsass, dart_sass))
 def compiler_factory(request):
     compiler_module = request.param
 
@@ -25,7 +25,6 @@ def compiler_factory(request):
 
 
 def test_get_full_source_path(compiler_factory):
-
     compiler = compiler_factory("scss")
     with pytest.raises(ValueError):
         compiler.get_full_source_path("_extra.scss")
@@ -59,7 +58,6 @@ def test_compile_file(compiler_factory, monkeypatch, tmpdir):
 
 
 def test_sourcemap(compiler_factory, monkeypatch, tmpdir):
-
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
@@ -84,7 +82,6 @@ def test_sourcemap(compiler_factory, monkeypatch, tmpdir):
 
 
 def test_compile_source(compiler_factory):
-
     compiler = compiler_factory("scss")
     assert (
         utils.normalize_whitespace(compiler.compile_source("p {font-size: 15px; a {color: red;}}"))
@@ -128,7 +125,6 @@ def test_parse_import_string(compiler_factory):
 
 
 def test_strip_comments(compiler_factory):
-
     source = """
 // Single-line comment
 a {
@@ -182,9 +178,6 @@ def test_find_imports():
 @import url(foo);  // `.class-name { @import "single-line-comment"; }`).
 @import "rounded-corners",
         "text-shadow";
-@import "compass";
-@import "compass.scss";
-@import "compass/css3";
 @import url(http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic);
 @import url("http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,700,600,300");
 @import "foo,bar", url(bar,baz), 'bar,foo';
@@ -192,32 +185,17 @@ def test_find_imports():
 
     expected = [
         "bar,foo",
-        "compass",
-        "compass.scss",
-        "compass/css3",
         "foo",
         "foo,bar",
         "foo.scss",
         "rounded-corners",
         "text-shadow",
     ]
-    compiler = ruby_scss.SCSS(compass_enabled=False)
-    assert compiler.find_imports(source) == expected
-
-    compiler = ruby_scss.SCSS(compass_enabled=True)
-    expected = [
-        "bar,foo",
-        "foo",
-        "foo,bar",
-        "foo.scss",
-        "rounded-corners",
-        "text-shadow",
-    ]
+    compiler = dart_sass.SCSS()
     assert compiler.find_imports(source) == expected
 
 
 def test_locate_imported_file(compiler_factory, monkeypatch):
-
     root = os.path.dirname(__file__)
 
     existing_files = set()
@@ -251,7 +229,6 @@ def test_find_dependencies(compiler_factory, monkeypatch):
         "A.scss": "@import 'B/C.scss';",
         "B/C.scss": "@import '../E';",
         "_E.scss": "p {color: red;}",
-        "compass-import.scss": '@import "compass"',
     }
     monkeypatch.setattr(compiler, "get_source", lambda x: files[x])
 
@@ -268,72 +245,7 @@ def test_find_dependencies(compiler_factory, monkeypatch):
     assert compiler.find_dependencies("_E.scss") == []
 
 
-def test_compass(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-
-    compiler = ruby_scss.SCSS(compass_enabled=True)
-
-    assert compiler.compile_file("test-compass.scss") == "COMPILED/test-compass.css"
-
-    full_output_path = compiler.get_full_output_path("test-compass.scss")
-    assert os.path.exists(full_output_path)
-    with open(full_output_path) as compiled:
-        assert (
-            compiled.read()
-            == """p {
-  background: url('/static/images/test.png'); }
-"""
-        )
-
-
-def test_compass_import(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-
-    compiler = ruby_scss.SCSS(compass_enabled=True)
-
-    assert (
-        compiler.compile_file("styles/sass/test-compass-import.scss") == "COMPILED/styles/sass/test-compass-import.css"
-    )
-
-    full_output_path = compiler.get_full_output_path("styles/sass/test-compass-import.scss")
-    assert os.path.exists(full_output_path)
-
-    with open(full_output_path) as compiled:
-        assert (
-            compiled.read()
-            == """.round-corners {
-  -moz-border-radius: 4px / 4px;
-  -webkit-border-radius: 4px 4px;
-  border-radius: 4px / 4px; }
-"""
-        )
-
-    compiler = ruby_scss.SCSS(compass_enabled=False)
-    with pytest.raises(exceptions.StaticCompilationError):
-        compiler.compile_file("styles/sass/test-compass-import.scss")
-
-
-def test_ruby_get_extra_args():
-
-    assert ruby_scss.SCSS().get_extra_args() == []
-
-    assert ruby_scss.SCSS(
-        compass_enabled=True, load_paths=["foo", "bar"], precision=10, output_style="compact"
-    ).get_extra_args() == [
-        "-I",
-        "foo",
-        "-I",
-        "bar",
-        "--compass",
-        "--precision",
-        "10",
-        "-t",
-        "compact",
-    ]
-
-
 def test_get_extra_args():
-
     assert dart_sass.SCSS().get_extra_args() == []
 
     assert dart_sass.SCSS(load_paths=["foo", "bar"], output_style="compact").get_extra_args() == [
@@ -365,16 +277,14 @@ def test_load_paths(compiler_factory, monkeypatch, tmpdir, settings):
         assert utils.normalize_whitespace(compiled.read()) == "p { font-weight: bold; }"
 
 
-@pytest.mark.parametrize("compiler_module", (libsass, ruby_scss))
 @pytest.mark.parametrize("precision", (None, 10))
-def test_precision(compiler_module, precision, monkeypatch, tmpdir):
-
+def test_precision(precision, monkeypatch, tmpdir):
     expected_precision = 5 if precision is None else precision
 
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
-    compiler = compiler_module.SCSS(precision=precision)
+    compiler = libsass.SCSS(precision=precision)
 
     compiler.compile_file("styles/sass/precision.scss")
 
@@ -388,7 +298,6 @@ def test_precision(compiler_module, precision, monkeypatch, tmpdir):
 
 
 def test_output_style(compiler_factory, monkeypatch, tmpdir):
-
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 

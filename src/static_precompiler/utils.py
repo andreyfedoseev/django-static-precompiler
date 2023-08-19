@@ -4,16 +4,9 @@ import posixpath
 import subprocess
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-import django.conf
-import django.core.cache
-import django.core.exceptions
 from django.utils import encoding
 
 from . import settings
-
-
-def get_file_encoding() -> str:
-    return getattr(django.conf.settings, "FILE_CHARSET", "utf-8")
 
 
 def normalize_path(posix_path: str) -> str:
@@ -25,7 +18,7 @@ def normalize_path(posix_path: str) -> str:
 
 def read_file(path: str) -> str:
     """Return the contents of a file as text."""
-    with open(path, encoding=get_file_encoding()) as file_object:
+    with open(path, encoding="utf-8") as file_object:
         return file_object.read()
 
 
@@ -35,7 +28,7 @@ def write_file(content: str, path: str) -> None:
     # Convert to unicode
     content = encoding.force_str(content)
 
-    with open(path, "w+", encoding=get_file_encoding()) as file_object:
+    with open(path, "w+", encoding="utf-8") as file_object:
         file_object.write(content)
 
 
@@ -48,7 +41,6 @@ def normalize_whitespace(text: str) -> str:
 def run_command(
     args: List[str], input: Optional[Union[bytes, str]] = None, cwd: Optional[str] = None
 ) -> Tuple[int, str, str]:
-
     popen_kwargs: Dict[str, Any] = {
         "stdout": subprocess.PIPE,
         "stderr": subprocess.PIPE,
@@ -88,7 +80,6 @@ def compile_static_lazy(path: str) -> str:
 
 
 def fix_sourcemap(sourcemap_full_path: str, source_path: str, compiled_full_path: str) -> None:
-
     sourcemap = json.loads(read_file(sourcemap_full_path))
 
     # Stylus, unlike SASS, can't add correct relative paths in source map when the compiled file

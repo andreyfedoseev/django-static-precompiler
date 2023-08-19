@@ -9,7 +9,6 @@ __all__ = ("Babel",)
 
 
 class Babel(base.BaseCompiler):
-
     name = "babel"
     input_extension = "es6"
     output_extension = "js"
@@ -25,7 +24,9 @@ class Babel(base.BaseCompiler):
         self.executable = executable
         self.is_sourcemap_enabled = sourcemap_enabled
         if modules:
-            warnings.warn("'modules' option is removed in Babel 6.0. Use `plugins` instead.", DeprecationWarning)
+            warnings.warn(
+                "'modules' option is removed in Babel 6.0. Use `plugins` instead.", DeprecationWarning, stacklevel=2
+            )
         self.modules = modules
         self.plugins = plugins
         self.presets = presets
@@ -46,9 +47,7 @@ class Babel(base.BaseCompiler):
         return args
 
     def compile_file(self, source_path: str) -> str:
-        args = [
-            self.executable,
-        ] + self.get_extra_args()
+        args = [self.executable, *self.get_extra_args()]
 
         if self.is_sourcemap_enabled:
             args.append("-s")
@@ -72,9 +71,7 @@ class Babel(base.BaseCompiler):
         return self.get_output_path(source_path)
 
     def compile_source(self, source: str) -> str:
-        args = [
-            self.executable,
-        ] + self.get_extra_args()
+        args = [self.executable, *self.get_extra_args()]
 
         return_code, out, errors = utils.run_command(args, input=source)
         if return_code:

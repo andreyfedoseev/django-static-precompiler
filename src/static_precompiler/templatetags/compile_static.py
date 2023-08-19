@@ -25,11 +25,9 @@ def compile_tag(source_path: str, compiler: Optional[BaseCompiler] = None) -> st
         "{% compile %} tag has been deprecated, use `compile` filter from `compile_static` template tag library "
         "instead.",
         DeprecationWarning,
+        stacklevel=2,
     )
-    if compiler:
-        compiled = compiler.compile(source_path)
-    else:
-        compiled = utils.compile_static(source_path)
+    compiled = compiler.compile(source_path) if compiler else utils.compile_static(source_path)
     if settings.PREPEND_STATIC_URL:
         compiled = django.templatetags.static.static(compiled)
     return compiled

@@ -8,7 +8,6 @@ __all__ = ("LiveScript",)
 
 
 class LiveScript(base.BaseCompiler):
-
     name = "livescript"
     input_extension = "ls"
     output_extension = "js"

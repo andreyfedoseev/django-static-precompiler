@@ -16,10 +16,8 @@ __all__ = (
 
 
 class SCSS(dart_sass.SCSS):
-
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*;", re.DOTALL)
     indented = False
-    is_compass_enabled = False
 
     def __init__(
         self,
@@ -89,7 +87,6 @@ class SCSS(dart_sass.SCSS):
 
 # noinspection PyAbstractClass
 class SASS(SCSS):
-
     name = "sass"
     input_extension = "sass"
     import_extensions = ("sass", "scss")

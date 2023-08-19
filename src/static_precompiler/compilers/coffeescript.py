@@ -7,7 +7,6 @@ __all__ = ("CoffeeScript",)
 
 
 class CoffeeScript(base.BaseCompiler):
-
     name = "coffeescript"
     input_extension = "coffee"
     output_extension = "js"

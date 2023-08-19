@@ -1,4 +1,4 @@
-from typing import List, Set, Tuple, Union
+from typing import Iterable, List, Tuple, Union
 
-StrCollection = Union[List[str], Tuple[str, ...], Set[str]]
+StrCollection = Iterable[str]
 OrderedStrCollection = Union[List[str], Tuple[str, ...]]

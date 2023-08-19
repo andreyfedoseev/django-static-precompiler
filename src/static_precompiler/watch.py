@@ -1,14 +1,13 @@
 import time
 from typing import Any, Collection, Iterable
 
-from watchdog import events, observers  # type: ignore
+from watchdog import events, observers
 
 from . import exceptions, registry
 from .compilers import BaseCompiler
 
 
-class EventHandler(events.FileSystemEventHandler):  # type: ignore
-
+class EventHandler(events.FileSystemEventHandler):
     # noinspection PyShadowingNames
     def __init__(self, scanned_dir: str, verbosity: int, compilers: Collection[BaseCompiler]) -> None:
         self.scanned_dir = scanned_dir
@@ -48,14 +47,14 @@ def watch_dirs(scanned_dirs: Iterable[str], verbosity: int) -> None:
 
     for scanned_dir in scanned_dirs:
         handler = EventHandler(scanned_dir, verbosity, compilers)
-        observer.schedule(handler, path=scanned_dir, recursive=True)
+        observer.schedule(handler, path=scanned_dir, recursive=True)  # type: ignore
 
-    observer.start()
+    observer.start()  # type: ignore
 
     try:
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        observer.stop()
+        observer.stop()  # type: ignore
 
     observer.join()

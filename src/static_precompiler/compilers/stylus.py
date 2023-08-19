@@ -10,7 +10,6 @@ __all__ = ("Stylus",)
 
 
 class Stylus(base.BaseCompiler):
-
     name = "stylus"
     input_extension = "styl"
     output_extension = "css"

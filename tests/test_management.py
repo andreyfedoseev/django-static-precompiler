@@ -8,7 +8,6 @@ from static_precompiler.management.commands import compilestatic
 
 
 def test_get_scanned_dirs():
-
     assert compilestatic.get_scanned_dirs() == sorted(
         [
             os.path.join(os.path.dirname(__file__), "compilestatic"),
@@ -28,7 +27,6 @@ def test_get_scanned_dirs():
     ),
 )
 def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
-
     monkeypatch.setattr(
         "static_precompiler.management.commands.compilestatic.get_scanned_dirs",
         lambda: (os.path.join(os.path.dirname(__file__), "compilestatic"),),
@@ -66,7 +64,6 @@ def test_compilestatic_command(verbosity, capsys, monkeypatch, tmpdir):
 
 @pytest.mark.django_db
 def test_ignore_dependencies_option(django_assert_num_queries, monkeypatch, tmpdir):
-
     monkeypatch.setattr(
         "static_precompiler.management.commands.compilestatic.get_scanned_dirs",
         lambda: (os.path.join(os.path.dirname(__file__), "compilestatic"),),
@@ -79,7 +76,6 @@ def test_ignore_dependencies_option(django_assert_num_queries, monkeypatch, tmpd
 
 @pytest.mark.django_db
 def test_delete_stale_files(monkeypatch, tmpdir):
-
     output_path = os.path.join(tmpdir.strpath, static_precompiler.settings.OUTPUT_DIR)
     if not os.path.exists(output_path):
         os.makedirs(output_path)

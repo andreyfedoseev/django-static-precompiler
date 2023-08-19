@@ -14,7 +14,6 @@ __all__ = (
 
 
 class SCSS(base.BaseCompiler):
-
     name = "scss"
     supports_dependencies = True
     input_extension = "scss"
@@ -56,7 +55,7 @@ class SCSS(base.BaseCompiler):
     def compile_file(self, source_path: str) -> str:
         full_source_path = self.get_full_source_path(source_path)
         full_output_path = self.get_full_output_path(source_path)
-        args = [self.executable] + self.get_extra_args()
+        args = [self.executable, *self.get_extra_args()]
         if self.is_sourcemap_enabled:
             args.append("--source-map")
         else:
@@ -91,7 +90,7 @@ class SCSS(base.BaseCompiler):
         return self.get_output_path(source_path)
 
     def compile_source(self, source: str) -> str:
-        args = [self.executable, "--stdin", "--no-indented"] + self.get_extra_args()
+        args = [self.executable, "--stdin", "--no-indented", *self.get_extra_args()]
 
         return_code, out, errors = utils.run_command(args, input=source)
         if return_code:
@@ -112,7 +111,6 @@ class SCSS(base.BaseCompiler):
         item_allowed = True
 
         for char in import_string:
-
             if char == ")":
                 in_parentheses = False
                 continue
@@ -273,7 +271,6 @@ class SCSS(base.BaseCompiler):
 
 # noinspection PyAbstractClass
 class SASS(SCSS):
-
     name = "sass"
     input_extension = "sass"
     import_extensions = ("sass", "scss")
@@ -281,7 +278,7 @@ class SASS(SCSS):
     IMPORT_RE = re.compile(r"@import\s+(.+?)\s*(?:\n|$)")
 
     def compile_source(self, source: str) -> str:
-        args = [self.executable, "--stdin", "--indented"] + self.get_extra_args()
+        args = [self.executable, "--stdin", "--indented", *self.get_extra_args()]
 
         return_code, out, errors = utils.run_command(args, input=source)
         if return_code:

@@ -32,7 +32,6 @@ def test_compile_file(monkeypatch, tmpdir):
 
 
 def test_sourcemap(monkeypatch, tmpdir):
-
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
     monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
 
@@ -106,7 +105,6 @@ def test_locate_imported_file(monkeypatch):
 
 
 def test_find_dependencies():
-
     compiler = compilers.Stylus()
 
     assert compiler.find_dependencies("styles/stylus/A.styl") == [

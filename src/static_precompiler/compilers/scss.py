@@ -1,1 +1,1 @@
-from .ruby_scss import SASS, SCSS  # noqa
+from .dart_sass import SASS, SCSS  # noqa

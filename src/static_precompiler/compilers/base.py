@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import os
 import posixpath
@@ -17,7 +18,6 @@ __all__ = ("BaseCompiler",)
 
 
 class BaseCompiler:
-
     name: str
     supports_dependencies: bool = False
     input_extension: str = ""
@@ -49,10 +49,8 @@ class BaseCompiler:
             if os.path.exists(full_path):
                 return full_path
 
-        try:
-            full_path = finders.find(norm_source_path)  # type: ignore
-        except django.core.exceptions.SuspiciousOperation:
-            pass
+        with contextlib.suppress(django.core.exceptions.SuspiciousOperation):
+            full_path = finders.find(norm_source_path)
 
         if full_path is None:
             raise ValueError(f"Can't find staticfile named: {source_path}")
@@ -157,7 +155,6 @@ class BaseCompiler:
         compiled_path = self.get_output_path(source_path)
 
         if self.should_compile(source_path, from_management=from_management):
-
             compiled_path = self.compile_file(source_path)
 
             if self.supports_dependencies:

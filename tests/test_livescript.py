@@ -23,7 +23,6 @@ def test_compile_file(monkeypatch, tmpdir):
 
 
 def test_sourcemap(monkeypatch, tmpdir):
-
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.LiveScript(sourcemap_enabled=False)

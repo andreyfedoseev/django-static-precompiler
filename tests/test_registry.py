@@ -6,7 +6,6 @@ from static_precompiler import compilers, exceptions, registry
 
 
 def test_build_compilers(monkeypatch):
-
     monkeypatch.setattr("static_precompiler.settings.COMPILERS", ["invalid_classpath"])
     with pytest.raises(django.core.exceptions.ImproperlyConfigured):
         registry.build_compilers()
@@ -48,7 +47,6 @@ def test_build_compilers(monkeypatch):
 
 
 def test_get_compiler_by_name(monkeypatch):
-
     compiler_stub = stub()
 
     monkeypatch.setattr(
@@ -65,7 +63,6 @@ def test_get_compiler_by_name(monkeypatch):
 
 
 def test_get_compiler_by_path(monkeypatch):
-
     coffeescript_compiler_stub = stub(is_supported=lambda source_path: source_path.endswith(".coffee"))
     less_compiler_stub = stub(is_supported=lambda source_path: source_path.endswith(".less"))
 

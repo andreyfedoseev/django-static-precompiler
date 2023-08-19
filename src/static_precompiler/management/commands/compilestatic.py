@@ -54,10 +54,9 @@ def delete_stale_files(compiled_files: StrCollection) -> None:
 
 
 class Command(django.core.management.base.BaseCommand):
-
     help = "Compile static files."
 
-    requires_system_checks = []  # type: ignore
+    requires_system_checks = []
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument(
@@ -90,7 +89,6 @@ class Command(django.core.management.base.BaseCommand):
         )
 
     def handle(self, *args: Any, **options: Any) -> None:
-
         if not options["watch"] and not options["initial_scan"]:
             sys.exit("--no-initial-scan option should be used with --watch.")
 

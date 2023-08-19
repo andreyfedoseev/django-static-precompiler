@@ -3,7 +3,6 @@ import pretend
 
 
 def test_compile_filter(monkeypatch):
-
     compile_static = pretend.call_recorder(lambda source_path: "compiled")
     monkeypatch.setattr("static_precompiler.utils.compile_static", compile_static)
     template = django.template.Template("""{% load compile_static %}{{ "source"|compile }}""")

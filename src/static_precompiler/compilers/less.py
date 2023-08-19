@@ -11,7 +11,6 @@ __all__ = ("LESS",)
 
 
 class LESS(base.BaseCompiler):
-
     name = "less"
     supports_dependencies = True
     input_extension = "less"

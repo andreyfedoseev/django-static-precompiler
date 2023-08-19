@@ -27,7 +27,7 @@ def build_compilers() -> Dict[str, BaseCompiler]:
             if len(compiler_path) != 2:
                 raise django.core.exceptions.ImproperlyConfigured(
                     'Compiler must be specified in the format ("path.to.CompilerClass", {{compiler options...}}),'
-                    " got {0}".format(compiler_path)
+                    f" got {compiler_path}"
                 )
             compiler_path, compiler_options = compiler_path
             if not isinstance(compiler_options, dict):
@@ -55,7 +55,7 @@ def build_compilers() -> Dict[str, BaseCompiler]:
         compiler_to_add = compiler_class(**compiler_options)
         compiler = compilers.setdefault(compiler_class.name, compiler_to_add)
         if compiler_to_add != compiler:
-            warnings.warn(f"Both compilers {compiler_to_add} and {compiler} have the same name.")
+            warnings.warn(f"Both compilers {compiler_to_add} and {compiler} have the same name.", stacklevel=2)
 
     return compilers
 

@@ -2,7 +2,6 @@ from static_precompiler import url_converter
 
 
 def test_convert_url():
-
     assert url_converter.convert_url("http://dummy.jpg", "styles/") == "http://dummy.jpg"
     assert url_converter.convert_url("https://dummy.jpg", "styles/") == "https://dummy.jpg"
     assert url_converter.convert_url("/dummy.jpg", "styles/") == "/dummy.jpg"
@@ -13,7 +12,6 @@ def test_convert_url():
 
 
 def test_convert():
-
     assert (
         url_converter.convert("p {\n  background: url(../images/ham.jpg) no-repeat 0 0;\n}", "styles/")
         == "p {\n  background: url(/static/images/ham.jpg) no-repeat 0 0;\n}"

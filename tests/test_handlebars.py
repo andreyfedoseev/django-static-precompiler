@@ -13,7 +13,6 @@ def clean_javascript(js):
 
 
 def test_is_supported():
-
     compiler = compilers.Handlebars()
 
     assert compiler.is_supported("test.hbs")
@@ -54,7 +53,6 @@ templates['test'] = template({"compiler":[8,">= 4.3.0"],"main":function(containe
 
 
 def test_sourcemap(monkeypatch, tmpdir):
-
     monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.Handlebars(sourcemap_enabled=False)
@@ -119,7 +117,6 @@ def test_find_dependencies():
 
 
 def test_get_extra_args(monkeypatch):
-
     compiler = compilers.Handlebars(known_helpers=["foo", "bar"], namespace="baz", simple=True)
 
     assert compiler.get_extra_args() == ["-k", "foo", "-k", "bar", "-n", "baz", "-s"]

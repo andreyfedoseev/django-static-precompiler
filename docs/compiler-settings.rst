@@ -119,55 +119,6 @@ Example:
 SASS / SCSS
 ===========
 
-Ruby-based (legacy) SASS compiler.
-
-``executable``
-  Path to SASS compiler executable. Default: "sass".
-
-``sourcemap_enabled``
-  Boolean. Set to ``True`` to enable source maps. Default: ``False``.
-
-``compass_enabled``
-  Boolean. Whether to use compass or not. Compass must be installed in your system.
-  Run ``sass --compass`` and if no error is shown it means that compass is installed.
-
-``load_paths``
-  List of additional directories to look imported files (``--load-path`` command line option). Default: ``None``.
-
-``precision``
-  How many digits of precision to use when outputting decimal numbers. Default: ``None``.
-  Set this to 8 or more if you compile Bootstrap.
-
-``output_style``
-  Output style. Default: ``None``.
-  Can be nested, compact, compressed, or expanded.
-
-Example:
-
-.. code-block:: python
-
-    STATIC_PRECOMPILER_COMPILERS = (
-        (
-            "static_precompiler.compilers.SCSS",
-            {
-                "executable": "/usr/bin/sass",
-                "sourcemap_enabled": True,
-                "compass_enabled": True,
-                "load_paths": ["/path"],
-                "precision": 8,
-                "output_style": "compressed",
-            },
-        ),
-    )
-
-
-Dart Sass
-=========
-
-Dart Sass is the current implementation of SASS.
-
-.. note:: Dart Sass compiler is not enabled by default. See the example below for how to enable it.
-
 Options:
 
 ``sourcemap_enabled``

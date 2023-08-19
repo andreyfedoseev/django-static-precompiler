@@ -8,7 +8,6 @@ from static_precompiler import compilers, models, settings
 
 
 def test_is_supported(monkeypatch):
-
     monkeypatch.setattr("static_precompiler.compilers.base.BaseCompiler.input_extension", "foo")
     compiler = compilers.BaseCompiler()
 
@@ -18,7 +17,6 @@ def test_is_supported(monkeypatch):
 
 
 def test_get_output_filename(monkeypatch):
-
     compiler = compilers.BaseCompiler()
 
     monkeypatch.setattr(compiler, "input_extension", "coffee")
@@ -50,7 +48,6 @@ def test_get_full_source_path():
 
 
 def test_get_output_path(monkeypatch):
-
     compiler = compilers.BaseCompiler()
     monkeypatch.setattr(compiler, "get_output_filename", lambda source_path: source_path.replace(".coffee", ".js"))
 
@@ -59,7 +56,6 @@ def test_get_output_path(monkeypatch):
 
 
 def test_get_full_output_path(monkeypatch):
-
     compiler = compilers.BaseCompiler()
     monkeypatch.setattr(compiler, "get_output_path", lambda source_path: settings.OUTPUT_DIR + "/dummy.js")
 
@@ -67,7 +63,6 @@ def test_get_full_output_path(monkeypatch):
 
 
 def test_get_source_mtime(monkeypatch):
-
     compiler = compilers.BaseCompiler()
 
     monkeypatch.setattr(compiler, "get_full_source_path", lambda source_path: "dummy.coffee")
@@ -77,7 +72,6 @@ def test_get_source_mtime(monkeypatch):
 
 
 def test_get_output_mtime(monkeypatch):
-
     compiler = compilers.BaseCompiler()
 
     monkeypatch.setattr(compiler, "get_full_output_path", lambda output_path: "dummy.js")

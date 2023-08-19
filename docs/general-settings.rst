@@ -23,7 +23,7 @@ General settings
 
       STATIC_PRECOMPILER_COMPILERS = (
           ("static_precompiler.compilers.CoffeeScript", {"executable": "/usr/bin/coffeescript"}),
-          ("static_precompiler.compilers.SCSS", {"compass_enabled": True}),
+          ("static_precompiler.compilers.SCSS", {"load_paths": ["/some/path"]}),
       )
 
 
