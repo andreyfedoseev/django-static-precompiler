@@ -1,6 +1,65 @@
+[tool.poetry]
+name = "django-static-precompiler"
+version = "3.0a1"
+description = "Django template tags to compile all kinds of static files (SASS, LESS, Stylus, CoffeeScript, Babel, LiveScript, Handlebars)."
+authors = ["Andrey Fedoseev <andrey@andreyfedoseev.com>"]
+license = "MIT"
+readme = ["README.md", "CHANGES.md"]
+homepage = "https://github.com/andreyfedoseev/django-static-precompiler"
+repository = "https://github.com/andreyfedoseev/django-static-precompiler"
+documentation = "https://django-static-precompiler.readthedocs.io/"
+keywords = ["django", "sass", "scss"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Django :: 3",
+    "Framework :: Django :: 4",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP"
+]
+packages = [
+    {include = "static_precompiler", from = "src"}
+]
+include = [
+    "AUTHORS",
+    "README.md",
+    "CHANGES.md",
+    "LICENSE",
+    "py.typed",
+    { path = "tests", format = "sdist" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Django = "^3.2.0"
+libsass = {version = "*", optional = true}
+watchdog = {version = "*", optional = true}
+
+[tool.poetry.group.test.dependencies]
+pytest = "~7.4.0"
+pytest-django = "~4.5.0"
+pretend = "~1.0.9"
+libsass = "~0.22.0"
+pytest-cov = "~4.0.0"
+watchdog = "~3.0.0"
+coverage = "~7.3.0"
+tox = "~4.9.0"
+mypy = "~1.4.0"
+django-stubs = {extras = ["compatible-mypy"], version = "~4.2.3"}
+
+[tool.poetry.extras]
+libsass = ["libsass"]
+watchdog = ["watchdog"]
+
 [build-system]
-requires = ["setuptools>=42"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 120
