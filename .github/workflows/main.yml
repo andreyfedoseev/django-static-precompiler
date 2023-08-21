@@ -34,4 +34,4 @@ jobs:
         run: make mypy
 
       - name: tests
-        run: make test
+        run: env TOX_PARALLEL_NO_SPINNER=1 make test
