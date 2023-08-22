@@ -44,9 +44,9 @@ watchdog = {version = "*", optional = true}
 [tool.poetry.group.test.dependencies]
 pytest = "~7.4.0"
 pytest-django = "~4.5.0"
-pretend = "~1.0.9"
 libsass = "~0.22.0"
 pytest-cov = "~4.0.0"
+pytest-mock = "~3.11.1"
 watchdog = "~3.0.0"
 coverage = "~7.3.0"
 tox = "~4.9.0"

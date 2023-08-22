@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 import pytest
+from pytest_mock import MockFixture
 
 from static_precompiler import compilers, exceptions
 
@@ -20,8 +21,8 @@ def test_is_supported():
     assert not compiler.is_supported("test.foo")
 
 
-def test_compile_file(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+def test_compile_file(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.Handlebars()
 
@@ -52,8 +53,8 @@ templates['test'] = template({"compiler":[8,">= 4.3.0"],"main":function(containe
         compiler.compile_file("scripts/broken.handlebars")
 
 
-def test_sourcemap(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+def test_sourcemap(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.Handlebars(sourcemap_enabled=False)
     compiler.compile_file("scripts/test.hbs")
@@ -116,7 +117,7 @@ def test_find_dependencies():
     return []
 
 
-def test_get_extra_args(monkeypatch):
+def test_get_extra_args():
     compiler = compilers.Handlebars(known_helpers=["foo", "bar"], namespace="baz", simple=True)
 
     assert compiler.get_extra_args() == ["-k", "foo", "-k", "bar", "-n", "baz", "-s"]

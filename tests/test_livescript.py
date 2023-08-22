@@ -2,6 +2,7 @@ import json
 import os
 
 import pytest
+from pytest_mock import MockFixture
 
 from static_precompiler import compilers, exceptions
 
@@ -11,8 +12,8 @@ def clean_javascript(js):
     return "\n".join(line for line in js.split("\n") if line.strip() and not line.startswith("//"))
 
 
-def test_compile_file(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+def test_compile_file(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.LiveScript()
 
@@ -22,8 +23,8 @@ def test_compile_file(monkeypatch, tmpdir):
         assert clean_javascript(compiled.read()) == """(function(){\n  console.log("Hello, World!");\n}).call(this);"""
 
 
-def test_sourcemap(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+def test_sourcemap(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.LiveScript(sourcemap_enabled=False)
     compiler.compile_file("scripts/test.ls")

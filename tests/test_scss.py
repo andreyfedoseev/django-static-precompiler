@@ -2,8 +2,8 @@ import json
 import os
 import re
 
-import pretend
 import pytest
+from pytest_mock import MockFixture
 
 from static_precompiler import exceptions, utils
 from static_precompiler.compilers import dart_sass, libsass
@@ -36,17 +36,16 @@ def test_get_full_source_path(compiler_factory):
     assert compiler.get_full_source_path("_extra.scss") == os.path.join(extra_path, "_extra.scss")
 
 
-def test_compile_file(compiler_factory, monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    convert_urls = pretend.call_recorder(lambda *args: None)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", convert_urls)
+def test_compile_file(compiler_factory, mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    convert_urls = mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compiler_factory("scss")
 
     assert compiler.compile_file("styles/sass/test.scss") == "COMPILED/styles/sass/test.css"
 
     full_output_path = compiler.get_full_output_path("styles/sass/test.scss")
-    assert convert_urls.calls == [pretend.call(full_output_path, "styles/sass/test.scss")]
+    convert_urls.assert_called_once_with(full_output_path, "styles/sass/test.scss")
 
     assert os.path.exists(full_output_path)
 
@@ -57,9 +56,9 @@ def test_compile_file(compiler_factory, monkeypatch, tmpdir):
         compiler.compile_file("styles/sass/invalid-syntax.scss")
 
 
-def test_sourcemap(compiler_factory, monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
+def test_sourcemap(compiler_factory, mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compiler_factory("scss", sourcemap_enabled=False)
     compiler.compile_file("styles/sass/test.scss")
@@ -195,7 +194,7 @@ def test_find_imports():
     assert compiler.find_imports(source) == expected
 
 
-def test_locate_imported_file(compiler_factory, monkeypatch):
+def test_locate_imported_file(compiler_factory, mocker: MockFixture):
     root = os.path.dirname(__file__)
 
     existing_files = set()
@@ -205,7 +204,7 @@ def test_locate_imported_file(compiler_factory, monkeypatch):
     additional_path = os.path.join(root, "static", "additional-path")
     existing_files.add(os.path.join(additional_path, "foo.scss"))
 
-    monkeypatch.setattr("os.path.exists", lambda x: x in existing_files)
+    mocker.patch("os.path.exists", side_effect=lambda x: x in existing_files)
 
     compiler = compiler_factory("scss", load_paths=(additional_path,))
 
@@ -223,14 +222,14 @@ def test_locate_imported_file(compiler_factory, monkeypatch):
         compiler.locate_imported_file("", "Z.scss")
 
 
-def test_find_dependencies(compiler_factory, monkeypatch):
+def test_find_dependencies(compiler_factory, mocker: MockFixture):
     compiler = compiler_factory("scss")
     files = {
         "A.scss": "@import 'B/C.scss';",
         "B/C.scss": "@import '../E';",
         "_E.scss": "p {color: red;}",
     }
-    monkeypatch.setattr(compiler, "get_source", lambda x: files[x])
+    mocker.patch.object(compiler, "get_source", side_effect=lambda x: files[x])
 
     root = os.path.dirname(__file__)
 
@@ -238,7 +237,7 @@ def test_find_dependencies(compiler_factory, monkeypatch):
     for f in files:
         existing_files.add(os.path.join(root, "static", utils.normalize_path(f)))
 
-    monkeypatch.setattr("os.path.exists", lambda x: x in existing_files)
+    mocker.patch("os.path.exists", side_effect=lambda x: x in existing_files)
 
     assert compiler.find_dependencies("A.scss") == ["B/C.scss", "_E.scss"]
     assert compiler.find_dependencies("B/C.scss") == ["_E.scss"]
@@ -258,9 +257,9 @@ def test_get_extra_args():
     ]
 
 
-def test_load_paths(compiler_factory, monkeypatch, tmpdir, settings):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
+def test_load_paths(compiler_factory, mocker: MockFixture, tmpdir, settings):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compiler_factory("scss")
     with pytest.raises(exceptions.StaticCompilationError):
@@ -278,11 +277,11 @@ def test_load_paths(compiler_factory, monkeypatch, tmpdir, settings):
 
 
 @pytest.mark.parametrize("precision", (None, 10))
-def test_precision(precision, monkeypatch, tmpdir):
+def test_precision(precision, mocker: MockFixture, tmpdir):
     expected_precision = 5 if precision is None else precision
 
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = libsass.SCSS(precision=precision)
 
@@ -299,9 +298,9 @@ def test_precision(precision, monkeypatch, tmpdir):
         assert len(line_height.split(".")[-1]) == expected_precision
 
 
-def test_output_style(compiler_factory, monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
+def test_output_style(compiler_factory, mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compiler_factory("scss", output_style="compressed")
 
