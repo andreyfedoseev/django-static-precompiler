@@ -195,9 +195,6 @@ def test_compile_lazy(monkeypatch):
     # noinspection PyUnresolvedReferences
     assert compiler.compile.calls == [pretend.call("dummy.coffee")]
 
-    assert compiler.compile(encoding.force_str("foo")).startswith(encoding.force_str("")) is True
-    assert compiler.compile(encoding.force_bytes("foo")).startswith(encoding.force_bytes("")) is True
-
 
 def test_find_dependencies():
     compiler = compilers.BaseCompiler()

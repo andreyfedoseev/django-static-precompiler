@@ -7,8 +7,8 @@ shell:
 test:
 	docker compose run --rm app tox -p auto
 
-mypy:
-	docker compose run --rm app mypy --strict ./src
+check-types:
+	docker compose run --rm app pyright
 
 package:
 	rm -rf ./dist

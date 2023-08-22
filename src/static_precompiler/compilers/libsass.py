@@ -45,12 +45,15 @@ class SCSS(dart_sass.SCSS):
 
         try:
             if self.is_sourcemap_enabled:
-                compiled, sourcemap = sass.compile(
+                result = sass.compile(
                     filename=full_source_path,
                     source_map_filename=sourcemap_path,
                     output_filename_hint=full_output_path,
                     include_paths=self.load_paths,
                 )
+                if result is None:
+                    raise exceptions.StaticCompilationError(f"Could not compile {source_path}")
+                compiled, sourcemap = result
             else:
                 compile_kwargs: Dict[str, Any] = {}
                 if self.load_paths:
@@ -78,7 +81,7 @@ class SCSS(dart_sass.SCSS):
 
     def compile_source(self, source: str) -> str:
         try:
-            compiled: str = sass.compile(string=source, indented=self.indented, include_paths=self.load_paths)
+            compiled = sass.compile(string=source, indented=self.indented, include_paths=self.load_paths)
         except sass.CompileError as e:
             raise exceptions.StaticCompilationError("Could not compile source") from e
 
