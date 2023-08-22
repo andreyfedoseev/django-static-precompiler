@@ -1,4 +1,4 @@
-FROM andreyfedoseev/django-static-precompiler:20.04-1
+FROM andreyfedoseev/django-static-precompiler:22.04-1
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 RUN apt update && \
@@ -7,6 +7,7 @@ RUN apt update && \
     apt install -y  \
     python3-venv \
     python3.8-dev \
+    python3.8-distutils \
     python3.9-dev \
     python3.9-distutils \
     python3.10-dev \
@@ -25,6 +26,7 @@ RUN python3 -m venv $POETRY_HOME && \
 RUN mkdir /app
 WORKDIR /app
 ADD poetry.lock pyproject.toml /app/
-RUN poetry install --all-extras --no-root --no-interaction
+RUN poetry install --all-extras --no-root --no-interaction && \
+    pyright --version #  this is to force pyright to install its dependencies
 ADD . /app/
 RUN poetry install --all-extras --no-interaction

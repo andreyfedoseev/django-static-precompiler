@@ -2,7 +2,7 @@ import json
 import os
 import posixpath
 import subprocess
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 from django.utils import encoding
 
@@ -38,12 +38,11 @@ def normalize_whitespace(text: str) -> str:
 
 
 # noinspection PyShadowingBuiltins
-def run_command(
-    args: List[str], input: Optional[Union[bytes, str]] = None, cwd: Optional[str] = None
-) -> Tuple[int, str, str]:
+def run_command(args: List[str], input: Optional[str] = None, cwd: Optional[str] = None) -> Tuple[int, str, str]:
     popen_kwargs: Dict[str, Any] = {
         "stdout": subprocess.PIPE,
         "stderr": subprocess.PIPE,
+        "universal_newlines": True,
     }
 
     if cwd is not None:
@@ -57,14 +56,11 @@ def run_command(
 
     p = subprocess.Popen(args, **popen_kwargs)
 
-    if input:
-        input = encoding.smart_bytes(input)
-
     output, error = p.communicate(input)
     return_code = p.poll()
     assert return_code is not None
 
-    return return_code, encoding.smart_str(output), encoding.smart_str(error)
+    return return_code, output, error
 
 
 def compile_static(path: str) -> str:

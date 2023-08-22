@@ -50,7 +50,7 @@ class BaseCompiler:
                 return full_path
 
         with contextlib.suppress(django.core.exceptions.SuspiciousOperation):
-            full_path = finders.find(norm_source_path)
+            full_path = finders.find(norm_source_path, all=False)
 
         if full_path is None:
             raise ValueError(f"Can't find staticfile named: {source_path}")

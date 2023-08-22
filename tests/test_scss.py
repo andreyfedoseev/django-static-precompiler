@@ -293,7 +293,9 @@ def test_precision(precision, monkeypatch, tmpdir):
 
     with open(full_output_path) as compiled:
         compiled_css = compiled.read()
-        line_height = re.search(r"line-height: (.+?);", compiled_css).groups()[0]
+        match = re.search(r"line-height: (.+?);", compiled_css)
+        assert match
+        line_height = match.groups()[0]
         assert len(line_height.split(".")[-1]) == expected_precision
 
 

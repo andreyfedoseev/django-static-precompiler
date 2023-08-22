@@ -27,11 +27,11 @@ packages = [
     {include = "static_precompiler", from = "src"}
 ]
 include = [
-    "AUTHORS",
-    "README.md",
-    "CHANGES.md",
-    "LICENSE",
-    "py.typed",
+    {path = "AUTHORS"},
+    {path = "README.md"},
+    {path = "CHANGES.md"},
+    {path = "LICENSE"},
+    {path = "py.typed"},
     { path = "tests", format = "sdist" }
 ]
 
@@ -50,8 +50,8 @@ pytest-cov = "~4.0.0"
 watchdog = "~3.0.0"
 coverage = "~7.3.0"
 tox = "~4.9.0"
-mypy = "~1.4.0"
-django-stubs = {extras = ["compatible-mypy"], version = "~4.2.3"}
+pyright = "^1.1.323"
+django-stubs = "~4.2.3"
 
 [tool.poetry.extras]
 libsass = ["libsass"]
@@ -73,13 +73,7 @@ target-version = "py38"
 [tool.ruff.isort]
 known-first-party = ["static_precompiler"]
 
-[tool.mypy]
-python_version = "3.8"
-plugins = ["mypy_django_plugin.main"]
-
-[[tool.mypy.overrides]]
-module = "pretend"
-ignore_missing_imports = true
-
-[tool.django-stubs]
-django_settings_module = "static_precompiler.mypy_django_settings"
+[tool.pyright]
+include = ["src"]
+exclude = ["__pycache__"]
+pythonVersion = "3.8"

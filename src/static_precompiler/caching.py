@@ -3,16 +3,14 @@ import socket
 from typing import Optional
 
 import django.core.cache
-import django.utils.encoding
-from django.core.cache import BaseCache
 
 from . import settings
 
 
-def get_cache() -> BaseCache:
+def get_cache() -> django.core.cache.BaseCache:
     if settings.CACHE_NAME:
         return django.core.cache.caches.get(settings.CACHE_NAME)  # type: ignore
-    return django.core.cache.cache
+    return django.core.cache.cache  # type: ignore
 
 
 def get_cache_key(key: str) -> str:
@@ -20,7 +18,7 @@ def get_cache_key(key: str) -> str:
 
 
 def get_hexdigest(plaintext: str, length: Optional[int] = None) -> str:
-    digest = hashlib.md5(django.utils.encoding.smart_bytes(plaintext)).hexdigest()
+    digest = hashlib.md5(plaintext.encode()).hexdigest()
     if length:
         return digest[:length]
     return digest

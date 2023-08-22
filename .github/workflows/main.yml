@@ -30,8 +30,8 @@ jobs:
       - name: build
         run: make
 
-      - name: mypy
-        run: make mypy
+      - name: check-types
+        run: make check-types
 
       - name: tests
         run: env TOX_PARALLEL_NO_SPINNER=1 make test
