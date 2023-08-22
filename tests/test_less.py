@@ -1,23 +1,22 @@
 import json
 import os
 
-import pretend
 import pytest
+from pytest_mock import MockFixture
 
 from static_precompiler import compilers, exceptions, utils
 
 
-def test_compile_file(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    convert_urls = pretend.call_recorder(lambda *args: None)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", convert_urls)
+def test_compile_file(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    convert_urls = mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compilers.LESS()
 
     assert compiler.compile_file("styles/less/test.less") == "COMPILED/styles/less/test.css"
 
     full_output_path = compiler.get_full_output_path("styles/less/test.less")
-    assert convert_urls.calls == [pretend.call(full_output_path, "styles/less/test.less")]
+    convert_urls.assert_called_once_with(full_output_path, "styles/less/test.less")
 
     assert os.path.exists(full_output_path)
 
@@ -37,9 +36,9 @@ h1 {
         )
 
 
-def test_sourcemap(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
+def test_sourcemap(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compilers.LESS(sourcemap_enabled=False)
     compiler.compile_file("styles/less/test.less")
@@ -111,7 +110,7 @@ def test_find_imports():
     assert compiler.find_imports(source) == expected
 
 
-def test_locate_imported_file(monkeypatch):
+def test_locate_imported_file(mocker: MockFixture):
     compiler = compilers.LESS()
 
     root = os.path.dirname(__file__)
@@ -120,7 +119,7 @@ def test_locate_imported_file(monkeypatch):
     for f in ("A/B.less", "D.less"):
         existing_files.add(os.path.join(root, "static", utils.normalize_path(f)))
 
-    monkeypatch.setattr("os.path.exists", lambda path: path in existing_files)
+    mocker.patch("os.path.exists", side_effect=lambda path: path in existing_files)
 
     assert compiler.locate_imported_file("A", "B.less") == "A/B.less"
     assert compiler.locate_imported_file("E", "../D") == "D.less"
@@ -131,14 +130,14 @@ def test_locate_imported_file(monkeypatch):
         compiler.locate_imported_file("", "Z.less")
 
 
-def test_find_dependencies(monkeypatch):
+def test_find_dependencies(mocker: MockFixture):
     compiler = compilers.LESS()
     files = {
         "A.less": "@import 'B/C.less';",
         "B/C.less": "@import '../E';",
         "E.less": "p {color: red;}",
     }
-    monkeypatch.setattr(compiler, "get_source", lambda x: files[x])
+    mocker.patch.object(compiler, "get_source", side_effect=lambda x: files[x])
 
     root = os.path.dirname(__file__)
 
@@ -146,16 +145,16 @@ def test_find_dependencies(monkeypatch):
     for f in files:
         existing_files.add(os.path.join(root, "static", utils.normalize_path(f)))
 
-    monkeypatch.setattr("os.path.exists", lambda path: path in existing_files)
+    mocker.patch("os.path.exists", side_effect=lambda path: path in existing_files)
 
     assert compiler.find_dependencies("A.less") == ["B/C.less", "E.less"]
     assert compiler.find_dependencies("B/C.less") == ["E.less"]
     assert compiler.find_dependencies("E.less") == []
 
 
-def test_global_vars(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
+def test_global_vars(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compilers.LESS()
 
@@ -189,9 +188,9 @@ p a {
         )
 
 
-def test_include_path(monkeypatch, tmpdir, settings):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
+def test_include_path(mocker: MockFixture, tmpdir, settings):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compilers.LESS()
     with pytest.raises(exceptions.StaticCompilationError):

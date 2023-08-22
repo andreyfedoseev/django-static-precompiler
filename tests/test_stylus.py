@@ -1,23 +1,22 @@
 import json
 import os
 
-import pretend
 import pytest
+from pytest_mock import MockFixture
 
 from static_precompiler import compilers, exceptions, utils
 
 
-def test_compile_file(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    convert_urls = pretend.call_recorder(lambda *args: None)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", convert_urls)
+def test_compile_file(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    convert_urls = mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compilers.Stylus()
 
     assert compiler.compile_file("styles/stylus/A.styl") == "COMPILED/styles/stylus/A.css"
 
     full_output_path = compiler.get_full_output_path("styles/stylus/A.styl")
-    assert convert_urls.calls == [pretend.call(full_output_path, "styles/stylus/A.styl")]
+    convert_urls.assert_called_once_with(full_output_path, "styles/stylus/A.styl")
 
     assert os.path.exists(full_output_path)
 
@@ -31,9 +30,9 @@ def test_compile_file(monkeypatch, tmpdir):
         )
 
 
-def test_sourcemap(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
-    monkeypatch.setattr("static_precompiler.url_converter.convert_urls", lambda *args: None)
+def test_sourcemap(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
+    mocker.patch("static_precompiler.url_converter.convert_urls", return_value=None)
 
     compiler = compilers.Stylus(sourcemap_enabled=False)
     compiler.compile_file("styles/stylus/A.styl")
@@ -86,7 +85,7 @@ def test_find_imports():
     assert compiler.find_imports(source) == expected
 
 
-def test_locate_imported_file(monkeypatch):
+def test_locate_imported_file(mocker: MockFixture):
     compiler = compilers.Stylus()
 
     root = os.path.dirname(__file__)
@@ -95,7 +94,7 @@ def test_locate_imported_file(monkeypatch):
     for f in ("A/B.styl", "C.styl"):
         existing_files.add(os.path.join(root, "static", utils.normalize_path(f)))
 
-    monkeypatch.setattr("os.path.exists", lambda x: x in existing_files)
+    mocker.patch("os.path.exists", side_effect=lambda x: x in existing_files)
 
     assert compiler.locate_imported_file("A", "B.styl") == "A/B.styl"
     assert compiler.locate_imported_file("", "C.styl") == "C.styl"

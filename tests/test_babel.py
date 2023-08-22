@@ -2,14 +2,15 @@ import json
 import os
 
 import pytest
+from pytest_mock import MockFixture
 
 from static_precompiler import compilers, exceptions
 
 from .test_coffeescript import clean_javascript
 
 
-def test_compile_file(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+def test_compile_file(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.Babel()
 
@@ -26,8 +27,8 @@ def test_compile_file(monkeypatch, tmpdir):
         compiler.compile_file("scripts/broken.es6")
 
 
-def test_sourcemap(monkeypatch, tmpdir):
-    monkeypatch.setattr("static_precompiler.settings.ROOT", tmpdir.strpath)
+def test_sourcemap(mocker: MockFixture, tmpdir):
+    mocker.patch("static_precompiler.settings.ROOT", tmpdir.strpath)
 
     compiler = compilers.Babel(sourcemap_enabled=False)
     compiler.compile_file("scripts/test.es6")
