@@ -37,7 +37,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-Django = "^3.2.0"
+Django = "^3.2.23"
 libsass = {version = "*", optional = true}
 watchdog = {version = "*", optional = true}
 
