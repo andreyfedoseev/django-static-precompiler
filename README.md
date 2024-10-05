@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **django-static-precomiler** is looking for a new maintainer! See https://github.com/andreyfedoseev/django-static-precompiler/issues/170 for details.
+
 ## Django Static Precompiler
 
 Django Static Precompiler provides template tags and filters to compile
