@@ -51,7 +51,7 @@ pytest-mock = "~3.11.1"
 watchdog = "~3.0.0"
 coverage = "~7.3.0"
 tox = "~4.9.0"
-pyright = "^1.1.323"
+pyright = "==1.1.323" # Freezed temporarily, version 1.1.400 crashes
 django-stubs = "~4.2.3"
 
 [tool.poetry.extras]
