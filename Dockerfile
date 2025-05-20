@@ -25,10 +25,9 @@ RUN python3 -m venv $POETRY_HOME && \
     $POETRY_HOME/bin/pip install --upgrade pip && \
     $POETRY_HOME/bin/pip install poetry && \
     python3 -m venv $VIRTUAL_ENV
-RUN mkdir /app
-WORKDIR /app
-ADD poetry.lock pyproject.toml /app/
+WORKDIR /opt/app
+ADD . /opt/app/
 RUN poetry install --all-extras --no-root --no-interaction && \
-    pyright --version #  this is to force pyright to install its dependencies
-ADD . /app/
-RUN poetry install --all-extras --no-interaction
+    pyright --version && \
+    poetry install --all-extras --no-interaction && \
+    tox run --notest -- poetry install --all-extras

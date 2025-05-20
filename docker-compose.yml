@@ -3,4 +3,4 @@ services:
     build: .
     entrypoint: []
     volumes:
-      - .:/app
+      - .:/opt/app
