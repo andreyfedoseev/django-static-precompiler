@@ -17,6 +17,7 @@ RUN apt update && \
     python3.11-dev \
     python3.11-distutils \
     python3.12-dev \
+    python3.13-dev \
     python3-pip \
     sqlite3 && \
     apt clean
