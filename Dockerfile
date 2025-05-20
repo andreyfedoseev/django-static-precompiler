@@ -2,6 +2,8 @@ FROM andreyfedoseev/django-static-precompiler:22.04-1
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 RUN apt update && \
+    apt upgrade --yes && \
+    apt autoremove --yes && \
     apt install software-properties-common -y && \
     add-apt-repository ppa:deadsnakes/ppa -y && \
     apt install -y  \
@@ -17,7 +19,8 @@ RUN apt update && \
     python3.12-dev \
     python3.12-distutils \
     python3-pip \
-    sqlite3
+    sqlite3 && \
+    apt clean
 ENV POETRY_HOME=/opt/poetry VIRTUAL_ENV=/opt/venv PATH=/opt/venv/bin:/opt/poetry/bin:$PATH
 RUN python3 -m venv $POETRY_HOME && \
     $POETRY_HOME/bin/pip install --upgrade pip && \
