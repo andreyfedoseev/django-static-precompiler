@@ -35,8 +35,7 @@ def list_files(scanned_dirs: StrCollection) -> Iterable[str]:
         for dirname, _dirnames, filenames in os.walk(scanned_dir):
             for filename in filenames:
                 path = os.path.join(dirname, filename)[len(scanned_dir) :]
-                if path.startswith("/"):
-                    path = path[1:]
+                path = path.lstrip(r"\/")
                 yield path
 
 
