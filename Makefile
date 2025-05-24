@@ -1,6 +1,9 @@
 all:
 	docker compose build
 
+update-dependencies:
+	docker compose run --rm app poetry update
+
 shell:
 	docker compose run --rm app /bin/bash
 
