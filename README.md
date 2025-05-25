@@ -1,5 +1,7 @@
 > [!IMPORTANT]
-> **django-static-precomiler** is looking for a new maintainer! See https://github.com/andreyfedoseev/django-static-precompiler/issues/170 for details.
+> **django-static-precomiler** is looking for a new maintainer!
+> See <https://github.com/andreyfedoseev/django-static-precompiler/issues/170>
+> for details.
 
 ## Django Static Precompiler
 
