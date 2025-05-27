@@ -8,6 +8,7 @@ shell:
 	docker compose run --rm app /bin/bash
 
 test:
+	docker compose run --rm app pytest --cov static_precompiler --cov-report xml --cov-append
 	docker compose run --rm app tox -p auto
 
 check-types:
