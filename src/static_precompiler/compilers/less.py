@@ -117,7 +117,7 @@ class LESS(base.BaseCompiler):
         :param source_dir: source directory
         :param import_path: path to the imported file
         """
-        if not import_path.endswith("." + self.input_extension):
+        if not import_path.endswith(("." + self.input_extension, ".css")):
             import_path += "." + self.input_extension
         path = posixpath.normpath(posixpath.join(source_dir, import_path))
 
@@ -152,5 +152,6 @@ class LESS(base.BaseCompiler):
         for import_path in self.find_imports(source):
             import_path = self.locate_imported_file(source_dir, import_path)
             dependencies.add(import_path)
-            dependencies.update(self.find_dependencies(import_path))
+            if not import_path.endswith(".css"):
+                dependencies.update(self.find_dependencies(import_path))
         return sorted(dependencies)
