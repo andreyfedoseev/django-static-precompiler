@@ -22,6 +22,7 @@ COMPILERS = getattr(
         "static_precompiler.compilers.LESS",
         "static_precompiler.compilers.Stylus",
         "static_precompiler.compilers.LiveScript",
+        "static_precompiler.compilers.TypeScript",
     ),
 )
 

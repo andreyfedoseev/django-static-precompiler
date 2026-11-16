@@ -6,3 +6,4 @@ from .less import *  # noqa
 from .livescript import *  # noqa
 from .scss import *  # noqa
 from .stylus import *  # noqa
+from .typescript import *  # noqa
