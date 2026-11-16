@@ -1,6 +1,5 @@
 import json
 import os
-from pathlib import Path
 
 import pytest
 from pytest_mock import MockFixture
@@ -49,7 +48,9 @@ def test_sourcemap(mocker: MockFixture, tmpdir):
 def test_compile_source():
     compiler = compilers.TypeScript()
 
-    compiled = clean_javascript(compiler.compile_source('const greeting: string = "Hello, World!"; console.log(greeting);'))
+    compiled = clean_javascript(
+        compiler.compile_source('const greeting: string = "Hello, World!"; console.log(greeting);')
+    )
     assert 'var greeting = "Hello, World!";' in compiled or 'const greeting = "Hello, World!";' in compiled
     assert "console.log(greeting);" in compiled
 
@@ -57,7 +58,9 @@ def test_compile_source():
         compiler.compile_source('const invalid: number = "not a number;')
 
     # Test non-ascii
-    compiled_unicode = clean_javascript(compiler.compile_source('const msg: string = "Привет, Мир!"; console.log(msg);'))
+    compiled_unicode = clean_javascript(
+        compiler.compile_source('const msg: string = "Привет, Мир!"; console.log(msg);')
+    )
     assert "Привет, Мир!" in compiled_unicode
 
 
